@@ -1,17 +1,15 @@
 <template>
-  <div>
-    <!--<input type="range" name="redness" @input="changeRed" min="0" max="100">-->
-    <label for="redness">Saturation</label>
-    <input type="range" name="redness" @input="changeRed" min="-100" max="100" class="wide-slider">
+  <div id="img-bucket">
+    <img id="main-img" :src="img" :class="hidden"/>
   </div>
+  <p>
+    <label for="photo">Select Photo to Upload:</label>
+    <input type="file" name="photo" @change="submit">
+  </p>
 </template>
 
 <script>
 import glfx from 'glfx';
-
-// const DB_NAME = 'photodb'
-// const DB_VERSION = 1
-// const DB_OBJECT_STORE_NAME = 'photos'
 
 export default {
   name: 'ChangeSaturation',
