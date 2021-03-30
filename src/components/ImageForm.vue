@@ -1,18 +1,34 @@
 <template>
-  <div id="img-bucket">
-    <img id="main-img" :src="img" :class="hidden"/>
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <section class="container has-text-centered">
+        <div id="img-bucket">
+          <img id="main-img" :src="img" :class="hidden"/>
+        </div>
+        <div class="file">
+          <label class="file-label">
+            <input class="file-input" type="file" name="photo" @change="submit">
+            <span class="file-cta">
+              <span class="file-icon">
+                <i class="fas fa-upload"></i>
+              </span>
+              <span class="file-label">
+                Choose a file…
+              </span>
+            </span>
+          </label>
+        </div>
+        <router-view></router-view>
+      </section>
+    </div>
   </div>
-  <p>
-    <label for="photo">Select Photo to Upload:</label>
-    <input type="file" name="photo" @change="submit">
-  </p>
 </template>
 
 <script>
 import glfx from 'glfx';
 
 export default {
-  name: 'ChangeSaturation',
+  name: 'ImageForm',
   props: {
     msg: String
   },
@@ -38,19 +54,6 @@ export default {
       image.parentNode.insertBefore(canvas, image);
       const oldCanvas = document.getElementsByTagName("canvas")[0];
       oldCanvas.style.display = 'none'
-    },
-    changeRed(e) {
-      this.hidden = 'hidden'
-      const imgBucket = document.getElementById('img-bucket');
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
-      const amount = e.target.value * .01;
-      const canvas = glfx.canvas();
-      const image = document.getElementById('main-img');
-      const texture = canvas.texture(image);
-      canvas.draw(texture).brightnessContrast(amount, 0).update();
-      imgBucket.removeChild(oldCanvas);
-      imgBucket.insertBefore(canvas, image)
-      //image.parentNode.removeChild(image);
     }
   }
 }

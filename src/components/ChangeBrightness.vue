@@ -1,20 +1,15 @@
 <template>
   <div>
-    <!--<input type="range" name="redness" @input="changeRed" min="0" max="100">-->
-    <label for="redness">Saturation</label>
-    <input type="range" name="redness" @input="changeRed" min="-100" max="100" class="wide-slider">
+    <label for="redness">Brightness</label>
+    <input type="range" name="redness" @input="changeBrightness" min="-100" max="100" class="wide-slider">
   </div>
 </template>
 
 <script>
 import glfx from 'glfx';
 
-// const DB_NAME = 'photodb'
-// const DB_VERSION = 1
-// const DB_OBJECT_STORE_NAME = 'photos'
-
 export default {
-  name: 'ChangeSaturation',
+  name: 'ChangeBrightness',
   props: {
     msg: String
   },
@@ -41,7 +36,7 @@ export default {
       const oldCanvas = document.getElementsByTagName("canvas")[0];
       oldCanvas.style.display = 'none'
     },
-    changeRed(e) {
+    changeBrightness(e) {
       this.hidden = 'hidden'
       const imgBucket = document.getElementById('img-bucket');
       const oldCanvas = document.getElementsByTagName("canvas")[0];
