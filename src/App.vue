@@ -20,20 +20,20 @@
         <router-link to="/transformations/color" class="navbar-item">
           Color
         </router-link>
-        <router-link to="/transformations/size" class="navbar-item">
-          Size and Rotation
+        <router-link to="/transformations/size-and-ratio" class="navbar-item">
+          Size and Aspect Ratio
+        </router-link>
+        <router-link to="/transformations/cropping-and-rotation" class="navbar-item">
+          Crop and Rotate
         </router-link>
       </div>
 
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-primary">
-              <strong>Sign up</strong>
-            </a>
-            <a class="button is-light">
-              Log in
-            </a>
+            <router-link to="/checkout" class="button is-primary">
+              <strong>No Ads</strong>
+            </router-link>
           </div>
         </div>
       </div>
@@ -46,5 +46,17 @@
 <style lang="scss">
   .hidden{
     display: none;
+  }
+
+  .showing{
+    display: inline;
+  }
+
+  .w-100{
+    width: 100%;
+  }
+
+  .w-75{
+    width: 75%;
   }
 </style>

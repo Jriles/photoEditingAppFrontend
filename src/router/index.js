@@ -1,7 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Journal from '../views/Journal.vue'
-import Plans from '../views/Plans.vue'
 import Checkout from '../views/Checkout.vue'
 import ImageForm from '../components/ImageForm.vue'
 import Light from '../views/Light.vue'
@@ -38,11 +37,6 @@ const routes = [
       //   component: ChangeSize
       // }
     ]
-  },
-  {
-    path: '/plans',
-    name: 'Plans',
-    component: Plans
   },
   {
     path: '/checkout',
