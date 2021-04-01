@@ -1,16 +1,22 @@
 <template>
-  <!-- <brightness></brightness> -->
-  <p>COLORS</p>
+  <effect-slider @updateVal="updateColorVal" name="red"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" name="blue"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" name="green"></effect-slider>
 </template>
 
 <script>
-// import ChangeBrightness from '../components/ChangeBrightness.vue'
+import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Color',
-  // components: {
-  //   'brightness': ChangeBrightness
-  // }
+  components: {
+    'effect-slider': EffectSliderComp
+  },
+  methods: {
+    updateColorVal(newVal) {
+      this.$emit("updateColorVal", newVal);
+    }
+  }
 }
 </script>
 

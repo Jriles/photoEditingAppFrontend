@@ -1,14 +1,23 @@
 <template>
-  <brightness></brightness>
+  <effect-slider @updateVal="updateLightVal" name="brightness"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" name="contrast"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" name="vibrance"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" name="hue"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" name="saturation"></effect-slider>
 </template>
 
 <script>
-import ChangeBrightness from '../components/ChangeBrightness.vue'
+import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Light',
   components: {
-    'brightness': ChangeBrightness
+    'effect-slider': EffectSliderComp
+  },
+  methods: {
+    updateLightVal(newVal) {
+      this.$emit("updateLightVal", newVal);
+    }
   }
 }
 </script>
