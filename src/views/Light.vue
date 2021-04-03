@@ -1,9 +1,9 @@
 <template>
-  <effect-slider @updateVal="updateLightVal" name="brightness"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" name="contrast"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" name="vibrance"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" name="hue"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" name="saturation"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="brightness"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="contrast"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="vibrance"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="hue"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="saturation"></effect-slider>
 </template>
 
 <script>
@@ -17,6 +17,9 @@ export default {
   methods: {
     updateLightVal(newVal) {
       this.$emit("updateLightVal", newVal);
+    },
+    sliderDone(newVal) {
+      this.$emit("sliderDone", newVal);
     }
   }
 }

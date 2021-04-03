@@ -4,10 +4,12 @@
       <label for="input" class="label">{{ name }}</label>
     </div>
     <div class="column is-half">
-      <input type="range" name="input" v-model="inputVal" @input="emitNewVal" @change="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
+      <div class="control">
+        <input type="number" name="input" v-model="inputVal" @input="emitNewVal" min="-100" max="100" class="input is-small">
+      </div>
     </div>
     <div class="column">
-      <button class="button is-warning is-small ml-5" @click="undo">Undo</button>
+      <button class="button is-warning ml-5 is-small" @click="undo">Undo</button>
     </div>
   </div>
 </template>
@@ -15,20 +17,9 @@
 <script>
 import glfx from 'glfx';
 
-
 export default {
   name: "default",
-  props: {
-    name: String,
-    min: {
-      type: Number,
-      default: -100
-    },
-    max: {
-      type: Number,
-      default: 100
-    }
-  },
+  props: ['name'],
   created(){
     console.log(this.name)
     this.$options.name = this.name
@@ -36,7 +27,7 @@ export default {
   //needs to match transformation name in ImageForm
   data() {
     return {
-      inputVal: 0,
+      inputVal: 0
     }
   },
   methods: {
@@ -54,14 +45,7 @@ export default {
         "valType": this.name
       }
       this.$emit('updateVal', changeObj)
-    },
-    emitDoneSliding(e){
-      const changeObj = {
-        "newVal": e.target.value,
-        "valType": this.name
-      }
-      this.$emit('sliderDone', changeObj)
-    },
+    }
   }
 }
 </script>

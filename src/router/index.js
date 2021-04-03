@@ -5,6 +5,8 @@ import Checkout from '../views/Checkout.vue'
 import ImageForm from '../components/ImageForm.vue'
 import Light from '../views/Light.vue'
 import Color from '../views/Color.vue'
+import Crop from '../views/Crop.vue'
+import Shape from '../views/Shape.vue'
 
 const routes = [
   {
@@ -23,19 +25,24 @@ const routes = [
     children: [
       {
         path: 'light',
-        name: 'Light',
+        name: 'light',
         component: Light
       },
       {
         path: 'color',
-        name: 'Color',
+        name: 'color',
         component: Color
       },
-      // {
-      //   path: 'color',
-      //   name: 'Size',
-      //   component: ChangeSize
-      // }
+      {
+        path: 'crop',
+        name: 'crop',
+        component: Crop
+      },
+      {
+        path: 'shape',
+        name: 'shape',
+        component: Shape
+      }
     ]
   },
   {

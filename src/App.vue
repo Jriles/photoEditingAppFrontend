@@ -20,11 +20,11 @@
         <router-link to="/transformations/color" class="navbar-item">
           Color
         </router-link>
-        <router-link to="/transformations/size-and-ratio" class="navbar-item">
-          Size and Aspect Ratio
+        <router-link to="/transformations/shape" class="navbar-item">
+          Shape
         </router-link>
-        <router-link to="/transformations/cropping-and-rotation" class="navbar-item">
-          Crop and Rotate
+        <router-link to="/transformations/crop" class="navbar-item">
+          Crop
         </router-link>
       </div>
 
