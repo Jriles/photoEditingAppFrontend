@@ -23,14 +23,15 @@
           </div>
         </div>
         <div v-show="uploaded">
-          <router-view @updateLightVal="updateLightVal" @updateColorVal="updateColorVal" @updateShapeVal="updateShapeVal" @sliderDone="sliderDone" @shapeCropSliderDone="shapeCropSliderDone"></router-view>
+          <router-view @updateLightVal="updateLightVal" @updateColorVal="updateColorVal" @updateShapeVal="updateShapeVal" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"></router-view>
         </div>
-        <div id="img-bucket" class="mt-5">
-          <!-- reuse this bad boi for holding on to changes in updateVal -->
-          <img id="transition-img" :src="cacheImg" class="hidden"/>
-          <div>
-            <img id="original-img" v-show="originalVisible" :src="img"/>
-          </div>
+        <div id="imgBucket" class="mt-5">
+          <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+          <img id="shapeImg" class="hidden" :src="shapeImg"/>
+          <img id="filterImg" class="hidden" :src="filterImg"/>
+          <img id="originalImg" v-show="originalVisible" :src="originalImg"/>
+          <VueCropper ref="cropper" :src="filterImg" alt="Cropping Img" v-show="cropperVisible"></VueCropper>
+          <VueCropper ref="storageCropper" alt="Cropping storage Img" v-show="false"></VueCropper>
         </div>
         <p class="mt-5" v-show="uploaded"><strong>Don't forget to bookmark us! plz</strong></p>
       </section>
@@ -41,8 +42,9 @@
 <script>
 import glfx from 'glfx';
 //import jimp from 'jimp';
+import VueCropper from 'vue-cropperjs';
 import Cropper from 'cropperjs';
-
+import 'cropperjs/dist/cropper.css';
 //max height 1000, max width is 80% of screen, after that experience falloff bitch
 const IMAGE_HEIGHT = 500;
 
@@ -51,25 +53,23 @@ export default {
   watch:{
     $route (to, from){
       if(this.uploaded){
-        document.getElementById('transition-img').className = ''
-        //if path changes to crop/rotate/sizing etc, convert canvas to 2d context
         const path = to.path;
-        console.log(path)
-
         switch(path){
           case "/transformations/color":
-            console.log('thinks switching to color')
-            this.swap2dForWebGL()
+            this.initWebGLCanvas()
+            break
           case "/transformations/light":
-            this.swap2dForWebGL()
-          case "/transformations/crop":
-            console.log('asked for crop')
+            this.initWebGLCanvas()
+            break
           case "/transformations/shape":
-            this.swapWebGLFor2d();
+            this.reInitCropperjsCanvas();
+            break
         }
-        document.getElementById('transition-img').className = 'hidden'
       }
     }
+  },
+  components: {
+    VueCropper
   },
   props: {
     msg: String
@@ -81,6 +81,11 @@ export default {
       uploaded: false,
       imgFileName: null,
       cacheImg: null,
+      filterStorageCanvas: null,
+      cropperVisible: false,
+      shapeImg: null,
+      filterImg: null,
+      originalImg: null,
       //different image properties
       //each one is an object, some alterations might be more complicated than just a number
       brightness: {
@@ -113,20 +118,29 @@ export default {
     }
   },
   methods: {
+    resetFilterShapeVals(){
+      this.brightness.val = 0;
+      this.contrast.val = 0;
+      this.vibrance.val = 0;
+      this.hue.val = 0;
+      this.saturation.val = 0;
+      this.red.val = 0;
+      this.blue.val = 0;
+      this.green.val = 0;
+      this.rotation.val = 0;
+    },
     async submit(e) {
       //delete old canvas
-      const canvi = document.getElementsByTagName("canvas");
-      if (canvi.length > 0){
-        const imgBucket = document.getElementById('img-bucket');
-        const oldCanvas = canvi[0];
-        imgBucket.removeChild(oldCanvas)
-      }
+      //for re-uploading
+      this.resetFilterShapeVals()
+      this.removeCanvasIfExists()
       this.uploaded = true
       // want to make two copies of the file
       const file = e.target.files[0];
-      var image = document.getElementById('transition-img');
-      this.cacheImg = URL.createObjectURL(file)
-      this.img = URL.createObjectURL(file)
+      const objURL = URL.createObjectURL(file)
+      this.shapeImg = objURL
+      this.filterImg = objURL
+      this.originalImg = objURL
       //if path changes to crop/rotate/sizing etc, convert canvas to 2d context
       const path = this.$route.name;
       const ref = this
@@ -135,72 +149,34 @@ export default {
         console.log(path)
         switch (path) {
           case "color":
-            ref.initWebGLCanvas(image)
-          break
+            ref.initWebGLCanvas()
+            break
           case "light":
-            ref.initWebGLCanvas(image)
-          break
-          case "crop":
-            ref.init2dCanvas(image)
-          break
+            ref.initWebGLCanvas()
+            break
           case "shape":
-            ref.init2dCanvas(image)
-          break
+            ref.initCropperjsCanvas()
+            break
         }
       }, 100);
       this.imgFileName = file.name
     },
     updateColorVal(newVal){
-      this.updateVal(newVal);
+      this.updateFilterVal(newVal);
     },
     updateLightVal(newVal){
-      this.updateVal(newVal);
+      this.updateFilterVal(newVal);
     },
     get70PercentOfScreenVal(){
       const width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       return width * .75
     },
-    renderImageOnCanvas2D(context, canvas){
-      var transitionImg = document.getElementById('transition-img');
-      const width = transitionImg.width;
-      const height = transitionImg.height;
-
-      canvas.width = this.get70PercentOfScreenVal()
-      canvas.height = IMAGE_HEIGHT
-      context.drawImage(transitionImg, (canvas.width/2)-(width/2), (canvas.height/2)-(height/2), width, height);
-    },
-    updateShapeVal(newVal){
-      console.log('called update crop and rotate val')
-      this[newVal['valType']].val = newVal['newVal']
-
-      var originalImg = document.getElementById('original-img')
-      const imgBucket = document.getElementById('img-bucket');
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
-      const ctx = oldCanvas.getContext('2d');
-      console.log(this.rotation.val)
-      //ctx.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin
-      oldCanvas.width = this.get70PercentOfScreenVal()
-      oldCanvas.height = IMAGE_HEIGHT
-      ctx.translate(oldCanvas.width/2, oldCanvas.height/2);
-      ctx.rotate(this.rotation.val * Math.PI / 180)
-      var transitionImg = document.getElementById('transition-img');
-      const width = transitionImg.width;
-      const height = transitionImg.height;
-      ctx.drawImage(transitionImg, -(width/2), -(height/2), width, height);
-      this.updateDownloadLink()
-    },
-    updateVal(newVal){
-      this[newVal['valType']].val = newVal['newVal']
-      var transitionImg = document.getElementById('transition-img');
-      var originalImg = document.getElementById('original-img')
-      transitionImg.className = 'hidden'
-      const imgBucket = document.getElementById('img-bucket');
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
+    getFilterCanvas(img){
       const canvas = glfx.canvas();
       const gl = canvas.getContext('webgl');
       gl.getExtension('WEBGL_color_buffer_float');
 
-      const texture = canvas.texture(transitionImg);
+      const texture = canvas.texture(img);
 
       canvas.draw(texture).brightnessContrast((this.brightness.val * .01), (this.contrast.val * .01)).update();
 
@@ -213,73 +189,78 @@ export default {
       //colors!
       texture.loadContentsOf(canvas);
       canvas.draw(texture).curves([[0,0], [.5, this.red.val * .01], [1,1]], [[0,0], [.5, this.green.val * .01], [1,1]], [[0,0], [.5, this.blue.val * .01], [1,1]]).update();
-
-      //texture.destroy();
-      imgBucket.removeChild(oldCanvas);
-      imgBucket.insertBefore(canvas, transitionImg)
       texture.destroy();
+      return canvas
+    },
+    updateFilterVal(newVal){
+      this[newVal['valType']].val = newVal['newVal']
+      var shapeImg = document.getElementById('shapeImg')
+      const imgBucket = document.getElementById('imgBucket');
+      const oldCanvas = document.getElementsByTagName("canvas")[0];
+      const displayCanvas = this.getFilterCanvas(shapeImg);
 
-      this.updateDownloadLink()
-    },
-    swapWebGLFor2d(){
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
-      const imgBucket = document.getElementById('img-bucket');
-      var canvas = document.createElement("canvas");
-      var transitionImg = document.getElementById('transition-img');
-      const ctx = canvas.getContext('2d');
-      this.renderImageOnCanvas2D(ctx, canvas);
-      imgBucket.insertBefore(canvas, transitionImg)
       imgBucket.removeChild(oldCanvas);
+      imgBucket.insertBefore(displayCanvas, originalImg)
     },
-    swap2dForWebGL(){
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
-      var transitionImg = document.getElementById('transition-img');
-      const imgBucket = document.getElementById('img-bucket');
-      var canvas = glfx.canvas();
-      const gl = canvas.getContext('webgl');
-      const { width, height } = oldCanvas.getBoundingClientRect();
-      canvas.width = width
-      canvas.height = height
-      const texture = canvas.texture(transitionImg);
-      canvas.draw(texture).update();
-      imgBucket.insertBefore(canvas, transitionImg)
-      imgBucket.removeChild(oldCanvas);
+    updateShapeVal(newVal){
+      //get cropper
+      this[newVal['valType']].val = newVal['newVal']
+      this.$refs.cropper.rotateTo(this.rotation.val);
+
+      //this.shapeImg = this.$refs.cropper.getCroppedCanvas().toDataURL("image/png")
     },
-    updateDownloadLink(){
-      const canvas = document.getElementsByTagName("canvas")[0];
-      var downloadLink = document.getElementById('downloadLink');
-      downloadLink.href = canvas.toDataURL();
-      downloadLink.download = 'yourNewImage.png'
-    },
-    sliderDone(newVal){
-      //this only happens in an event. (on key up, for everyone )
-      document.getElementById('transition-img').src = document.getElementById('downloadLink').href;
-    },
-    async initWebGLCanvas(image) {
-      console.log('called init WEBGL Canvas')
-      const canvas = glfx.canvas();
-      const gl = canvas.getContext('webgl', {preserveDrawingBuffer: true});
-      const texture = canvas.texture(image);
-      const width = image.width;
-      const height = image.height;
+    initWebGLCanvas() {
+      //remove cropper
+      // console.log('called init WEBGL Canvas')
+      this.cropperVisible = false;
+      this.removeCanvasIfExists()
+      const shapeImg = document.getElementById('shapeImg')
+      const canvas = this.getFilterCanvas(shapeImg)
       //order of width/height, (x, y) pos opposite!!!
-      canvas.draw(texture).update()
-      image.parentNode.insertBefore(canvas, image);
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
+      shapeImg.parentNode.insertBefore(canvas, shapeImg);
+      const changeObj = {
+        "newVal": this.rotation.val,
+        "valType": "rotation"
+      }
+      //this.updateFilterVal(changeObj)
     },
-    async init2dCanvas(image) {
-      console.log('called init 2d canvas')
-      var canvas = document.createElement("canvas");
-      canvas.width = this.get70PercentOfScreenVal();
-      canvas.height = IMAGE_HEIGHT;
-      const gl = canvas.getContext('2d', {preserveDrawingBuffer: true});
-      const width = image.width;
-      const height = image.height;
-      console.log(width)
-      console.log(height)
-      gl.drawImage(image, 0, 0, width, height);
-      image.parentNode.insertBefore(canvas, image);
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
+    initCropperjsCanvas() {
+      this.cropperVisible = true;
+      this.removeCanvasIfExists()
+      console.log(this.filterImg)
+      this.$refs.cropper.replace(this.filterImg);
+      this.$refs.storageCropper.replace(this.originalImg);
+    },
+    reInitCropperjsCanvas() {
+      this.cropperVisible = true;
+      this.removeCanvasIfExists()
+      this.$refs.cropper.replace(this.filterImg);
+      const changeObj = {
+        "newVal": this.rotation.val,
+        "valType": "rotation"
+      }
+      this.$refs.cropper.rotateTo(0);
+      const ref = this
+      setTimeout(function() {
+        ref.updateShapeVal(changeObj)
+      }, 100);
+    },
+    removeCanvasIfExists(){
+      const canvi = document.getElementsByTagName("canvas");
+      if (canvi.length > 0){
+        const imgBucket = document.getElementById('imgBucket');
+        const oldCanvas = canvi[0];
+        imgBucket.removeChild(oldCanvas)
+      }
+    },
+    doneChangingShape(){
+      var originalImg = document.getElementById('originalImg')
+      this.$refs.storageCropper.rotateTo(this.rotation.val);
+      this.shapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL()
+    },
+    doneChangingFilter(){
+      var originalImg = document.getElementById('originalImg')
+      this.filterImg = this.getFilterCanvas(originalImg).toDataURL()
     }
   }
 }

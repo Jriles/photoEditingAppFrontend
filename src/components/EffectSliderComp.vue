@@ -60,7 +60,7 @@ export default {
         "newVal": e.target.value,
         "valType": this.name
       }
-      this.$emit('sliderDone', changeObj)
+      this.$emit('doneApplyingChange', changeObj)
     },
   }
 }

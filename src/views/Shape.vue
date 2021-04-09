@@ -1,5 +1,5 @@
 <template>
-  <effect-slider @updateVal="updateShapeVal" @sliderDone="sliderDone" name="rotation" min="-360" max="360"></effect-slider>
+  <effect-slider @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="0" max="180"></effect-slider>
   <!-- <effect-slider @updateVal="updateShapeVal" name="size"></effect-number> -->
 </template>
 
@@ -17,8 +17,8 @@ export default {
     updateShapeVal(newVal) {
       this.$emit("updateShapeVal", newVal);
     },
-    sliderDone(newVal) {
-      this.$emit("sliderDone", newVal);
+    doneApplyingChange(newVal) {
+      this.$emit("doneChangingShape", newVal);
     }
   }
 }

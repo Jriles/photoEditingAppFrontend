@@ -1,7 +1,7 @@
 <template>
-  <effect-slider @updateVal="updateColorVal" @sliderDone="sliderDone" name="red"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @sliderDone="sliderDone" name="blue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @sliderDone="sliderDone" name="green"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="red"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="blue"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="green"></effect-slider>
 </template>
 
 <script>
@@ -16,8 +16,8 @@ export default {
     updateColorVal(newVal) {
       this.$emit("updateColorVal", newVal);
     },
-    sliderDone(newVal) {
-      this.$emit("sliderDone", newVal);
+    doneApplyingChange(newVal) {
+      this.$emit("doneChangingFilter", newVal);
     }
   }
 }

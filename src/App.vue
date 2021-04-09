@@ -23,9 +23,6 @@
         <router-link to="/transformations/shape" class="navbar-item">
           Shape
         </router-link>
-        <router-link to="/transformations/crop" class="navbar-item">
-          Crop
-        </router-link>
       </div>
 
       <div class="navbar-end">

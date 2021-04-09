@@ -1,9 +1,9 @@
 <template>
-  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="brightness"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="contrast"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="vibrance"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="hue"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @sliderDone="sliderDone" name="saturation"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="brightness"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="contrast"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="vibrance"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="hue"></effect-slider>
+  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="saturation"></effect-slider>
 </template>
 
 <script>
@@ -18,8 +18,8 @@ export default {
     updateLightVal(newVal) {
       this.$emit("updateLightVal", newVal);
     },
-    sliderDone(newVal) {
-      this.$emit("sliderDone", newVal);
+    doneApplyingChange(newVal) {
+      this.$emit("doneChangingFilter", newVal);
     }
   }
 }
