@@ -4,7 +4,7 @@
       <label for="input" class="label">{{ name }}</label>
     </div>
     <div class="column is-half">
-      <input type="range" name="input" v-model="inputVal" @input="emitNewVal" @change="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
+      <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
     </div>
     <div class="column">
       <button class="button is-warning is-small ml-5" @click="undo">Undo</button>
@@ -21,41 +21,44 @@ export default {
   props: {
     name: String,
     min: {
-      type: Number,
       default: -100
     },
     max: {
-      type: Number,
       default: 100
+    },
+    valProp: {
+      default: 0
     }
   },
   created(){
-    console.log(this.name)
     this.$options.name = this.name
   },
   //needs to match transformation name in ImageForm
   data() {
     return {
-      inputVal: 0,
+      val: this.valProp,
     }
   },
   methods: {
     emitNewVal(e){
+      this.val = e.target.value
       const changeObj = {
-        "newVal": e.target.value,
+        "newVal": this.val,
         "valType": this.name
       }
       this.$emit('updateVal', changeObj)
     },
     undo(){
-      this.inputVal = 0
+      this.val = 0
       const changeObj = {
-        "newVal": this.inputVal,
+        "newVal": this.val,
         "valType": this.name
       }
       this.$emit('updateVal', changeObj)
+      this.$emit('doneApplyingChange', changeObj)
     },
     emitDoneSliding(e){
+      this.val = e.target.value
       const changeObj = {
         "newVal": e.target.value,
         "valType": this.name

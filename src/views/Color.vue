@@ -1,7 +1,7 @@
 <template>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="red"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="blue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="green"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="red" min="0" max="100" :valProp="localRed"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="blue" min="0" max="100" :valProp="localBlue"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="green" min="0" max="100" :valProp="localGreen"></effect-slider>
 </template>
 
 <script>
@@ -9,6 +9,24 @@ import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Color',
+  props: {
+    red: {
+      default: 0
+    },
+    blue: {
+      default: 0
+    },
+    green: {
+      default: 0
+    }
+  },
+  data() {
+    return {
+      localRed: this.red,
+      localBlue: this.blue,
+      localGreen: this.green
+    }
+  },
   components: {
     'effect-slider': EffectSliderComp
   },

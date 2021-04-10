@@ -23,15 +23,32 @@
           </div>
         </div>
         <div v-show="uploaded">
-          <router-view @updateLightVal="updateLightVal" @updateColorVal="updateColorVal" @updateShapeVal="updateShapeVal" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"></router-view>
+          <router-view
+            @updateLightVal="updateLightVal"
+            @updateColorVal="updateColorVal"
+            @updateShapeVal="updateShapeVal"
+            @doneChangingFilter="doneChangingFilter"
+            @doneChangingShape="doneChangingShape"
+            :red="red.val"
+            :green="green.val"
+            :blue="blue.val"
+            :brightness="brightness.val"
+            :contrast="contrast.val"
+            :vibrance="vibrance.val"
+            :hue="hue.val"
+            :saturation="saturation.val"
+            :rotation="rotation.val"
+          ></router-view>
+        </div>
+        <div>
+          <img id="originalImg" v-show="originalVisible" :src="originalImg"/>
         </div>
         <div id="imgBucket" class="mt-5">
           <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
           <img id="shapeImg" class="hidden" :src="shapeImg"/>
           <img id="filterImg" class="hidden" :src="filterImg"/>
-          <img id="originalImg" v-show="originalVisible" :src="originalImg"/>
-          <VueCropper ref="cropper" :src="filterImg" alt="Cropping Img" v-show="cropperVisible"></VueCropper>
-          <VueCropper ref="storageCropper" alt="Cropping storage Img" v-show="false"></VueCropper>
+          <VueCropper ref="cropper" :src="filterImg" :autoCropArea="2" :autoCrop="false" alt="Cropping Img" v-show="cropperVisible"></VueCropper>
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false"></VueCropper>
         </div>
         <p class="mt-5" v-show="uploaded"><strong>Don't forget to bookmark us! plz</strong></p>
       </section>
@@ -43,7 +60,7 @@
 import glfx from 'glfx';
 //import jimp from 'jimp';
 import VueCropper from 'vue-cropperjs';
-import Cropper from 'cropperjs';
+//import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 //max height 1000, max width is 80% of screen, after that experience falloff bitch
 const IMAGE_HEIGHT = 500;
@@ -80,8 +97,6 @@ export default {
       img: null,
       uploaded: false,
       imgFileName: null,
-      cacheImg: null,
-      filterStorageCanvas: null,
       cropperVisible: false,
       shapeImg: null,
       filterImg: null,
@@ -146,7 +161,6 @@ export default {
       const ref = this
       //waiting for images to load
       setTimeout(function() {
-        console.log(path)
         switch (path) {
           case "color":
             ref.initWebGLCanvas()
@@ -188,7 +202,10 @@ export default {
 
       //colors!
       texture.loadContentsOf(canvas);
-      canvas.draw(texture).curves([[0,0], [.5, this.red.val * .01], [1,1]], [[0,0], [.5, this.green.val * .01], [1,1]], [[0,0], [.5, this.blue.val * .01], [1,1]]).update();
+      const redVal = this.red.val * .01;
+      const blueVal = this.blue.val * .01;
+      const greenVal = this.green.val * .01;
+      canvas.draw(texture).curves([[0,0], [.25, .25 - redVal], [.75, .75 + redVal], [1,1]], [[0,0], [.25, .25 - greenVal], [.75, .75 + greenVal], [1,1]], [[0,0], [.25, .25 - blueVal], [.75, .75 + blueVal], [1,1]]).update();
       texture.destroy();
       return canvas
     },
@@ -200,34 +217,25 @@ export default {
       const displayCanvas = this.getFilterCanvas(shapeImg);
 
       imgBucket.removeChild(oldCanvas);
-      imgBucket.insertBefore(displayCanvas, originalImg)
+      imgBucket.insertBefore(displayCanvas, filterImg)
     },
     updateShapeVal(newVal){
       //get cropper
       this[newVal['valType']].val = newVal['newVal']
       this.$refs.cropper.rotateTo(this.rotation.val);
-
-      //this.shapeImg = this.$refs.cropper.getCroppedCanvas().toDataURL("image/png")
     },
     initWebGLCanvas() {
       //remove cropper
-      // console.log('called init WEBGL Canvas')
       this.cropperVisible = false;
+      this.$refs.storageCropper.replace(this.originalImg);
       this.removeCanvasIfExists()
       const shapeImg = document.getElementById('shapeImg')
       const canvas = this.getFilterCanvas(shapeImg)
-      //order of width/height, (x, y) pos opposite!!!
       shapeImg.parentNode.insertBefore(canvas, shapeImg);
-      const changeObj = {
-        "newVal": this.rotation.val,
-        "valType": "rotation"
-      }
-      //this.updateFilterVal(changeObj)
     },
     initCropperjsCanvas() {
       this.cropperVisible = true;
       this.removeCanvasIfExists()
-      console.log(this.filterImg)
       this.$refs.cropper.replace(this.filterImg);
       this.$refs.storageCropper.replace(this.originalImg);
     },
@@ -257,11 +265,23 @@ export default {
       var originalImg = document.getElementById('originalImg')
       this.$refs.storageCropper.rotateTo(this.rotation.val);
       this.shapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL()
+      this.img = this.$refs.cropper.getCroppedCanvas().toDataURL()
     },
     doneChangingFilter(){
       var originalImg = document.getElementById('originalImg')
       this.filterImg = this.getFilterCanvas(originalImg).toDataURL()
-    }
+      this.$refs.cropper.replace(this.filterImg);
+      const changeObj = {
+        "newVal": this.rotation.val,
+        "valType": "rotation"
+      }
+      this.$refs.cropper.rotateTo(0);
+      const ref = this
+      setTimeout(function() {
+        ref.updateShapeVal(changeObj)
+        ref.img = ref.$refs.cropper.getCroppedCanvas().toDataURL()
+      }, 100);
+    },
   }
 }
 </script>

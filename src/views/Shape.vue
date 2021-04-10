@@ -1,5 +1,5 @@
 <template>
-  <effect-slider @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="0" max="180"></effect-slider>
+  <effect-slider @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="0" max="180" :valProp="localRotation"></effect-slider>
   <!-- <effect-slider @updateVal="updateShapeVal" name="size"></effect-number> -->
 </template>
 
@@ -9,6 +9,22 @@ import EffectNumberComp from '../components/EffectNumberComp.vue'
 
 export default {
   name: 'Shape',
+  props: {
+    rotation: {
+      default: 0
+    },
+    scale: {
+      default: 0
+    },
+    crop: {
+      default: 0
+    }
+  },
+  data() {
+    return {
+      localRotation: this.rotation,
+    }
+  },
   components: {
     'effect-slider': EffectSliderComp,
     'effect-number': EffectNumberComp
