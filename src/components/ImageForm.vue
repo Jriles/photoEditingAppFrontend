@@ -101,6 +101,7 @@ export default {
       shapeImg: null,
       filterImg: null,
       originalImg: null,
+      imgFileExt: null,
       //different image properties
       //each one is an object, some alterations might be more complicated than just a number
       brightness: {
@@ -147,11 +148,22 @@ export default {
     async submit(e) {
       //delete old canvas
       //for re-uploading
+      //first check if valid file format/save file format
+      const file = e.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      if (fileExt === "png" || fileExt === "PNG") {
+        this.imgFileExt = "image/png"
+      } else if (fileExt === "jpg" || fileExt === "jpeg" || fileExt === "JPG" || fileExt === "JPEG") {
+        this.imgFileExt = "image/jpeg"
+      } else {
+        alert('Sorry, only jpg/jpeg/pngs accepted currently.')
+        return
+      }
       this.resetFilterShapeVals()
       this.removeCanvasIfExists()
       this.uploaded = true
       // want to make two copies of the file
-      const file = e.target.files[0];
+
       const objURL = URL.createObjectURL(file)
       this.shapeImg = objURL
       this.filterImg = objURL
@@ -174,6 +186,7 @@ export default {
         }
       }, 100);
       this.imgFileName = file.name
+
     },
     updateColorVal(newVal){
       this.updateFilterVal(newVal);
@@ -264,23 +277,25 @@ export default {
     doneChangingShape(){
       var originalImg = document.getElementById('originalImg')
       this.$refs.storageCropper.rotateTo(this.rotation.val);
-      this.shapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL()
-      this.img = this.$refs.cropper.getCroppedCanvas().toDataURL()
+      this.shapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL(this.imgFileExt, 1)
+      //download prep
+      this.img = this.$refs.cropper.getCroppedCanvas().toDataURL(this.imgFileExt, 1)
     },
     doneChangingFilter(){
       var originalImg = document.getElementById('originalImg')
-      this.filterImg = this.getFilterCanvas(originalImg).toDataURL()
+      this.filterImg = this.getFilterCanvas(originalImg).toDataURL(this.imgFileExt, 1)
       this.$refs.cropper.replace(this.filterImg);
       const changeObj = {
         "newVal": this.rotation.val,
         "valType": "rotation"
       }
+      //need shape changes here
       this.$refs.cropper.rotateTo(0);
       const ref = this
       setTimeout(function() {
         ref.updateShapeVal(changeObj)
-        ref.img = ref.$refs.cropper.getCroppedCanvas().toDataURL()
-      }, 100);
+        ref.img = ref.$refs.cropper.getCroppedCanvas().toDataURL(this.imgFileExt, 1)
+      }, 50);
     },
   }
 }
