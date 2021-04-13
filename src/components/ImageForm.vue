@@ -72,6 +72,7 @@ import 'cropperjs/dist/cropper.css';
 
 //max height 1000, max width is 80% of screen, after that experience falloff bitch
 const IMAGE_HEIGHT = 500;
+const IMAGE_LOAD_TIME = 50;
 
 export default {
   name: 'ImageForm',
@@ -238,8 +239,8 @@ export default {
                   ref.initCropperjsCanvas()
                   break
               }
-            }, 100);
-          }, 100);
+            }, IMAGE_LOAD_TIME);
+          }, IMAGE_LOAD_TIME);
         } else {
           console.log('here')
           ref.shapeImg = objURL
@@ -261,7 +262,7 @@ export default {
                 ref.initCropperjsCanvas()
                 break
             }
-          }, 100);
+          }, IMAGE_LOAD_TIME);
           ref.originalImgSizeRatio = 1
         }
         URL.revokeObjectURL(objURL);
@@ -333,12 +334,30 @@ export default {
     },
     initWebGLCanvas() {
       //remove cropper
+      const ref = this;
       this.cropperVisible = false;
-      this.$refs.storageCropper.replace(this.originalDisplayImg);
       this.removeCanvasIfExists()
       const shapeImg = document.getElementById('shapeImg')
-      const canvas = this.getFilterCanvas(shapeImg)
-      shapeImg.parentNode.insertBefore(canvas, shapeImg);
+
+      const canvasWidth = this.get70PercentOfScreenVal()
+      if (shapeImg.width > canvasWidth) {
+        //resize using storageCropper
+        const cropperToGLFXRatio = canvasWidth / shapeImg.width;
+        this.$refs.storageCropper.replace(this.shapeImg);
+
+        setTimeout(function() {
+          ref.$refs.storageCropper.scale(cropperToGLFXRatio, cropperToGLFXRatio)
+          const correctSizeImg = ref.$refs.storageCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
+          ref.shapeImg = correctSizeImg
+        }, IMAGE_LOAD_TIME);
+      }
+
+      setTimeout(function() {
+        const shapeImg = document.getElementById('shapeImg')
+        ref.$refs.storageCropper.replace(ref.originalDisplayImg);
+        const canvas = ref.getFilterCanvas(shapeImg)
+        shapeImg.parentNode.insertBefore(canvas, shapeImg);
+      }, IMAGE_LOAD_TIME);
     },
     initCropperjsCanvas() {
       this.cropperVisible = true;
@@ -357,7 +376,7 @@ export default {
       const ref = this
       setTimeout(function() {
         ref.updateShapeVal(changeObj)
-      }, 100);
+      }, IMAGE_LOAD_TIME);
     },
     removeCanvasIfExists(){
       const canvi = document.getElementsByTagName("canvas");
@@ -384,7 +403,6 @@ export default {
         //flip it!
         this.cropping.val = !this.cropping.val
       }
-
       //ask if we are cropping
       this.changeCropState()
     },
@@ -416,8 +434,8 @@ export default {
           console.log(ref.img)
           ref.img = ref.$refs.outputCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
           console.log(ref.img)
-        }, 100);
-      }, 50);
+        }, IMAGE_LOAD_TIME);
+      }, IMAGE_LOAD_TIME);
       //we should now have all alterations accounted for at this point.
     }
   }
