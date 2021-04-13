@@ -1,10 +1,6 @@
 <template>
   <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="vibrance" :valProp="localVibrance"></effect-slider>
   <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="hue" :valProp="localHue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="saturation" :valProp="localSaturation"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="red" min="0" max="100" :valProp="localRed"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="blue" min="0" max="100" :valProp="localBlue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="green" min="0" max="100" :valProp="localGreen"></effect-slider>
 </template>
 
 <script>
@@ -13,13 +9,13 @@ import EffectSliderComp from '../components/EffectSliderComp.vue'
 export default {
   name: 'Color',
   props: {
-    vibrance: {
+    noise: {
       default: 0
     },
-    hue: {
+    sepia: {
       default: 0
     },
-    saturation: {
+    vignette: {
       default: 0
     },
     red: {

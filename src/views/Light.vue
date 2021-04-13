@@ -1,9 +1,9 @@
 <template>
   <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="brightness" :valProp="localBrightness"></effect-slider>
   <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="contrast" :valProp="localContrast"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="vibrance" :valProp="localVibrance"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="hue" :valProp="localHue"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="saturation" :valProp="localSaturation"></effect-slider>
+  <!-- <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="highlights" :valProp="localHighlights"></effect-slider> -->
+  <!-- <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="shadows" :valProp="localShadows"></effect-slider> -->
+  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="smooth" :valProp="localSmooth" min="0" max="50"></effect-slider>
 </template>
 
 <script>
@@ -18,13 +18,13 @@ export default {
     contrast: {
       default: 0
     },
-    vibrance: {
+    highlights: {
       default: 0
     },
-    hue: {
+    shadows: {
       default: 0
     },
-    saturation: {
+    smooth: {
       default: 0
     }
   },
@@ -32,9 +32,9 @@ export default {
     return {
       localBrightness: this.brightness,
       localContrast: this.contrast,
-      localVibrance: this.vibrance,
-      localHue: this.hue,
-      localSaturation: this.saturation
+      localHighlights: this.highlights,
+      localShadows: this.shadows,
+      localSmooth: this.smooth
     }
   },
   components: {
