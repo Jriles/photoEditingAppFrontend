@@ -11,6 +11,7 @@ import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Light',
+  emits: ['updateLightVal', 'doneChangingFilter'],
   props: {
     brightness: {
       default: 0

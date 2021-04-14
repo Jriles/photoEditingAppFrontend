@@ -44,7 +44,7 @@
             :smooth="smooth.val"
             :rotation="rotation.val"
             :cropping="cropping.val"
-            :scale="scale.val"
+            :size="[sizeX.val]"
             :straightening="straightening.val"
           ></router-view>
         </div>
@@ -56,9 +56,9 @@
           <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
           <img id="shapeImg" class="hidden" :src="shapeImg"/>
           <img id="filterImg" class="hidden" :src="filterImg"/>
-          <VueCropper ref="cropper" :src="filterImg" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" :minContainerWidth="get75PercentOfScreenVal()" :minContainerHeight="imgHeight" alt="Cropping Img" v-show="cropperVisible"></VueCropper>
+          <VueCropper ref="cropper" :src="filterImg" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" :minContainerWidth="get75PercentOfScreenVal()" :minContainerHeight="imgHeight" alt="Cropping Img" v-show="cropperVisible" @cropend="doneChangingShape"></VueCropper>
           <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false"></VueCropper>
-          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false"></VueCropper>
+          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="true"></VueCropper>
         </div>
         <p class="mt-5" v-show="uploaded"><strong>Please bookmark us!</strong></p>
       </section>
@@ -77,6 +77,7 @@ const IMAGE_LOAD_TIME = 50;
 
 export default {
   name: 'ImageForm',
+  emits: ['updateColorVal', 'updateShapeVal'],
   watch:{
     $route (to, from){
       if(this.uploaded){
@@ -157,10 +158,16 @@ export default {
         val: false,
         defaultSize: 0.8
       },
-      croppingAspectRatio: {
+      cropped: {
         val: false
       },
-      scale: {
+      size: {
+        val: 100
+      },
+      sizeX: {
+        val: 100
+      },
+      sizeY: {
         val: 100
       },
       straightening: {
@@ -168,6 +175,9 @@ export default {
       },
       straightenAmount: {
         val: 0
+      },
+      straightened: {
+        val: false
       }
     }
   },
@@ -311,10 +321,12 @@ export default {
       return canvas
     },
     applyShapeChanges(cropperName){
+      console.log(this.sizeX.val)
       this.$refs[cropperName].rotateTo(this.rotation.val);
-      this.$refs[cropperName].scale(this.scale.val * .01, this.scale.val * .01)
+      this.$refs[cropperName].scaleX(this.sizeX.val * .01)
+      this.$refs[cropperName].scaleY(this.sizeY.val * .01)
+      //this.$refs[cropperName].scale(this.size.val * .01, this.size.val * .01)
       this.straighten(cropperName)
-      //this.changeCropState(cropperName)
     },
     updateFilterVal(newVal){
       this[newVal['valType']].val = newVal['newVal']
@@ -329,6 +341,10 @@ export default {
     updateShapeVal(newVal){
       //get cropper
       this[newVal['valType']].val = newVal['newVal']
+      if (newVal['valType'] === 'size'){
+        this.sizeX.val = newVal['newVal']
+        this.sizeY.val = newVal['newVal']
+      }
       this.applyShapeChanges('cropper')
     },
     initWebGLCanvas() {
@@ -398,6 +414,7 @@ export default {
       this.prepOutput()
     },
     changeStateButton(newVal){
+      console.log(newVal)
       if (newVal['valType'] === "Straightening") {
         this.straightening.val = !this.straightening.val
       }
@@ -410,29 +427,70 @@ export default {
       if (newVal['valType'] === "Aspect Ratio") {
         this.$refs.cropper.setAspectRatio(this.originalAspectRatio)
       }
+
+      if (newVal['valType'] === "Flip Along X"){
+        this.sizeX.val = -1 * this.sizeX.val
+        this.applyShapeChanges('cropper')
+        this.prepOutput()
+      } else if (newVal['valType'] === "Flip Along Y") {
+        this.sizeY.val = -1 * this.sizeY.val
+        this.applyShapeChanges('cropper')
+        this.prepOutput()
+      }
       //ask if we are cropping
-      this.changeCropState('cropper')
+      this.changeCropState('cropper', newVal)
     },
-    changeCropState(cropperName){
-      if (this.cropping.val || this.straightening.val){
-        this.$refs[cropperName].initCrop()
-        if (this.straightening.val) {
-          //need to set crop box to max
-          const cropperData = this.$refs[cropperName].getCanvasData()
-          this.$refs[cropperName].setCropBoxData({
-            "left": cropperData['left'],
-            "top": 0,
-            "width": cropperData['width'],
-            "height": cropperData['height']
-          })
+    changeCropState(cropperName, newVal){
+      //if we have yet to crop anything
+      if (this.cropped.val === false) {
+        if (this.straightening.val || this.cropping.val) {
+          this.$refs[cropperName].initCrop()
+        } else {
+          this.$refs[cropperName].clear()
         }
-      } else {
-        this.$refs[cropperName].clear()
+      }
+
+      if (this.cropping.val) {
+        if (newVal['valType'] === 'Save') {
+          this.cropping.val = false
+          this.cropped.val = true
+          this.prepOutput()
+        } else if (newVal['valType'] === 'Cancel') {
+          this.$refs[cropperName].clear()
+          this.cropping.val = false
+          this.cropped.val = false
+        }
+      }
+
+      if (this.straightening.val) {
+        if (newVal['valType'] === 'Save') {
+          this.straightened.val = true
+          this.prepOutput()
+          this.straightening.val = false
+        } else if (newVal['valType'] === 'Cancel') {
+          this.$refs[cropperName].clear()
+          this.straightenAmount.val = 0
+          this.straighten('cropper')
+          this.prepOutput()
+          this.straightening.val = false
+          this.straightened.val = false
+        }
+      }
+
+      if (this.straightening.val && newVal['valType'] === "Straightening") {
+        //need to set crop box to max
+        const cropperData = this.$refs[cropperName].getCanvasData()
+        this.$refs[cropperName].setCropBoxData({
+          "left": cropperData['left'],
+          "top": 0,
+          "width": cropperData['width'],
+          "height": cropperData['height']
+        })
       }
     },
     straighten(cropperName){
       //rotate and crop to fit as we rotate
-      if (this.straightening.val) {
+      if (this.straightening.val || this.straightened.val) {
         this.$refs[cropperName].rotateTo(this.straightenAmount.val)
         this.$refs[cropperName].scale(1 + (.021 * Math.abs(this.straightenAmount.val)))
       }
@@ -444,13 +502,15 @@ export default {
       var originalImgWFilters = this.getFilterCanvas(originalImg).toDataURL()
 
       // upload to output cropper
+      console.log('about to replace img')
       this.$refs.outputCropper.replace(originalImgWFilters)
+      console.log('replaed')
 
       const ref = this;
       setTimeout(function() {
-        //apply rotation, scale, cropping
+        //apply rotation, size, cropping
         ref.applyShapeChanges('outputCropper')
-        if (ref.cropping.val || ref.straightening.val){
+        if (ref.cropped.val || ref.straightened.val){
           //need cropper info
           const cropperData = ref.$refs.cropper.getCropBoxData()
           ref.$refs.outputCropper.initCrop()

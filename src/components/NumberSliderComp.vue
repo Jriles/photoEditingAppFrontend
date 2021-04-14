@@ -3,8 +3,11 @@
     <div class="column">
       <label for="input" class="label has-text-white">{{ name }}</label>
     </div>
-    <div class="column is-half">
+    <div class="column is-4">
       <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2 black-slider">
+    </div>
+    <div class="column is-1 is-offset-1">
+      <input type="number" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2 black-slider">
     </div>
     <div class="column">
       <button class="button is-black is-small ml-5 has-text-white" @click="undo">Undo</button>

@@ -8,6 +8,7 @@ import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Color',
+  emits: ['updateColorVal', 'doneChangingFilter'],
   props: {
     noise: {
       default: 0

@@ -1,7 +1,7 @@
 <template>
   <div class="columns">
     <div class="column">
-      <label for="input" class="label">{{ name }}</label>
+      <label for="input" class="label has-text-white">Or</label>
     </div>
     <div class="column is-half">
       <div class="control">
