@@ -1,7 +1,18 @@
 <template>
   <effect-slider @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="0" max="180" :valProp="localRotation"></effect-slider>
   <effect-slider @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="scale" min="0" max="200" :valProp="localScale"></effect-slider>
-  <state-button name="Cropping" @changeState="changeStateButton" :valProp="localCropping"></state-button>
+  <effect-slider v-if="straightening" @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="straightenAmount" min="-45" max="45" :valProp="localStraightenAmount"></effect-slider>
+  <div class="columns mt-4">
+    <div class="column" v-if="!straightening">
+      <state-button enableAction="Start" disableAction="Stop" name="Cropping" @changeState="changeStateButton" :valProp="localCropping"></state-button>
+    </div>
+    <div class="column" v-if="cropping">
+      <state-button name="Aspect Ratio" enableAction="Reset" disableAction="Reset" @changeState="changeStateButton" :valProp="localCropping"></state-button>
+    </div>
+    <div class="column" v-if="!cropping">
+      <state-button enableAction="Start" disableAction="Stop" name="Straightening" @changeState="changeStateButton" :valProp="localStraightening"></state-button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -20,13 +31,21 @@ export default {
     },
     cropping: {
       default: false
+    },
+    straightening: {
+      default: false
+    },
+    straightenAmount: {
+      default: false
     }
   },
   data() {
     return {
       localRotation: this.rotation,
       localCropping: this.cropping,
-      localScale: this.scale
+      localScale: this.scale,
+      localStraightening: this.straightening,
+      localStraightenAmount: this.straightenAmount
     }
   },
   components: {

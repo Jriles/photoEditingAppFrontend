@@ -1,8 +1,8 @@
 <template>
   <div class="columns">
     <div class="column">
-      <button v-if="!val" class="button is-success is-medium" @click="changeState">Start {{ $options.name }}</button>
-      <button v-else class="button is-success is-medium" @click="changeState">Stop {{ $options.name }}</button>
+      <button v-if="!val" class="button is-black is-normal" @click="changeState">{{ localEnableAction + " " + localName }}</button>
+      <button v-else class="button is-black is-normal" @click="changeState">{{ localDisableAction + " " + localName }}</button>
     </div>
   </div>
 </template>
@@ -15,6 +15,9 @@ export default {
   name: "default",
   props: {
     name: String,
+    //example "Start" or "Stop" or Toggle
+    enableAction: String,
+    disableAction: String,
     min: {
       default: -100
     },
@@ -25,13 +28,18 @@ export default {
       default: false
     }
   },
-  created(){
-    this.$options.name = this.name
-  },
+  // created(){
+  //   console.log(this.$options.name)
+  //   console.log('name in created: ' + this.name)
+  //   this.$options.name = this.name
+  // },
   //needs to match transformation name in ImageForm
   data() {
     return {
       val: this.valProp,
+      localEnableAction: this.enableAction,
+      localDisableAction: this.disableAction,
+      localName: this.name
     }
   },
   methods: {
@@ -39,7 +47,7 @@ export default {
     changeState(e){
       this.val = !this.val
       const changeObj = {
-        "valType": this.name
+        "valType": this.localName
       }
       this.$emit('changeState', changeObj)
     }

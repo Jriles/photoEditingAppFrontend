@@ -6,6 +6,7 @@ import ImageForm from '../components/ImageForm.vue'
 import Light from '../views/Light.vue'
 import Color from '../views/Color.vue'
 import Shape from '../views/Shape.vue'
+import Hints from '../views/Hints.vue'
 
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
     path: '/checkout',
     name: 'Checkout',
     component: Checkout
+  },
+  {
+    path: '/hints',
+    name: 'Hints',
+    component: Hints
   }
   //more vues (haha) here
 ]

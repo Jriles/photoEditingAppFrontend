@@ -1,13 +1,13 @@
 <template>
   <div class="columns">
     <div class="column">
-      <label for="input" class="label">{{ name }}</label>
+      <label for="input" class="label has-text-white">{{ name }}</label>
     </div>
     <div class="column is-half">
       <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
     </div>
     <div class="column">
-      <button class="button is-warning is-small ml-5" @click="undo">Undo</button>
+      <button class="button is-black is-small ml-5 has-text-white" @click="undo">Undo</button>
     </div>
   </div>
 </template>

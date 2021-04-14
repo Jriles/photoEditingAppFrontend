@@ -7,7 +7,7 @@
             <div class="file is-primary is-centered">
               <label class="file-label">
                 <input class="file-input" type="file" name="photo" @change="submit">
-                <span class="file-cta">
+                <span class="file-cta has-background-black">
                   <span class="file-label">
                     Choose a file…
                   </span>
@@ -16,11 +16,11 @@
             </div>
           </div>
           <div class="column" v-show="uploaded">
-            <button v-if="originalVisible" class="button is-info" @click="originalVisible = !originalVisible">Hide Original</button>
-            <button v-else class="button is-info" @click="originalVisible = !originalVisible">Show Original</button>
+            <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
+            <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
           </div>
           <div class="column" v-show="uploaded">
-            <a :download="imgFileName" :href="img" id="downloadLink"><button class="button is-success" @click="download">Download Copy</button></a>
+            <a :download="imgFileName" :href="img" id="downloadLink"><button class="button is-black">Download Copy</button></a>
           </div>
         </div>
         <div v-show="uploaded">
@@ -45,6 +45,7 @@
             :rotation="rotation.val"
             :cropping="cropping.val"
             :scale="scale.val"
+            :straightening="straightening.val"
           ></router-view>
         </div>
         <div class="mt-5">
@@ -55,7 +56,7 @@
           <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
           <img id="shapeImg" class="hidden" :src="shapeImg"/>
           <img id="filterImg" class="hidden" :src="filterImg"/>
-          <VueCropper ref="cropper" :src="filterImg" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" :minContainerWidth="get70PercentOfScreenVal()" :minContainerHeight="imgHeight" alt="Cropping Img" v-show="cropperVisible"></VueCropper>
+          <VueCropper ref="cropper" :src="filterImg" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" :minContainerWidth="get75PercentOfScreenVal()" :minContainerHeight="imgHeight" alt="Cropping Img" v-show="cropperVisible"></VueCropper>
           <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false"></VueCropper>
           <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false"></VueCropper>
         </div>
@@ -112,7 +113,7 @@ export default {
       filterImg: null,
       originalDisplayImg: null,
       imgFileExt: null,
-      originalImgSizeRatio: null,
+      originalAspectRatio: null,
       imgHeight: IMAGE_HEIGHT,
       //different image properties
       //each one is an object, some alterations might be more complicated than just a number
@@ -156,8 +157,17 @@ export default {
         val: false,
         defaultSize: 0.8
       },
+      croppingAspectRatio: {
+        val: false
+      },
       scale: {
         val: 100
+      },
+      straightening: {
+        val: false
+      },
+      straightenAmount: {
+        val: 0
       }
     }
   },
@@ -174,7 +184,6 @@ export default {
       this.rotation.val = 0;
     },
     async submit(e) {
-      console.log('called submit')
       //delete old canvas
       //for re-uploading
       //first check if valid file format/save file format
@@ -189,37 +198,27 @@ export default {
         alert('Sorry, only jpg/jpeg/pngs accepted currently.')
         return
       }
-      console.log('hereeeee')
       this.resetFilterShapeVals()
       this.removeCanvasIfExists()
       this.uploaded = true
 
       //here we need to ask if the image is too big
-
-
       const objURL = URL.createObjectURL(file)
-
       const img = new Image();
       const ref = this
-      const canvasWidth = this.get70PercentOfScreenVal()
-      console.log(canvasWidth)
+      const canvasWidth = this.get75PercentOfScreenVal()
       img.onload = function () {
-        console.log('IMG LOADED!')
         if (this.width > canvasWidth) {
-          console.log('thinks this width too bg')
           //image too big to just be rendered as is
           ref.$refs.cropper.replace(objURL);
           //need the ratio of the
           const newSizeRatio = canvasWidth / this.width;
-          ref.originalImgSizeRatio = this.width / canvasWidth;
-          console.log(newSizeRatio)
 
           //need to make a copy
           setTimeout(function() {
             ref.$refs.cropper.scale(newSizeRatio, newSizeRatio)
             const correctSizeImg = ref.$refs.cropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
             ref.$refs.cropper.replace(correctSizeImg)
-            console.log(correctSizeImg)
             ref.shapeImg = correctSizeImg
             ref.filterImg = correctSizeImg
             ref.originalDisplayImg = correctSizeImg
@@ -242,7 +241,6 @@ export default {
             }, IMAGE_LOAD_TIME);
           }, IMAGE_LOAD_TIME);
         } else {
-          console.log('here')
           ref.shapeImg = objURL
           ref.filterImg = objURL
           ref.originalDisplayImg = objURL
@@ -263,8 +261,8 @@ export default {
                 break
             }
           }, IMAGE_LOAD_TIME);
-          ref.originalImgSizeRatio = 1
         }
+        this.originalAspectRatio = this.width / this.height;
         URL.revokeObjectURL(objURL);
       };
       this.originalImg = objURL
@@ -279,9 +277,9 @@ export default {
     updateLightVal(newVal){
       this.updateFilterVal(newVal);
     },
-    get70PercentOfScreenVal(){
+    get75PercentOfScreenVal(){
       const width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-      return width * .70
+      return width * .75
     },
     getFilterCanvas(img){
       const canvas = glfx.canvas();
@@ -315,7 +313,8 @@ export default {
     applyShapeChanges(cropperName){
       this.$refs[cropperName].rotateTo(this.rotation.val);
       this.$refs[cropperName].scale(this.scale.val * .01, this.scale.val * .01)
-      this.changeCropState(cropperName)
+      this.straighten(cropperName)
+      //this.changeCropState(cropperName)
     },
     updateFilterVal(newVal){
       this[newVal['valType']].val = newVal['newVal']
@@ -339,7 +338,7 @@ export default {
       this.removeCanvasIfExists()
       const shapeImg = document.getElementById('shapeImg')
 
-      const canvasWidth = this.get70PercentOfScreenVal()
+      const canvasWidth = this.get75PercentOfScreenVal()
       if (shapeImg.width > canvasWidth) {
         //resize using storageCropper
         const cropperToGLFXRatio = canvasWidth / shapeImg.width;
@@ -399,20 +398,43 @@ export default {
       this.prepOutput()
     },
     changeStateButton(newVal){
+      if (newVal['valType'] === "Straightening") {
+        this.straightening.val = !this.straightening.val
+      }
+
       if (newVal['valType'] === "Cropping") {
         //flip it!
         this.cropping.val = !this.cropping.val
       }
+
+      if (newVal['valType'] === "Aspect Ratio") {
+        this.$refs.cropper.setAspectRatio(this.originalAspectRatio)
+      }
       //ask if we are cropping
-      this.changeCropState()
+      this.changeCropState('cropper')
     },
     changeCropState(cropperName){
-      console.log('called change crop state')
-      console.log(this.cropping.val)
-      if (this.cropping.val){
+      if (this.cropping.val || this.straightening.val){
         this.$refs[cropperName].initCrop()
+        if (this.straightening.val) {
+          //need to set crop box to max
+          const cropperData = this.$refs[cropperName].getCanvasData()
+          this.$refs[cropperName].setCropBoxData({
+            "left": cropperData['left'],
+            "top": 0,
+            "width": cropperData['width'],
+            "height": cropperData['height']
+          })
+        }
       } else {
         this.$refs[cropperName].clear()
+      }
+    },
+    straighten(cropperName){
+      //rotate and crop to fit as we rotate
+      if (this.straightening.val) {
+        this.$refs[cropperName].rotateTo(this.straightenAmount.val)
+        this.$refs[cropperName].scale(1 + (.021 * Math.abs(this.straightenAmount.val)))
       }
     },
     prepOutput(){
@@ -425,15 +447,22 @@ export default {
       this.$refs.outputCropper.replace(originalImgWFilters)
 
       const ref = this;
-      console.log(this.rotation.val)
       setTimeout(function() {
         //apply rotation, scale, cropping
         ref.applyShapeChanges('outputCropper')
+        if (ref.cropping.val || ref.straightening.val){
+          //need cropper info
+          const cropperData = ref.$refs.cropper.getCropBoxData()
+          ref.$refs.outputCropper.initCrop()
+          ref.img = ref.$refs.outputCropper.setCropBoxData({
+            "left": cropperData['left'],
+            "top": cropperData['top'],
+            "width": cropperData['width'],
+            "height": cropperData['height']
+          })
+        }
         setTimeout(function() {
-          console.log('made it to callback')
-          console.log(ref.img)
           ref.img = ref.$refs.outputCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
-          console.log(ref.img)
         }, IMAGE_LOAD_TIME);
       }, IMAGE_LOAD_TIME);
       //we should now have all alterations accounted for at this point.
