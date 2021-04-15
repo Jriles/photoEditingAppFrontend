@@ -75,7 +75,6 @@ export default {
   },
   methods: {
     updateShapeVal(newVal) {
-      console.log(newVal)
       this.$emit("updateShapeVal", newVal);
     },
     doneApplyingChange(newVal) {

@@ -40,6 +40,15 @@
     </div>
   </nav>
   <router-view/>
+  <footer class="footer has-background-grey-dark">
+    <div class="content has-text-centered has-background-grey-dark">
+      <p>
+        <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+        is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+      </p>
+    </div>
+  </footer>
 </template>
 
 <style lang="scss">
@@ -61,7 +70,7 @@
 
   body{
     background-color: #4A4A4A;
-    height: 200vh;
+    //height: 200vh;
   }
 
   input[type=range] {
