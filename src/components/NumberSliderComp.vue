@@ -16,8 +16,8 @@
 </template>
 
 <script>
+//NOT USED AT PRESENT
 import glfx from 'glfx';
-
 
 export default {
   name: "default",

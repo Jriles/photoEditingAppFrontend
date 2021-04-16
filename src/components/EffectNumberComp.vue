@@ -1,15 +1,13 @@
 <template>
+  <div class="mb-1">
+    <label for="input" class="label has-text-white tool-name">{{ name }}</label>
+  </div>
   <div class="columns">
-    <div class="column">
-      <label for="input" class="label has-text-white">Or</label>
-    </div>
     <div class="column is-half">
-      <div class="control">
-        <input type="number" name="input" v-model="inputVal" @input="emitNewVal" min="-100" max="100" class="input is-small">
-      </div>
+      <input type="number" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-50">
     </div>
     <div class="column">
-      <button class="button is-warning ml-5 is-small" @click="undo">Undo</button>
+      <button class="button is-black is-small ml-5 has-text-white" @click="undo">Undo</button>
     </div>
   </div>
 </template>
@@ -17,35 +15,64 @@
 <script>
 import glfx from 'glfx';
 
+
 export default {
   name: "default",
-  props: ['name'],
+  watch: {
+
+  },
+  props: {
+    name: String,
+    defaultProp: Number,
+    min: {
+      default: -100
+    },
+    max: {
+      default: 100
+    },
+    valProp: {
+      default: 0
+    }
+
+  },
   created(){
-    console.log(this.name)
     this.$options.name = this.name
+    console.log(this.defaultProp)
   },
   //needs to match transformation name in ImageForm
   data() {
     return {
-      inputVal: 0
+      val: this.valProp,
+      default: this.defaultProp
     }
   },
   methods: {
     emitNewVal(e){
+      this.val = e.target.value
       const changeObj = {
-        "newVal": e.target.value,
+        "newVal": this.val,
         "valType": this.name
       }
       this.$emit('updateVal', changeObj)
     },
     undo(){
-      this.inputVal = 0
+      console.log(this.default)
+      this.val = this.default
       const changeObj = {
-        "newVal": this.inputVal,
+        "newVal": this.val,
         "valType": this.name
       }
       this.$emit('updateVal', changeObj)
-    }
+      this.$emit('doneApplyingChange', changeObj)
+    },
+    emitDoneSliding(e){
+      this.val = e.target.value
+      const changeObj = {
+        "newVal": e.target.value,
+        "valType": this.name
+      }
+      this.$emit('doneApplyingChange', changeObj)
+    },
   }
 }
 </script>

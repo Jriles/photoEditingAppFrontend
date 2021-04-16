@@ -1,13 +1,13 @@
 <template>
+  <div class="mb-1">
+    <label for="input" class="label has-text-white tool-name">{{ name }}</label>
+  </div>
   <div class="columns">
-    <div class="column">
-      <label for="input" class="label has-text-white">{{ name }}</label>
-    </div>
-    <div class="column is-half">
+    <div class="column is-two-thirds">
       <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
     </div>
-    <div class="column">
-      <button class="button is-black is-small ml-5 has-text-white" @click="undo">Undo</button>
+    <div class="column is-1">
+      <button class="button is-black is-small ml-5 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
     </div>
   </div>
 </template>
@@ -18,8 +18,12 @@ import glfx from 'glfx';
 
 export default {
   name: "default",
+  watch: {
+
+  },
   props: {
     name: String,
+    defaultProp: Number,
     min: {
       default: -100
     },
@@ -29,14 +33,18 @@ export default {
     valProp: {
       default: 0
     }
+
   },
   created(){
     this.$options.name = this.name
+    console.log(this.width)
+
   },
   //needs to match transformation name in ImageForm
   data() {
     return {
       val: this.valProp,
+      default: this.defaultProp
     }
   },
   methods: {
@@ -49,7 +57,8 @@ export default {
       this.$emit('updateVal', changeObj)
     },
     undo(){
-      this.val = 0
+      console.log(this.default)
+      this.val = this.default
       const changeObj = {
         "newVal": this.val,
         "valType": this.name

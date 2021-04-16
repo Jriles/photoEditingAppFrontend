@@ -1,7 +1,7 @@
 <template>
-  <number-slider @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="-180" max="180" :valProp="localRotation"></number-slider>
-  <number-slider @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="size" min="0" max="1000" :valProp="localScale"></number-slider>
-  <div class="columns">
+  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="-180" max="180" :valProp="localRotation"></effect-number>
+  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="size" min="0" max="1000" :valProp="localScale"></effect-number>
+  <div class="columns mt-4">
     <div class="column is-offset-one-quarter is-one-quarter">
       <signal-button name="Flip Along X" @changeState="changeStateButton"></signal-button>
     </div>
@@ -9,25 +9,34 @@
       <signal-button name="Flip Along Y" @changeState="changeStateButton"></signal-button>
     </div>
   </div>
-  <effect-slider v-if="straightening" @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="straightenAmount" min="-45" max="45" :valProp="localStraightenAmount"></effect-slider>
-
+  <!--crop-->
   <div class="columns mt-4">
     <div class="column" v-if="!straightening && !cropping">
       <state-button enableAction="Start" disableAction="Stop" name="Cropping" @changeState="changeStateButton" :valProp="localCropping"></state-button>
     </div>
-    <div class="column" v-if="cropping || straightening">
+    <div class="column" v-if="cropping">
       <signal-button name="Save" @changeState="changeStateButton"></signal-button>
     </div>
-    <div class="column" v-if="cropping || straightening">
+    <div class="column" v-if="cropping">
       <signal-button name="Cancel" @changeState="changeStateButton"></signal-button>
     </div>
     <div class="column" v-if="cropping">
       <state-button name="Aspect Ratio" enableAction="Reset" disableAction="Reset" @changeState="changeStateButton" :valProp="localCropping"></state-button>
     </div>
+  </div>
+  <!--straighten-->
+  <div class="columns mt-4">
     <div class="column" v-if="!cropping && !straightening">
       <state-button enableAction="Start" disableAction="Stop" name="Straightening" @changeState="changeStateButton" :valProp="localStraightening"></state-button>
     </div>
+    <div class="column" v-if="straightening">
+      <signal-button name="Save" @changeState="changeStateButton"></signal-button>
+    </div>
+    <div class="column" v-if="straightening">
+      <signal-button name="Cancel" @changeState="changeStateButton"></signal-button>
+    </div>
   </div>
+  <effect-slider class="mt-4" v-if="straightening" @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="straightenAmount" min="-45" max="45" :defaultProp="defaultStraightenAmount" :valProp="localStraightenAmount"></effect-slider>
 </template>
 
 <script>
@@ -54,7 +63,7 @@ export default {
       default: false
     },
     straightenAmount: {
-      default: false
+      default: 0
     }
   },
   data() {
@@ -63,7 +72,11 @@ export default {
       localCropping: this.cropping,
       localScale: this.size,
       localStraightening: this.straightening,
-      localStraightenAmount: this.straightenAmount
+      localStraightenAmount: this.straightenAmount,
+      //defaults
+      defaultRotation: 0,
+      defaultSize: 100,
+      defaultStraightenAmount: 0
     }
   },
   components: {

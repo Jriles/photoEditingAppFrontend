@@ -52,6 +52,10 @@
 </template>
 
 <style lang="scss">
+  .tool-name{
+    text-transform: capitalize;
+  }
+
   .hidden{
     display: none;
   }

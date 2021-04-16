@@ -1,88 +1,179 @@
 <template>
-  <div v-if="uploaded" class="columns is-centered">
-    <div class="column is-three-quarters">
-      <section class="container has-text-centered">
-        <div class="columns mt-4">
-          <div class="column">
-            <div class="file is-primary is-centered">
-              <label class="file-label">
-                <input class="file-input" type="file" name="photo" @change="submit">
-                <span class="file-cta has-background-black">
-                  <span class="file-label">
-                    Choose a file…
+  <div v-if="desktopMode == false">
+    <div v-if="uploaded" class="columns is-centered">
+      <div class="column is-three-quarters">
+        <section class="container has-text-centered">
+          <div class="columns mt-6 mb-6">
+            <div class="column">
+              <div class="file is-primary is-centered">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="photo" @change="submit">
+                  <span class="file-cta has-background-black">
+                    <span class="file-label">
+                      Choose a file…
+                    </span>
                   </span>
-                </span>
-              </label>
+                </label>
+              </div>
+            </div>
+            <div class="column" v-show="uploaded">
+              <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
+              <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
+            </div>
+            <div class="column" v-show="uploaded">
+              <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
             </div>
           </div>
-          <div class="column" v-show="uploaded">
-            <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
-            <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
+          <div v-show="uploaded">
+            <router-view
+              @updateLightVal="updateLightVal"
+              @updateColorVal="updateColorVal"
+              @updateShapeVal="updateShapeVal"
+              @doneChangingFilter="doneChangingFilter"
+              @doneChangingShape="doneChangingShape"
+              @changeStateButton="changeStateButton"
+              :red="red.val"
+              :green="green.val"
+              :blue="blue.val"
+              :brightness="brightness.val"
+              :contrast="contrast.val"
+              :vibrance="vibrance.val"
+              :hue="hue.val"
+              :saturation="saturation.val"
+              :highlights="highlights.val"
+              :shadows="shadows.val"
+              :smooth="smooth.val"
+              :rotation="rotation.val"
+              :cropping="cropping.val"
+              :size="size.val"
+              :straightening="straightening.val"
+            ></router-view>
           </div>
-          <div class="column" v-show="uploaded">
-            <!-- <a :download="imgFileName" :href="img" id="downloadLink"><button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button></a> -->
-            <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
+          <div class="mt-5">
+            <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
+            <img id="originalImg" v-show="false" :src="originalImg"/>
           </div>
-        </div>
-        <div v-show="uploaded">
-          <router-view
-            @updateLightVal="updateLightVal"
-            @updateColorVal="updateColorVal"
-            @updateShapeVal="updateShapeVal"
-            @doneChangingFilter="doneChangingFilter"
-            @doneChangingShape="doneChangingShape"
-            @changeStateButton="changeStateButton"
-            :red="red.val"
-            :green="green.val"
-            :blue="blue.val"
-            :brightness="brightness.val"
-            :contrast="contrast.val"
-            :vibrance="vibrance.val"
-            :hue="hue.val"
-            :saturation="saturation.val"
-            :highlights="highlights.val"
-            :shadows="shadows.val"
-            :smooth="smooth.val"
-            :rotation="rotation.val"
-            :cropping="cropping.val"
-            :size="size.val"
-            :straightening="straightening.val"
-          ></router-view>
-        </div>
-        <div class="mt-5">
-          <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
-          <img id="originalImg" v-show="false" :src="originalImg"/>
-        </div>
-        <div id="imgBucket" class="mt-5">
-          <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
-          <img id="shapeImg" class="hidden" :src="shapeImg"/>
-          <img id="filterImg" class="hidden" :src="filterImg"/>
-          <VueCropper ref="cropper" :src="filterImg" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" :minContainerWidth="get75PercentOfScreenVal()" :minContainerHeight="containerHeight" alt="Cropping Img" v-show="cropperVisible" @cropend="doneChangingShape"></VueCropper>
-          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="get75PercentOfScreenVal()" :minContainerHeight="containerHeight"></VueCropper>
-          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="get75PercentOfScreenVal()" :minContainerHeight="containerHeight"></VueCropper>
-        </div>
-        <p class="mt-5" v-show="uploaded"><strong class="has-text-white">Please bookmark us!</strong></p>
-      </section>
+          <div id="imgBucket" class="mt-5">
+            <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+            <img id="shapeImg" class="hidden" :src="shapeImg"/>
+            <img id="filterImg" class="hidden" :src="filterImg"/>
+            <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+          </div>
+          <p class="mt-5" v-show="uploaded"><strong class="has-text-white">Please bookmark us!</strong></p>
+        </section>
+      </div>
+    </div>
+    <div v-else class="columns is-centered placeholder">
+      <div class="column is-three-quarters">
+        <section class="container has-text-centered">
+          <div class="columns mt-4">
+            <div class="column">
+              <div class="file is-primary is-centered">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="photo" @change="submit">
+                  <span class="file-cta has-background-black">
+                    <span class="file-label">
+                      Choose a file…
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
-  <div v-else class="columns is-centered placeholder">
-    <div class="column is-three-quarters">
-      <section class="container has-text-centered">
-        <div class="columns mt-4">
-          <div class="column">
-            <div class="file is-primary is-centered">
-              <label class="file-label">
-                <input class="file-input" type="file" name="photo" @change="submit">
-                <span class="file-cta has-background-black">
-                  <span class="file-label">
-                    Choose a file…
+  <div v-else>
+    <!--desktop-->
+    <div v-if="uploaded" class="columns is-centered">
+      <div class="column">
+        <section class="has-text-centered">
+          <div class="columns">
+            <div class="column desktopCanvasOffset">
+              <div class="mt-5">
+                <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
+                <img id="originalImg" v-show="false" :src="originalImg"/>
+              </div>
+              <div id="imgBucket" class="mt-6">
+                <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+                <img id="shapeImg" class="hidden" :src="shapeImg"/>
+                <img id="filterImg" class="hidden" :src="filterImg"/>
+                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+                <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+                <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+              </div>
+            </div>
+            <div class="column mt-6" v-show="uploaded">
+              <div class="file is-primary is-centered">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="photo" @change="submit">
+                  <span class="file-cta has-background-black">
+                    <span class="file-label">
+                      Choose a file…
+                    </span>
                   </span>
-                </span>
-              </label>
+                </label>
+              </div>
+              <div class="is-centered mt-5">
+                <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
+                <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
+              </div>
+              <div class="is-centered mt-5">
+                <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
+              </div>
+              <div class="desktopControls">
+                <router-view
+                  @updateLightVal="updateLightVal"
+                  @updateColorVal="updateColorVal"
+                  @updateShapeVal="updateShapeVal"
+                  @doneChangingFilter="doneChangingFilter"
+                  @doneChangingShape="doneChangingShape"
+                  @changeStateButton="changeStateButton"
+                  :red="red.val"
+                  :green="green.val"
+                  :blue="blue.val"
+                  :brightness="brightness.val"
+                  :contrast="contrast.val"
+                  :vibrance="vibrance.val"
+                  :hue="hue.val"
+                  :saturation="saturation.val"
+                  :highlights="highlights.val"
+                  :shadows="shadows.val"
+                  :smooth="smooth.val"
+                  :rotation="rotation.val"
+                  :cropping="cropping.val"
+                  :size="size.val"
+                  :straightening="straightening.val"
+                ></router-view>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+          <p class="mt-5" v-show="uploaded"><strong class="has-text-white">Please bookmark us!</strong></p>
+        </section>
+      </div>
+    </div>
+    <div v-else class="columns is-centered placeholder">
+      <div class="column is-three-quarters">
+        <section class="container has-text-centered">
+          <div class="columns mt-4">
+            <div class="column">
+              <div class="file is-primary is-centered">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="photo" @change="submit">
+                  <span class="file-cta has-background-black">
+                    <span class="file-label">
+                      Choose a file…
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 </template>
@@ -93,8 +184,11 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
 
-//max height 1000, max width is 80% of screen, after that experience falloff bitch
-const IMAGE_HEIGHT = 500;
+//max width is 75% of screen
+const IMAGE_HEIGHT = screen.height - 200;
+const MOBILE_CANVAS_PERCENT = .8;
+const DESKTOP_CANVAS_PERCENT = .7;
+//how long we wait for an image to load before doing work
 const IMAGE_LOAD_TIME = 50;
 
 export default {
@@ -118,6 +212,17 @@ export default {
       }
     }
   },
+  created(){
+    if(screen.width > 1100){
+      //desktop
+      this.desktopMode = true
+      this.containerWidth = this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT)
+      console.log(this.containerWidth)
+    } else {
+      this.desktopMode = false
+      this.containerWidth = this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT)
+    }
+  },
   components: {
     VueCropper
   },
@@ -138,7 +243,10 @@ export default {
       imgFileExt: null,
       originalAspectRatio: null,
       containerHeight: IMAGE_HEIGHT,
+      containerWidth: null,
       outputVisible: false,
+      //mobile first!
+      desktopMode: false,
       //different image properties
       //each one is an object, some alterations might be more complicated than just a number
       brightness: {
@@ -216,7 +324,7 @@ export default {
       this.green.val = 0;
       this.rotation.val = 0;
     },
-    async submit(e) {
+    submit(e) {
       //delete old canvas
       //for re-uploading
       //first check if valid file format/save file format
@@ -236,67 +344,36 @@ export default {
 
       //here we need to ask if the image is too big
       const objURL = URL.createObjectURL(file)
+
       //filter img does not get resized, it is not displayed, except on cropper js, which doesnt care about size.
       this.filterImg = objURL
       this.originalImg = objURL
       const img = new Image();
       const ref = this
-      const canvasWidth = this.get75PercentOfScreenVal()
       this.uploaded = true
       img.onload = function () {
-        if (this.width > canvasWidth) {
-          console.log('thoguht the image had to be shrunk')
-          //image too big to just be rendered as is
-          ref.$refs.cropper.replace(objURL);
-          //need the ratio of the
-          const newSizeRatio = canvasWidth / this.width;
-
-          //need to make a copy
-          setTimeout(function() {
-            ref.$refs.cropper.scale(newSizeRatio, newSizeRatio)
-            const correctSizeImg = ref.$refs.cropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
-
-            ref.shapeImg = correctSizeImg
-            ref.originalDisplayImg = correctSizeImg
-            //if path changes to crop/rotate/sizing etc, convert canvas to 2d context
-            const path = ref.$route.name;
-
-            //waiting for images to load
-            setTimeout(function() {
-              switch (path) {
-                case "color":
-                  ref.initWebGLCanvas()
-                  break
-                case "light":
-                  ref.initWebGLCanvas()
-                  break
-                case "shape":
-                  ref.initCropperjsCanvas()
-                  break
-              }
-            }, IMAGE_LOAD_TIME);
-          }, IMAGE_LOAD_TIME);
+        //ref.cropperVisible = true;
+        if (ref.imgTooBig(this, ref)) {
+          ref.fitImgToCanvas(objURL, 'cropper', this, ref, true)
         } else {
           ref.shapeImg = objURL
           ref.originalDisplayImg = objURL
-          //if path changes to crop/rotate/sizing etc, convert canvas to 2d context
-          const path = ref.$route.name;
-
-          //waiting for images to load
-          setTimeout(function() {
-            switch (path) {
-              case "color":
-                ref.initWebGLCanvas()
-                break
-              case "light":
-                ref.initWebGLCanvas()
-                break
-              case "shape":
-                ref.initCropperjsCanvas()
-                break
-            }
-          }, IMAGE_LOAD_TIME);
         }
+        const path = ref.$route.name;
+        //waiting for images to load
+        setTimeout(function() {
+          switch (path) {
+            case "color":
+              ref.initWebGLCanvas()
+              break
+            case "light":
+              ref.initWebGLCanvas()
+              break
+            case "shape":
+              ref.initCropperjsCanvas()
+              break
+          }
+        }, IMAGE_LOAD_TIME);
         ref.originalAspectRatio = this.width / this.height;
       };
       //set download
@@ -310,9 +387,9 @@ export default {
     updateLightVal(newVal){
       this.updateFilterVal(newVal);
     },
-    get75PercentOfScreenVal(){
+    getPercentOfScreenVal(percent){
       const width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-      return width * .75
+      return width * percent
     },
     getFilterCanvas(img){
       const canvas = glfx.canvas();
@@ -344,10 +421,6 @@ export default {
       return canvas
     },
     applyShapeChanges(cropperName){
-      console.log(this.sizeX.val)
-      console.log(this.sizeY.val)
-      console.log(cropperName)
-      console.log(this.rotation.val)
       this.$refs[cropperName].rotateTo(this.rotation.val);
       this.$refs[cropperName].scaleX(this.sizeX.val * .01)
       this.$refs[cropperName].scaleY(this.sizeY.val * .01)
@@ -374,23 +447,15 @@ export default {
       this.applyShapeChanges('cropper')
     },
     initWebGLCanvas() {
+      console.log('called init webgl canvas')
       //remove cropper
       const ref = this;
       this.cropperVisible = false;
       this.removeCanvasIfExists()
-      const shapeImg = document.getElementById('shapeImg')
 
-      const canvasWidth = this.get75PercentOfScreenVal()
-      if (shapeImg.width > canvasWidth) {
-        //resize using storageCropper
-        const cropperToGLFXRatio = canvasWidth / shapeImg.width;
-        this.$refs.storageCropper.replace(this.shapeImg);
-
-        setTimeout(function() {
-          ref.$refs.storageCropper.scale(cropperToGLFXRatio, cropperToGLFXRatio)
-          const correctSizeImg = ref.$refs.storageCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
-          ref.shapeImg = correctSizeImg
-        }, IMAGE_LOAD_TIME);
+      if (ref.imgTooBig(shapeImg, ref)) {
+        console.log('thoguht the image had to be shrunk')
+        ref.fitImgToCanvas(this.shapeImg, 'storageCropper', shapeImg, ref, false)
       }
 
       setTimeout(function() {
@@ -401,7 +466,7 @@ export default {
       }, IMAGE_LOAD_TIME);
     },
     initCropperjsCanvas() {
-      this.cropperVisible = true;
+      this.cropperVisible = true
       this.$refs.cropper.replace(this.originalImg);
       this.$refs.storageCropper.replace(this.originalDisplayImg);
       this.$refs.outputCropper.replace(this.originalImg);
@@ -509,6 +574,31 @@ export default {
         })
       }
     },
+    imgTooBig(image, vueRef){
+      if (image.width > vueRef.containerWidth || image.height > IMAGE_HEIGHT) {
+        return true
+      }
+      return false
+    },
+    fitImgToCanvas(newImgURL, cropperRef, image, vueRef, submitCall){
+      //takes in an image id, loads
+      //submit call is a flag for when we are calling this function
+      //on submit image
+      vueRef.$refs[cropperRef].replace(newImgURL);
+      const newWidthRatio = vueRef.containerWidth / image.width;
+      const newHeightRatio = IMAGE_HEIGHT / image.height;
+      const ratioToUse = Math.min(newWidthRatio, newHeightRatio)
+      //need to make a copy
+      setTimeout(function() {
+        vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
+        //correctly sized img
+        const correctlySizedImg = vueRef.$refs[cropperRef].getCroppedCanvas().toDataURL(vueRef.imgFileExt, 1)
+        vueRef.shapeImg = correctlySizedImg
+        if (submitCall) {
+          vueRef.originalDisplayImg = correctlySizedImg
+        }
+      }, IMAGE_LOAD_TIME)
+    },
     straighten(cropperName){
       //rotate and crop to fit as we rotate
       if (this.straightening.val || this.straightened.val) {
@@ -559,5 +649,14 @@ export default {
 <style scoped>
   .placeholder{
     height: 77vh;
+  }
+
+  .desktopControls{
+    position: relative;
+    top: 75px;
+  }
+
+  .desktopCanvasOffset{
+    margin-left: 2%;
   }
 </style>
