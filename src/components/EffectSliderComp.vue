@@ -2,7 +2,7 @@
   <div class="mb-1">
     <label for="input" class="label has-text-white tool-name">{{ name }}</label>
   </div>
-  <div class="columns">
+  <div class="columns is-mobile">
     <div class="column is-two-thirds">
       <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
     </div>

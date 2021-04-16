@@ -1,14 +1,4 @@
 <template>
-  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="-180" max="180" :valProp="localRotation"></effect-number>
-  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="size" min="0" max="1000" :valProp="localScale"></effect-number>
-  <div class="columns mt-4">
-    <div class="column is-offset-one-quarter is-one-quarter">
-      <signal-button name="Flip Along X" @changeState="changeStateButton"></signal-button>
-    </div>
-    <div class="column is-one-quarter">
-      <signal-button name="Flip Along Y" @changeState="changeStateButton"></signal-button>
-    </div>
-  </div>
   <!--crop-->
   <div class="columns mt-4">
     <div class="column" v-if="!straightening && !cropping">
@@ -36,7 +26,15 @@
       <signal-button name="Cancel" @changeState="changeStateButton"></signal-button>
     </div>
   </div>
-  <effect-slider class="mt-4" v-if="straightening" @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="straightenAmount" min="-45" max="45" :defaultProp="defaultStraightenAmount" :valProp="localStraightenAmount"></effect-slider>
+  <effect-slider v-if="straightening" @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="straightenAmount" min="-45" max="45" :defaultProp="defaultStraightenAmount" :valProp="localStraightenAmount"></effect-slider>
+  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="-180" max="180" :valProp="localRotation"></effect-number>
+  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="size" min="0" max="1000" :valProp="localScale"></effect-number>
+  <div class="w-100 mt-5">
+    <signal-button name="Flip Along X" @changeState="changeStateButton"></signal-button>
+  </div>
+  <div class="w-100 mt-3">
+    <signal-button name="Flip Along Y" @changeState="changeStateButton"></signal-button>
+  </div>
 </template>
 
 <script>

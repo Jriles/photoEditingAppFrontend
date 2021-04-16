@@ -5,14 +5,14 @@
         <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
       </router-link>
 
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
+      <a role="button" class="navbar-burger" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active' : showNav }" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span class="has-text-white" aria-hidden="true"></span>
+        <span class="has-text-white" aria-hidden="true"></span>
+        <span class="has-text-white" aria-hidden="true"></span>
       </a>
     </div>
 
-    <div id="navbarBasicExample" class="navbar-menu">
+    <div id="navbarBasicExample" class="navbar-menu has-background-grey-dark" v-bind:class="{ 'is-active' : showNav }">
       <div class="navbar-start has-text-white">
         <router-link to="/transformations/light" class="navbar-item has-text-white has-background-grey-dark">
           Light
@@ -28,7 +28,8 @@
         </router-link>
       </div>
 
-      <div class="navbar-end">
+      <!-- No ads v2 -->
+      <!-- <div class="navbar-end has-background-grey-dark">
         <div class="navbar-item">
           <div class="buttons">
             <router-link to="/checkout" class="button is-primary">
@@ -36,20 +37,35 @@
             </router-link>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </nav>
   <router-view/>
   <footer class="footer has-background-grey-dark">
     <div class="content has-text-centered has-background-grey-dark">
-      <p>
+      <!-- <p>
         <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is licensed
         <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
         is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+      </p> -->
+      <p>
+        <br>
+        <br>
+        <br>
       </p>
     </div>
   </footer>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      showNav: false
+    }
+  }
+}
+</script>
 
 <style lang="scss">
   .tool-name{

@@ -1,4 +1,5 @@
 <template>
+  <!-- mobile version of dom -->
   <div v-if="desktopMode == false">
     <div v-if="uploaded" class="columns is-centered">
       <div class="column is-three-quarters">
@@ -23,6 +24,18 @@
             <div class="column" v-show="uploaded">
               <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
             </div>
+          </div>
+          <div class="mt-5">
+            <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
+            <img id="originalImg" v-show="false" :src="originalImg"/>
+          </div>
+          <div id="imgBucket" class="mt-5">
+            <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+            <img id="shapeImg" class="hidden" :src="shapeImg"/>
+            <img id="filterImg" class="hidden" :src="filterImg"/>
+            <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
           </div>
           <div v-show="uploaded">
             <router-view
@@ -49,40 +62,59 @@
               :straightening="straightening.val"
             ></router-view>
           </div>
-          <div class="mt-5">
-            <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
-            <img id="originalImg" v-show="false" :src="originalImg"/>
-          </div>
-          <div id="imgBucket" class="mt-5">
-            <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
-            <img id="shapeImg" class="hidden" :src="shapeImg"/>
-            <img id="filterImg" class="hidden" :src="filterImg"/>
-            <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-          </div>
           <p class="mt-5" v-show="uploaded"><strong class="has-text-white">Please bookmark us!</strong></p>
         </section>
       </div>
     </div>
-    <div v-else class="columns is-centered placeholder">
+    <div v-else class="columns mobile-placeholder">
       <div class="column is-three-quarters">
-        <section class="container has-text-centered">
-          <div class="columns mt-4">
-            <div class="column">
-              <div class="file is-primary is-centered">
-                <label class="file-label">
-                  <input class="file-input" type="file" name="photo" @change="submit">
-                  <span class="file-cta has-background-black">
-                    <span class="file-label">
-                      Choose a file…
-                    </span>
-                  </span>
-                </label>
-              </div>
+        <section class="hero is-primary is-large header-image">
+            <!-- Hero content: will be in the middle -->
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <h1 class="title has-text-black">
+                        Transform Your Images
+                    </h1>
+                      <div class="file is-primary is-centered">
+                        <label class="file-label">
+                          <input class="file-input" type="file" name="photo" @change="submit">
+                          <span class="file-cta has-background-black">
+                            <span class="file-label">
+                              Choose a file…
+                            </span>
+                          </span>
+                        </label>
+                      </div>
+                </div>
             </div>
-          </div>
         </section>
+      </div>
+      <div class="column">
+        <div class="has-text-centered pl-5 pr-5">
+          <router-view
+            @updateLightVal="updateLightVal"
+            @updateColorVal="updateColorVal"
+            @updateShapeVal="updateShapeVal"
+            @doneChangingFilter="doneChangingFilter"
+            @doneChangingShape="doneChangingShape"
+            @changeStateButton="changeStateButton"
+            :red="red.val"
+            :green="green.val"
+            :blue="blue.val"
+            :brightness="brightness.val"
+            :contrast="contrast.val"
+            :vibrance="vibrance.val"
+            :hue="hue.val"
+            :saturation="saturation.val"
+            :highlights="highlights.val"
+            :shadows="shadows.val"
+            :smooth="smooth.val"
+            :rotation="rotation.val"
+            :cropping="cropping.val"
+            :size="size.val"
+            :straightening="straightening.val"
+          ></router-view>
+        </div>
       </div>
     </div>
   </div>
@@ -155,26 +187,68 @@
         </section>
       </div>
     </div>
-    <div v-else class="columns is-centered placeholder">
+    <!-- <div v-else class="columns is-centered placeholder">
       <div class="column is-three-quarters">
         <section class="container has-text-centered">
           <div class="columns mt-4">
             <div class="column">
-              <div class="file is-primary is-centered">
-                <label class="file-label">
-                  <input class="file-input" type="file" name="photo" @change="submit">
-                  <span class="file-cta has-background-black">
-                    <span class="file-label">
-                      Choose a file…
-                    </span>
-                  </span>
-                </label>
-              </div>
+
             </div>
           </div>
         </section>
       </div>
-    </div>
+    </div> -->
+    <div v-else class="columns placeholder desktopCanvasOffset">
+        <div class="column is-three-quarters">
+          <section class="hero is-primary is-large header-image">
+              <!-- Hero content: will be in the middle -->
+              <div class="hero-body">
+                  <div class="container has-text-centered">
+                      <h1 class="title has-text-black">
+                          Transform Your Images
+                      </h1>
+                        <div class="file is-primary is-centered">
+                          <label class="file-label">
+                            <input class="file-input" type="file" name="photo" @change="submit">
+                            <span class="file-cta has-background-black">
+                              <span class="file-label">
+                                Choose a file…
+                              </span>
+                            </span>
+                          </label>
+                        </div>
+                  </div>
+              </div>
+          </section>
+        </div>
+        <div class="column is-one-quarter">
+          <div class="desktopControls has-text-centered">
+            <router-view
+              @updateLightVal="updateLightVal"
+              @updateColorVal="updateColorVal"
+              @updateShapeVal="updateShapeVal"
+              @doneChangingFilter="doneChangingFilter"
+              @doneChangingShape="doneChangingShape"
+              @changeStateButton="changeStateButton"
+              :red="red.val"
+              :green="green.val"
+              :blue="blue.val"
+              :brightness="brightness.val"
+              :contrast="contrast.val"
+              :vibrance="vibrance.val"
+              :hue="hue.val"
+              :saturation="saturation.val"
+              :highlights="highlights.val"
+              :shadows="shadows.val"
+              :smooth="smooth.val"
+              :rotation="rotation.val"
+              :cropping="cropping.val"
+              :size="size.val"
+              :straightening="straightening.val"
+            ></router-view>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -651,12 +725,26 @@ export default {
     height: 77vh;
   }
 
+  .mobile-placeholder{
+    height: 150vh;
+  }
+
   .desktopControls{
     position: relative;
     top: 75px;
+    margin-right: 5%
   }
 
   .desktopCanvasOffset{
-    margin-left: 2%;
+    margin-left: 1%;
+  }
+
+  .header-image {
+    background-image: url("http://orig14.deviantart.net/7584/f/2015/181/2/7/flat_mountains_landscape_by_ggiuliafilippini-d8zdbco.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: #999;
   }
 </style>
