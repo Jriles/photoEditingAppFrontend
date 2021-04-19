@@ -24,6 +24,9 @@
             <div class="column" v-show="uploaded">
               <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
             </div>
+            <div class="column" v-show="uploaded">
+              <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
+            </div>
           </div>
           <div class="mt-5">
             <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
@@ -37,7 +40,7 @@
             <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
             <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
           </div>
-          <div v-show="uploaded">
+          <div v-show="uploaded" class="has-text-centered pl-5 pr-5">
             <router-view
               @updateLightVal="updateLightVal"
               @updateColorVal="updateColorVal"
@@ -53,13 +56,29 @@
               :vibrance="vibrance.val"
               :hue="hue.val"
               :saturation="saturation.val"
-              :highlights="highlights.val"
-              :shadows="shadows.val"
               :smooth="smooth.val"
               :rotation="rotation.val"
               :cropping="cropping.val"
               :size="size.val"
               :straightening="straightening.val"
+              :sepia="sepia.val"
+              :noise="noise.val"
+              :ink="ink.val"
+              :defaultStraightenAmount="defaultStraightenAmount.val"
+              :defaultBrightness="defaultBrightness.val"
+              :defaultContrast="defaultContrast.val"
+              :defaultVibrance="defaultVibrance.val"
+              :defaultHue="defaultHue.val"
+              :defaultSaturation="defaultSaturation.val"
+              :defaultRed="defaultRed.val"
+              :defaultBlue="defaultBlue.val"
+              :defaultGreen="defaultGreen.val"
+              :defaultSmooth="defaultSmooth.val"
+              :defaultRotation="defaultRotation.val"
+              :defaultSize="defaultSize.val"
+              :defaultSepia="defaultSepia.val"
+              :defaultNoise="defaultNoise.val"
+              :defaultInk="defaultInk.val"
             ></router-view>
           </div>
           <p class="mt-5" v-show="uploaded"><strong class="has-text-white">Please bookmark us!</strong></p>
@@ -106,13 +125,29 @@
             :vibrance="vibrance.val"
             :hue="hue.val"
             :saturation="saturation.val"
-            :highlights="highlights.val"
-            :shadows="shadows.val"
             :smooth="smooth.val"
             :rotation="rotation.val"
             :cropping="cropping.val"
             :size="size.val"
             :straightening="straightening.val"
+            :sepia="sepia.val"
+            :noise="noise.val"
+            :ink="ink.val"
+            :defaultStraightenAmount="defaultStraightenAmount.val"
+            :defaultBrightness="defaultBrightness.val"
+            :defaultContrast="defaultContrast.val"
+            :defaultVibrance="defaultVibrance.val"
+            :defaultHue="defaultHue.val"
+            :defaultSaturation="defaultSaturation.val"
+            :defaultRed="defaultRed.val"
+            :defaultBlue="defaultBlue.val"
+            :defaultGreen="defaultGreen.val"
+            :defaultSmooth="defaultSmooth.val"
+            :defaultRotation="defaultRotation.val"
+            :defaultSize="defaultSize.val"
+            :defaultSepia="defaultSepia.val"
+            :defaultNoise="defaultNoise.val"
+            :defaultInk="defaultInk.val"
           ></router-view>
         </div>
       </div>
@@ -124,7 +159,7 @@
       <div class="column">
         <section class="has-text-centered">
           <div class="columns">
-            <div class="column desktopCanvasOffset">
+            <div class="column desktopCanvasOffset is-three-quarters">
               <div class="mt-5">
                 <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
                 <img id="originalImg" v-show="false" :src="originalImg"/>
@@ -156,6 +191,9 @@
               <div class="is-centered mt-5">
                 <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
               </div>
+              <div class="is centered mt-5" v-show="uploaded">
+                <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
+              </div>
               <div class="desktopControls">
                 <router-view
                   @updateLightVal="updateLightVal"
@@ -172,13 +210,29 @@
                   :vibrance="vibrance.val"
                   :hue="hue.val"
                   :saturation="saturation.val"
-                  :highlights="highlights.val"
-                  :shadows="shadows.val"
                   :smooth="smooth.val"
                   :rotation="rotation.val"
                   :cropping="cropping.val"
                   :size="size.val"
                   :straightening="straightening.val"
+                  :sepia="sepia.val"
+                  :noise="noise.val"
+                  :ink="ink.val"
+                  :defaultStraightenAmount="defaultStraightenAmount.val"
+                  :defaultBrightness="defaultBrightness.val"
+                  :defaultContrast="defaultContrast.val"
+                  :defaultVibrance="defaultVibrance.val"
+                  :defaultHue="defaultHue.val"
+                  :defaultSaturation="defaultSaturation.val"
+                  :defaultRed="defaultRed.val"
+                  :defaultBlue="defaultBlue.val"
+                  :defaultGreen="defaultGreen.val"
+                  :defaultSmooth="defaultSmooth.val"
+                  :defaultRotation="defaultRotation.val"
+                  :defaultSize="defaultSize.val"
+                  :defaultSepia="defaultSepia.val"
+                  :defaultNoise="defaultNoise.val"
+                  :defaultInk="defaultInk.val"
                 ></router-view>
               </div>
             </div>
@@ -198,6 +252,7 @@
         </section>
       </div>
     </div> -->
+    <!-- Not uploaded/editing yet -->
     <div v-else class="columns placeholder desktopCanvasOffset">
         <div class="column is-three-quarters">
           <section class="hero is-primary is-large header-image">
@@ -238,13 +293,29 @@
               :vibrance="vibrance.val"
               :hue="hue.val"
               :saturation="saturation.val"
-              :highlights="highlights.val"
-              :shadows="shadows.val"
               :smooth="smooth.val"
               :rotation="rotation.val"
               :cropping="cropping.val"
               :size="size.val"
               :straightening="straightening.val"
+              :sepia="sepia.val"
+              :noise="noise.val"
+              :ink="ink.val"
+              :defaultStraightenAmount="defaultStraightenAmount.val"
+              :defaultBrightness="defaultBrightness.val"
+              :defaultContrast="defaultContrast.val"
+              :defaultVibrance="defaultVibrance.val"
+              :defaultHue="defaultHue.val"
+              :defaultSaturation="defaultSaturation.val"
+              :defaultRed="defaultRed.val"
+              :defaultBlue="defaultBlue.val"
+              :defaultGreen="defaultGreen.val"
+              :defaultSmooth="defaultSmooth.val"
+              :defaultRotation="defaultRotation.val"
+              :defaultSize="defaultSize.val"
+              :defaultSepia="defaultSepia.val"
+              :defaultNoise="defaultNoise.val"
+              :defaultInk="defaultInk.val"
             ></router-view>
           </div>
         </div>
@@ -347,12 +418,12 @@ export default {
       green: {
         val: 0
       },
-      shadows: {
-        val: 0
-      },
-      highlights: {
-        val: 0
-      },
+      // shadows: {
+      //   val: 0
+      // },
+      // highlights: {
+      //   val: 0
+      // },
       smooth: {
         val: 50
       },
@@ -383,20 +454,113 @@ export default {
       },
       straightened: {
         val: false
+      },
+      sepia: {
+        val: 0
+      },
+      noise: {
+        val: 0
+      },
+      ink: {
+        val: 0
+      },
+      //defaults
+      defaultBrightness: {
+        val: 0
+      },
+      defaultContrast: {
+        val: 0
+      },
+      defaultVibrance: {
+        val: 0
+      },
+      defaultHue: {
+        val: 0
+      },
+      defaultSaturation: {
+        val: 0
+      },
+      defaultRed: {
+        val: 0
+      },
+      defaultBlue: {
+        val: 0
+      },
+      defaultGreen: {
+        val: 0
+      },
+      defaultSmooth: {
+        val: 50
+      },
+      defaultRotation: {
+        val: 0
+      },
+      defaultSize: {
+        val: 100
+      },
+      defaultSizeX: {
+        val: 100
+      },
+      defaultSizeY: {
+        val: 100
+      },
+      defaultStraightenAmount: {
+        val: 0
+      },
+      defaultSepia: {
+        val: 0
+      },
+      defaultNoise: {
+        val: 0
+      },
+      defaultInk: {
+        val: 0
       }
     }
   },
   methods: {
+    undoAll(){
+      this.resetFilterShapeVals()
+      const path = this.$route.name;
+      //waiting for images to load
+      switch (path) {
+        case "color":
+          this.initWebGLCanvas()
+          break
+        case "light":
+          this.initWebGLCanvas()
+          break
+        case "shape":
+          this.reInitCropperjsCanvas()
+          break
+      }
+    },
     resetFilterShapeVals(){
-      this.brightness.val = 0;
-      this.contrast.val = 0;
-      this.vibrance.val = 0;
-      this.hue.val = 0;
-      this.saturation.val = 0;
-      this.red.val = 0;
-      this.blue.val = 0;
-      this.green.val = 0;
-      this.rotation.val = 0;
+      console.log('called reset filter shape vals')
+      //light/effects stuff
+      this.brightness.val = this.defaultBrightness.val;
+      this.contrast.val = this.defaultContrast.val;
+      this.smooth.val = this.defaultSmooth.val;
+      this.sepia.val = this.defaultSepia.val;
+      this.noise.val = this.defaultNoise.val;
+      this.ink.val = this.defaultInk.val;
+      //color
+      this.vibrance.val = this.defaultVibrance.val;
+      this.hue.val = this.defaultHue.val;
+      this.saturation.val = this.defaultSaturation.val;
+      this.red.val = this.defaultRed.val;
+      this.blue.val = this.defaultBlue.val;
+      this.green.val = this.defaultGreen.val;
+      //shape
+      this.size.val = this.defaultSize.val;
+      this.sizeX.val = this.defaultSizeX.val;
+      this.sizeY.val = this.defaultSizeY.val;
+      this.rotation.val = this.defaultRotation.val;
+      this.cropping.val = false;
+      this.cropped.val = false;
+      this.straightening.val = false;
+      this.straightened.val = false;
+      this.straightenAmount.val = this.defaultStraightenAmount.val;
     },
     submit(e) {
       //delete old canvas
@@ -471,26 +635,52 @@ export default {
       gl.getExtension('WEBGL_color_buffer_float');
 
       const texture = canvas.texture(img);
+      canvas.draw(texture).update()
 
-      canvas.draw(texture).brightnessContrast((this.brightness.val * .01), (this.contrast.val * .01)).update();
+      if (this.brightness.val !== this.defaultBrightness.val || this.contrast.val !== this.defaultContrast.val) {
+        canvas.draw(texture).brightnessContrast((this.brightness.val * .01), (this.contrast.val * .01)).update();
+      }
 
-      texture.loadContentsOf(canvas);
-      canvas.draw(texture).vibrance((this.vibrance.val * .01)).update();
+      if (this.vibrance.val !== this.defaultVibrance.val) {
+        texture.loadContentsOf(canvas);
+        canvas.draw(texture).vibrance((this.vibrance.val * .01)).update();
+      }
 
-      texture.loadContentsOf(canvas);
-      canvas.draw(texture).hueSaturation((this.hue.val * .01), (this.saturation.val * .01)).update();
+      if (this.hue.val !== this.defaultHue.val || this.saturation.val !== this.defaultSaturation.val) {
+        texture.loadContentsOf(canvas);
+        canvas.draw(texture).hueSaturation((this.hue.val * .01), (this.saturation.val * .01)).update();
+      }
 
-      //colors!
-      texture.loadContentsOf(canvas);
-      const redVal = this.red.val * .01;
-      const blueVal = this.blue.val * .01;
-      const greenVal = this.green.val * .01;
-      canvas.draw(texture).curves([[0,0], [.25, .25 - redVal], [.75, .75 + redVal], [1,1]], [[0,0], [.25, .25 - greenVal], [.75, .75 + greenVal], [1,1]], [[0,0], [.25, .25 - blueVal], [.75, .75 + blueVal], [1,1]]).update();
+      if (this.red.val !== this.defaultRed.val ||
+          this.green.val !== this.defaultGreen.val ||
+          this.blue.val !== this.defaultBlue.val) {
+        //colors!
+        texture.loadContentsOf(canvas);
+        const redVal = this.red.val * .01;
+        const blueVal = this.blue.val * .01;
+        const greenVal = this.green.val * .01;
+        canvas.draw(texture).curves([[0,0], [.25, .25 - redVal], [.75, .75 + redVal], [1,1]], [[0,0], [.25, .25 - greenVal], [.75, .75 + greenVal], [1,1]], [[0,0], [.25, .25 - blueVal], [.75, .75 + blueVal], [1,1]]).update();
+      }
 
-      //smooth!
-      //texture.loadContentsOf(canvas);
-      //canvas.draw(texture).denoise(this.smooth.val).update();
+      if (this.smooth.val !== this.defaultSmooth.val) {
+        texture.loadContentsOf(canvas);
+        canvas.draw(texture).denoise(this.smooth.val).update();
+      }
 
+      if (this.sepia.val !== this.defaultSepia.val) {
+        texture.loadContentsOf(canvas);
+        canvas.draw(texture).sepia(this.sepia.val * .01).update();
+      }
+
+      if (this.noise.val !== this.defaultNoise.val) {
+        texture.loadContentsOf(canvas);
+        canvas.draw(texture).noise(this.noise.val * .01).update();
+      }
+
+      if (this.ink.val !== this.defaultInk.val) {
+        texture.loadContentsOf(canvas);
+        canvas.draw(texture).ink(this.ink.val * .01).update();
+      }
       texture.destroy();
       return canvas
     },
@@ -502,23 +692,28 @@ export default {
       this.straighten(cropperName)
     },
     updateFilterVal(newVal){
-      this[newVal['valType']].val = newVal['newVal']
-      var shapeImg = document.getElementById('shapeImg')
-      const imgBucket = document.getElementById('imgBucket');
-      const oldCanvas = document.getElementsByTagName("canvas")[0];
-      const displayCanvas = this.getFilterCanvas(shapeImg);
+      //dont apply changes if no photo
+      if (this.uploaded) {
+        this[newVal['valType']].val = newVal['newVal']
+        var shapeImg = document.getElementById('shapeImg')
+        const imgBucket = document.getElementById('imgBucket');
+        const oldCanvas = document.getElementsByTagName("canvas")[0];
+        const displayCanvas = this.getFilterCanvas(shapeImg);
 
-      imgBucket.removeChild(oldCanvas);
-      imgBucket.insertBefore(displayCanvas, filterImg)
+        imgBucket.removeChild(oldCanvas);
+        imgBucket.insertBefore(displayCanvas, filterImg)
+      }
     },
     updateShapeVal(newVal){
       //get cropper
-      this[newVal['valType']].val = newVal['newVal']
-      if (newVal['valType'] === 'size'){
-        this.sizeX.val = newVal['newVal']
-        this.sizeY.val = newVal['newVal']
+      if (this.uploaded) {
+        this[newVal['valType']].val = newVal['newVal']
+        if (newVal['valType'] === 'size'){
+          this.sizeX.val = newVal['newVal']
+          this.sizeY.val = newVal['newVal']
+        }
+        this.applyShapeChanges('cropper')
       }
-      this.applyShapeChanges('cropper')
     },
     initWebGLCanvas() {
       console.log('called init webgl canvas')
@@ -732,7 +927,6 @@ export default {
   .desktopControls{
     position: relative;
     top: 75px;
-    margin-right: 5%
   }
 
   .desktopCanvasOffset{
@@ -746,5 +940,10 @@ export default {
     background-attachment: fixed;
     background-size: cover;
     background-color: #999;
+  }
+
+  .file-cta:hover{
+    background-color: white !important;
+    color: black !important;
   }
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="vibrance" :valProp="localVibrance"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="hue" :valProp="localHue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="saturation" :valProp="localSaturation"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="red" min="0" max="100" :valProp="localRed"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="blue" min="0" max="100" :valProp="localBlue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="green" min="0" max="100" :valProp="localGreen"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="vibrance" :valProp="localVibrance" :defaultProp="localDefaultVibrance"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="hue" :valProp="localHue" :defaultProp="localDefaultHue"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="saturation" :valProp="localSaturation" :defaultProp="localDefaultSaturation"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="red" min="0" max="100" :valProp="localRed" :defaultProp="localDefaultRed"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="blue" min="0" max="100" :valProp="localBlue" :defaultProp="localDefaultBlue"></effect-slider>
+  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="green" min="0" max="100" :valProp="localGreen" :defaultProp="localDefaultGreen"></effect-slider>
 </template>
 
 <script>
@@ -31,7 +31,14 @@ export default {
     },
     green: {
       default: 0
-    }
+    },
+    //defaults
+    defaultVibrance: Number,
+    defaultHue: Number,
+    defaultSaturation: Number,
+    defaultRed: Number,
+    defaultBlue: Number,
+    defaultGreen: Number
   },
   data() {
     return {
@@ -40,7 +47,14 @@ export default {
       localSaturation: this.saturation,
       localRed: this.red,
       localBlue: this.blue,
-      localGreen: this.green
+      localGreen: this.green,
+      //default
+      localDefaultVibrance: this.defaultVibrance,
+      localDefaultHue: this.defaultHue,
+      localDefaultSaturation: this.defaultSaturation,
+      localDefaultRed: this.defaultRed,
+      localDefaultBlue: this.defaultBlue,
+      localDefaultGreen: this.defaultGreen
     }
   },
   components: {

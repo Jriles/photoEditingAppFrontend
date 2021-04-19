@@ -26,6 +26,7 @@
         <router-link to="/hints" class="navbar-item has-text-white has-background-grey-dark">
           Hints
         </router-link>
+        <a href="tel:+1206-724-7800" class="navbar-item has-text-white has-background-grey-dark">Feedback and Support</a>
       </div>
 
       <!-- No ads v2 -->
@@ -68,6 +69,19 @@ export default {
 </script>
 
 <style lang="scss">
+  button:hover{
+    background-color: white !important;
+    color: black !important;
+  }
+
+  .navbar-item:hover{
+    background-color: black !important;
+  }
+
+  .navbar-item:focus{
+    background-color: black !important;
+  }
+
   .tool-name{
     text-transform: capitalize;
   }
@@ -100,9 +114,11 @@ export default {
     width: 100%;
     background-color: #4A4A4A;
   }
+
   input[type=range]:focus {
     outline: none;
   }
+
   input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     height: 5px;
@@ -113,6 +129,7 @@ export default {
     border-radius: 1px;
     border: 0px solid #000000;
   }
+
   input[type=range]::-webkit-slider-thumb {
     box-shadow: 0px 0px 0px #000000;
     border: 1px solid white;
@@ -127,6 +144,7 @@ export default {
   input[type=range]:focus::-webkit-slider-runnable-track {
     background: black;
   }
+
   input[type=range]::-moz-range-track {
     width: 100%;
     height: 5px;
