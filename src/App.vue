@@ -1,8 +1,9 @@
 <template>
   <nav class="navbar has-background-grey-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <router-link class="navbar-item" to="/transformations/light">
-        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+      <router-link class="navbar-item has-text-white has-background-grey-dark simple-photo-logo" to="/transformations/light">
+        <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
+        SimplePhoto
       </router-link>
 
       <a role="button" class="navbar-burger" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active' : showNav }" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -69,6 +70,22 @@ export default {
 </script>
 
 <style lang="scss">
+
+  @font-face {
+    font-family: "Helvetica";
+    src: url("assets/fonts/helvetica.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "RobotoSlabExtraLight";
+    src: url("assets/fonts/RobotoSlab-ExtraLight.woff") format("woff");
+  }
+
+  .simple-photo-logo{
+    font-family: 'RobotoSlabExtraLight' !important;
+    font-size: 20px;
+  }
+
   button:hover{
     background-color: white !important;
     color: black !important;
@@ -104,6 +121,7 @@ export default {
 
   body{
     background-color: #4A4A4A;
+    font-family: 'Helvetica' !important;
     //height: 200vh;
   }
 

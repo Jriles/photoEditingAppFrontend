@@ -191,7 +191,7 @@
               <div class="is-centered mt-5">
                 <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
               </div>
-              <div class="is centered mt-5" v-show="uploaded">
+              <div class="is centered mt-5 mb-5" v-show="uploaded">
                 <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
               </div>
               <div class="desktopControls">
@@ -328,6 +328,7 @@ import glfx from 'glfx';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
+import { Carousel, Slide } from 'vue-carousel';
 
 //max width is 75% of screen
 const IMAGE_HEIGHT = screen.height - 200;
@@ -926,7 +927,7 @@ export default {
 
   .desktopControls{
     position: relative;
-    top: 75px;
+    top: 20px;
   }
 
   .desktopCanvasOffset{
