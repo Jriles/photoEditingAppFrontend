@@ -27,8 +27,8 @@
     </div>
   </div>
   <effect-slider v-if="straightening" @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="straightenAmount" min="-45" max="45" :defaultProp="localDefaultStraightenAmount" :valProp="localStraightenAmount"></effect-slider>
-  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="-180" max="180" :valProp="localRotation" :defaultProp="localDefaultRotation"></effect-number>
-  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="size" min="0" max="1000" :valProp="localScale" :defaultProp="localDefaultSize"></effect-number>
+  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="rotation" min="-180" max="180" :valProp="localRotation" :defaultProp="localDefaultRotation" :symbol="String.fromCharCode(176)"></effect-number>
+  <effect-number @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="size" min="0" max="1000" :valProp="localScale" :defaultProp="localDefaultSize" :symbol="String.fromCharCode(37)"></effect-number>
   <div class="w-100 mt-5">
     <signal-button name="Flip Along X" @changeState="changeStateButton"></signal-button>
   </div>

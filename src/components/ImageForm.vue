@@ -85,6 +85,7 @@
         </section>
       </div>
     </div>
+    <!-- not yet uploaded to mobile -->
     <div v-else class="columns mobile-placeholder">
       <div class="column is-three-quarters">
         <section class="hero is-primary is-large header-image">
@@ -256,7 +257,6 @@
     <div v-else class="columns placeholder desktopCanvasOffset">
         <div class="column is-three-quarters">
           <section class="hero is-primary is-large header-image">
-              <!-- Hero content: will be in the middle -->
               <div class="hero-body">
                   <div class="container has-text-centered">
                       <h1 class="title has-text-black">
@@ -328,7 +328,6 @@ import glfx from 'glfx';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
-import { Carousel, Slide } from 'vue-carousel';
 
 //max width is 75% of screen
 const IMAGE_HEIGHT = screen.height - 200;
@@ -359,18 +358,22 @@ export default {
     }
   },
   created(){
+    const ref = this;
+    console.log(this)
+    console.log(screen.width)
     if(screen.width > 1100){
       //desktop
-      this.desktopMode = true
-      this.containerWidth = this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT)
+      ref.desktopMode = true
+      ref.containerWidth = ref.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT)
       console.log(this.containerWidth)
     } else {
-      this.desktopMode = false
-      this.containerWidth = this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT)
+      ref.desktopMode = false
+      ref.containerWidth = ref.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT)
     }
   },
   components: {
-    VueCropper
+    VueCropper,
+    //VueSlickCarousel
   },
   props: {
     msg: String
@@ -935,7 +938,7 @@ export default {
   }
 
   .header-image {
-    background-image: url("http://orig14.deviantart.net/7584/f/2015/181/2/7/flat_mountains_landscape_by_ggiuliafilippini-d8zdbco.jpg");
+    background-image: url("~@/assets/img/catman.jpg");
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;

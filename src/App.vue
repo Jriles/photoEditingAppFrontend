@@ -27,7 +27,7 @@
         <router-link to="/hints" class="navbar-item has-text-white has-background-grey-dark">
           Hints
         </router-link>
-        <a href="tel:+1206-724-7800" class="navbar-item has-text-white has-background-grey-dark">Feedback and Support</a>
+        <a href="tel:+1206-724-7800" class="navbar-item has-text-white has-background-grey-dark">Help & Feedback</a>
       </div>
 
       <!-- No ads v2 -->

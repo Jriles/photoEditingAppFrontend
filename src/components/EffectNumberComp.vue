@@ -1,6 +1,6 @@
 <template>
   <div class="mb-1">
-    <label for="input" class="label has-text-white tool-name">{{ name }}</label>
+    <label for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</label>
   </div>
   <div class="columns is-mobile">
     <div class="column is-two-thirds">
@@ -32,8 +32,8 @@ export default {
     },
     valProp: {
       default: 0
-    }
-
+    },
+    symbol: String
   },
   created(){
     this.$options.name = this.name
@@ -43,7 +43,8 @@ export default {
   data() {
     return {
       val: this.valProp,
-      default: this.defaultProp
+      default: this.defaultProp,
+      localSymbol: this.symbol
     }
   },
   methods: {
