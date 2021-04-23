@@ -334,7 +334,7 @@ const IMAGE_HEIGHT = screen.height - 200;
 const MOBILE_CANVAS_PERCENT = .8;
 const DESKTOP_CANVAS_PERCENT = .7;
 //how long we wait for an image to load before doing work
-const IMAGE_LOAD_TIME = 50;
+const IMAGE_LOAD_TIME = 150;
 
 export default {
   name: 'ImageForm',
@@ -587,21 +587,20 @@ export default {
       this.removeCanvasIfExists()
 
       //here we need to ask if the image is too big
-      const objURL = URL.createObjectURL(file)
-
-      //filter img does not get resized, it is not displayed, except on cropper js, which doesnt care about size.
-      this.filterImg = objURL
-      this.originalImg = objURL
+      //const objURL = URL.createObjectURL(file)
+      const reader = new FileReader();
       const img = new Image();
       const ref = this
-      this.uploaded = true
-      img.onload = function () {
+
+      img.addEventListener("load", function () {
+        console.log('called on load')
         //ref.cropperVisible = true;
+        console.log('about to call imgTooBig')
         if (ref.imgTooBig(this, ref)) {
-          ref.fitImgToCanvas(objURL, 'cropper', this, ref, true)
+          ref.fitImgToCanvas(reader.result, 'cropper', this, ref, true)
         } else {
-          ref.shapeImg = objURL
-          ref.originalDisplayImg = objURL
+          ref.shapeImg = reader.result
+          ref.originalDisplayImg = reader.result
         }
         const path = ref.$route.name;
         //waiting for images to load
@@ -619,11 +618,25 @@ export default {
           }
         }, IMAGE_LOAD_TIME);
         ref.originalAspectRatio = this.width / this.height;
-      };
-      //set download
-      img.src = objURL;
-      this.img = objURL;
-      URL.revokeObjectURL(objURL);
+      }, false);
+
+      reader.addEventListener("load", function () {
+        //filter img does not get resized, it is not displayed, except on cropper js, which doesnt care about size.
+        ref.filterImg = reader.result
+        ref.originalImg = reader.result
+        console.log('set vars with obj url')
+
+        ref.uploaded = true
+        //set download
+        img.src = reader.result;
+        ref.img = reader.result;
+        console.log(reader.result)
+      }, false);
+
+      const objURL = reader.readAsDataURL(file)
+      console.log('generated objurl')
+
+      //URL.revokeObjectURL(objURL);
     },
     updateColorVal(newVal){
       this.updateFilterVal(newVal);
