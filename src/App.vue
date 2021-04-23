@@ -3,7 +3,7 @@
     <div class="navbar-brand">
       <router-link class="navbar-item has-text-white has-background-grey-dark simple-photo-logo" to="/transformations/light">
         <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
-        SimpleSnap
+        SimpleSnapTEST
       </router-link>
 
       <a role="button" class="navbar-burger" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active' : showNav }" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
