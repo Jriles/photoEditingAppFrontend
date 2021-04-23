@@ -358,6 +358,8 @@ export default {
     }
   },
   created(){
+    //redirect to light transformations
+    //no landing page
     const ref = this;
     console.log(this)
     console.log(screen.width)
