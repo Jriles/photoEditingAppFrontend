@@ -341,12 +341,6 @@ export default {
   emits: ['updateColorVal', 'updateShapeVal'],
   watch:{
     $route (to, from){
-      //redirect to light transformations
-      //no landing page
-      if (to.path === '/') {
-        window.location.href = '/transformations/light';
-      }
-
       if(this.uploaded){
         const path = to.path;
         switch(path){
@@ -364,6 +358,8 @@ export default {
     }
   },
   created(){
+    //redirect to light transformations
+    //no landing page
     const ref = this;
     console.log(this)
     console.log(screen.width)

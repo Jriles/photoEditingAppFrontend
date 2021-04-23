@@ -65,6 +65,12 @@ export default {
     return {
       showNav: false
     }
+  },
+  created(){
+    console.log(window.location.pathname)
+    if (window.location.pathname === '/' || window.location.pathname === '/#/') {
+      this.$router.push('/transformations/light');
+    }
   }
 }
 </script>
