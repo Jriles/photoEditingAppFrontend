@@ -1,13 +1,13 @@
 <template>
-  <div class="mb-1">
+  <div class="mb-2">
     <label for="input" class="label has-text-white tool-name">{{ name }}</label>
   </div>
   <div class="columns is-mobile">
-    <div class="column is-two-thirds">
-      <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
+    <div class="column is-10">
+      <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 slider-custom-margin">
     </div>
-    <div class="column is-1">
-      <button class="button is-black is-small ml-5 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
+    <div class="column auto">
+      <button class="button is-black is-small has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
     </div>
   </div>
 </template>
@@ -80,5 +80,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.slider-custom-margin{
+  margin-top: 2px;
+}
 </style>

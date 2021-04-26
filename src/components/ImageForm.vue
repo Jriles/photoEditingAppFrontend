@@ -195,7 +195,7 @@
               <div class="is centered mt-5 mb-5" v-show="uploaded">
                 <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
               </div>
-              <div class="desktopControls">
+              <div class="desktopControls pr-5">
                 <router-view
                   @updateLightVal="updateLightVal"
                   @updateColorVal="updateColorVal"
@@ -253,6 +253,7 @@
         </section>
       </div>
     </div> -->
+
     <!-- Not uploaded/editing yet -->
     <div v-else class="columns placeholder desktopCanvasOffset">
         <div class="column is-three-quarters">
@@ -277,7 +278,7 @@
           </section>
         </div>
         <div class="column is-one-quarter">
-          <div class="desktopControls has-text-centered">
+          <div class="desktopControls has-text-centered pr-5">
             <router-view
               @updateLightVal="updateLightVal"
               @updateColorVal="updateColorVal"
@@ -593,15 +594,9 @@ export default {
       const ref = this
 
       img.addEventListener("load", function () {
-        console.log('called on load')
-        //ref.cropperVisible = true;
-        console.log('about to call imgTooBig')
-        if (ref.imgTooBig(this, ref)) {
-          ref.fitImgToCanvas(reader.result, 'cropper', this, ref, true)
-        } else {
-          ref.shapeImg = reader.result
-          ref.originalDisplayImg = reader.result
-        }
+        //always fit it to the canvas. We use the original img on download.
+        ref.fitImgToCanvas(reader.result, 'cropper', this, ref, true)
+
         const path = ref.$route.name;
         //waiting for images to load
         setTimeout(function() {
