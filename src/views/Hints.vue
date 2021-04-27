@@ -1,5 +1,5 @@
 <template>
-  <div class="columns is-centered mt-4">
+  <div class="columns is-centered navbar-offset">
     <div class="column is-full">
       <section class="container has-text-centered">
         <div class="content has-text-white hints-section">
@@ -23,7 +23,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .hints-section{
-    margin-bottom: 200px;
+  /* .hints-section{
+    margin-bottom: 400px;
+  } */
+
+  .navbar-offset{
+    margin-top: 50px;
+    height: 70vh;
   }
 </style>
