@@ -253,7 +253,7 @@
     </div> -->
 
     <!-- Not uploaded/editing yet -->
-    <div v-else class="columns placeholder desktopCanvasOffset navbar-offset">
+    <div v-else class="columns desktopCanvasOffset navbar-offset">
         <div class="column is-three-quarters">
           <section class="hero is-primary is-large header-image">
               <div class="hero-body">
@@ -931,10 +931,6 @@ export default {
 
   .main-title{
     font-size: 3rem !important;
-  }
-
-  .placeholder{
-    height: 77vh;
   }
 
   .mobile-placeholder{

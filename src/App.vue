@@ -83,10 +83,6 @@ export default {
 </script>
 
 <style lang="scss">
-  .footer{
-    position: relative;
-    top: 150px;
-  }
 
   @font-face {
     font-family: "Helvetica";
