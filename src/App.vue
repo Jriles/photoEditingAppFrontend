@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar is-fixed-top has-background-grey-dark" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
+    <div class="navbar-brand ml-4">
       <router-link class="navbar-item has-text-white has-background-grey-dark simple-photo-logo" to="/transformations/light">
         <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
         EazySnap
@@ -83,6 +83,10 @@ export default {
 </script>
 
 <style lang="scss">
+  .footer{
+    position: relative;
+    top: 150px;
+  }
 
   @font-face {
     font-family: "Helvetica";
