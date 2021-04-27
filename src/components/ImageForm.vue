@@ -718,6 +718,7 @@ export default {
     },
     updateShapeVal(newVal){
       //get cropper
+      //test
       if (this.uploaded) {
         this[newVal['valType']].val = newVal['newVal']
         if (newVal['valType'] === 'size'){
