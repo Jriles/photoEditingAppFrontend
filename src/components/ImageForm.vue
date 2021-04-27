@@ -524,6 +524,9 @@ export default {
     }
   },
   methods: {
+    submitGAClickEvent(category){
+      ga('send', 'event', category, 'click');
+    },
     undoAll(){
       this.resetFilterShapeVals()
       const path = this.$route.name;
@@ -539,6 +542,7 @@ export default {
           this.reInitCropperjsCanvas()
           break
       }
+      this.submitGAClickEvent('Undo All')
     },
     resetFilterShapeVals(){
       console.log('called reset filter shape vals')
@@ -627,9 +631,8 @@ export default {
       }, false);
 
       const objURL = reader.readAsDataURL(file)
-      console.log('generated objurl')
 
-      //URL.revokeObjectURL(objURL);
+      this.submitGAClickEvent('Submit')
     },
     updateColorVal(newVal){
       this.updateFilterVal(newVal);
