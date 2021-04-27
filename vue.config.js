@@ -1,13 +1,14 @@
 // vue.config.js
 
-require = require('esm')(module);
-const { routes } = require('./src/router/index.js');
-
 module.exports = {
     pluginOptions: {
         sitemap: {
-            baseURL: 'https://eazysnap.com',
-            routes,
+          urls: [
+              'https://eazysnap.com/transformations/light',
+              'https://eazysnap.com/transformations/color',
+              'https://eazysnap.com/transformations/shape',
+              'https://eazysnap.com/hints'
+          ]
         }
     }
 }
