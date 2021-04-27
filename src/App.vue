@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar has-background-grey-dark" role="navigation" aria-label="main navigation">
+  <nav class="navbar is-fixed-top has-background-grey-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <router-link class="navbar-item has-text-white has-background-grey-dark simple-photo-logo" to="/transformations/light">
         <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
@@ -45,12 +45,19 @@
   <router-view/>
   <footer class="footer has-background-grey-dark">
     <div class="content has-text-centered has-background-grey-dark">
-      <!-- <p>
-        <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is licensed
-        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-        is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
-      </p> -->
-      <p>
+      <!-- Your share button code -->
+      <div class="buttons is-centered">
+        <div class="fb-share-button"
+        data-href="<%= BASE_URL %>transformations/light"
+        data-layout="button" size="large" lazy="true">
+        </div>
+        <a class="twitter-share-button"
+          href="https://twitter.com/intent/tweet?text=Check%20out%3A%20https%3A%2F%2Feazysnap.com!">
+        <button class="button is-small is-black"><font-awesome-icon :icon="['fab', 'twitter']" />Tweet!</button></a>
+        <a href="https://cloud.google.com/sustainability"><button class="button is-small is-success">Sustainability</button></a>
+      </div>
+      <p class="has-text-white">
+        Please bookmark EazySnap if you like it!
         <br>
         <br>
         <br>
@@ -85,6 +92,10 @@ export default {
   @font-face {
     font-family: "RobotoSlabExtraLight";
     src: url("assets/fonts/RobotoSlab-ExtraLight.woff") format("woff");
+  }
+
+  .fb-share-button{
+    margin-bottom: 6px;
   }
 
   .simple-photo-logo{

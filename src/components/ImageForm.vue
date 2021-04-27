@@ -1,7 +1,7 @@
 <template>
   <!-- mobile version of dom -->
   <div v-if="desktopMode == false">
-    <div v-if="uploaded" class="columns is-centered">
+    <div v-if="uploaded" class="columns is-centered navbar-offset">
       <div class="column is-three-quarters">
         <section class="container has-text-centered">
           <div class="columns mt-6 mb-6">
@@ -81,18 +81,17 @@
               :defaultInk="defaultInk.val"
             ></router-view>
           </div>
-          <p class="mt-5" v-show="uploaded"><strong class="has-text-white">Please bookmark us!</strong></p>
         </section>
       </div>
     </div>
     <!-- not yet uploaded to mobile -->
-    <div v-else class="columns mobile-placeholder">
+    <div v-else class="columns mobile-placeholder navbar-offset">
       <div class="column is-three-quarters">
         <section class="hero is-primary is-large header-image">
             <!-- Hero content: will be in the middle -->
             <div class="hero-body">
                 <div class="container has-text-centered">
-                    <h1 class="title has-text-black">
+                    <h1 class="title has-text-white">
                         Transform Your Images
                     </h1>
                       <div class="file is-primary is-centered">
@@ -156,16 +155,16 @@
   </div>
   <div v-else>
     <!--desktop-->
-    <div v-if="uploaded" class="columns is-centered">
+    <div v-if="uploaded" class="columns is-centered navbar-offset">
       <div class="column">
         <section class="has-text-centered">
           <div class="columns">
             <div class="column desktopCanvasOffset is-three-quarters">
-              <div class="mt-5">
+              <div>
                 <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
                 <img id="originalImg" v-show="false" :src="originalImg"/>
               </div>
-              <div id="imgBucket" class="mt-6">
+              <div id="imgBucket">
                 <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
                 <img id="shapeImg" class="hidden" :src="shapeImg"/>
                 <img id="filterImg" class="hidden" :src="filterImg"/>
@@ -238,7 +237,6 @@
               </div>
             </div>
           </div>
-          <p class="mt-5" v-show="uploaded"><strong class="has-text-white">Please bookmark us!</strong></p>
         </section>
       </div>
     </div>
@@ -255,12 +253,12 @@
     </div> -->
 
     <!-- Not uploaded/editing yet -->
-    <div v-else class="columns placeholder desktopCanvasOffset">
+    <div v-else class="columns placeholder desktopCanvasOffset navbar-offset">
         <div class="column is-three-quarters">
           <section class="hero is-primary is-large header-image">
               <div class="hero-body">
                   <div class="container has-text-centered">
-                      <h1 class="title has-text-black">
+                      <h1 class="title has-text-white main-title">
                           Transform Your Images
                       </h1>
                         <div class="file is-primary is-centered">
@@ -930,6 +928,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .navbar-offset{
+    margin-top: 50px;
+  }
+
+  .main-title{
+    font-size: 3rem !important;
+  }
+
   .placeholder{
     height: 77vh;
   }
@@ -948,7 +954,7 @@ export default {
   }
 
   .header-image {
-    background-image: url("~@/assets/img/catman.jpg");
+    background-image: url("~@/assets/img/catman copy.jpg");
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;

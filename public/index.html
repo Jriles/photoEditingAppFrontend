@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.png">
     <title>EazySnap</title>
+    <meta property="og:url"           content="<%= BASE_URL %>transformations/light" />
+    <meta property="og:type"          content="website" />
+    <meta property="og:title"         content="EazySnap" />
+    <meta property="og:description"   content="Easily Crop, straighten, change color curves, size and much, much more. Free. Always." />
+    <meta property="og:image"         content="<%= BASE_URL %>favicon.png" />
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRCHPWLB7Y"></script>
     <script>
@@ -17,6 +22,14 @@
     </script>
   </head>
   <body>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
