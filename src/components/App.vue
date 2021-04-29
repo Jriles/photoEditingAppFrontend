@@ -86,12 +86,12 @@ export default {
 
   @font-face {
     font-family: "Helvetica";
-    src: url("assets/fonts/helvetica.woff") format("woff");
+    src: url("~@/assets/fonts/helvetica.woff") format("woff");
   }
 
   @font-face {
     font-family: "RobotoSlabExtraLight";
-    src: url("assets/fonts/RobotoSlab-ExtraLight.woff") format("woff");
+    src: url("~@/assets/fonts/RobotoSlab-ExtraLight.woff") format("woff");
   }
 
   .fb-share-button{

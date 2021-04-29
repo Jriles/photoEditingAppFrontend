@@ -1,6 +1,7 @@
 <template>
   <!-- mobile version of dom -->
   <div v-if="desktopMode == false">
+    <h1>MOBILE</h1>
     <div v-if="uploaded" class="columns is-centered navbar-offset">
       <div class="column is-three-quarters">
         <section class="container has-text-centered">
@@ -41,45 +42,7 @@
             <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
           </div>
           <div v-show="uploaded" class="has-text-centered pl-5 pr-5">
-            <router-view
-              @updateLightVal="updateLightVal"
-              @updateColorVal="updateColorVal"
-              @updateShapeVal="updateShapeVal"
-              @doneChangingFilter="doneChangingFilter"
-              @doneChangingShape="doneChangingShape"
-              @changeStateButton="changeStateButton"
-              :red="red.val"
-              :green="green.val"
-              :blue="blue.val"
-              :brightness="brightness.val"
-              :contrast="contrast.val"
-              :vibrance="vibrance.val"
-              :hue="hue.val"
-              :saturation="saturation.val"
-              :smooth="smooth.val"
-              :rotation="rotation.val"
-              :cropping="cropping.val"
-              :size="size.val"
-              :straightening="straightening.val"
-              :sepia="sepia.val"
-              :noise="noise.val"
-              :ink="ink.val"
-              :defaultStraightenAmount="defaultStraightenAmount.val"
-              :defaultBrightness="defaultBrightness.val"
-              :defaultContrast="defaultContrast.val"
-              :defaultVibrance="defaultVibrance.val"
-              :defaultHue="defaultHue.val"
-              :defaultSaturation="defaultSaturation.val"
-              :defaultRed="defaultRed.val"
-              :defaultBlue="defaultBlue.val"
-              :defaultGreen="defaultGreen.val"
-              :defaultSmooth="defaultSmooth.val"
-              :defaultRotation="defaultRotation.val"
-              :defaultSize="defaultSize.val"
-              :defaultSepia="defaultSepia.val"
-              :defaultNoise="defaultNoise.val"
-              :defaultInk="defaultInk.val"
-            ></router-view>
+            <router-view/>
           </div>
         </section>
       </div>
@@ -110,45 +73,7 @@
       </div>
       <div class="column">
         <div class="has-text-centered pl-5 pr-5">
-          <router-view
-            @updateLightVal="updateLightVal"
-            @updateColorVal="updateColorVal"
-            @updateShapeVal="updateShapeVal"
-            @doneChangingFilter="doneChangingFilter"
-            @doneChangingShape="doneChangingShape"
-            @changeStateButton="changeStateButton"
-            :red="red.val"
-            :green="green.val"
-            :blue="blue.val"
-            :brightness="brightness.val"
-            :contrast="contrast.val"
-            :vibrance="vibrance.val"
-            :hue="hue.val"
-            :saturation="saturation.val"
-            :smooth="smooth.val"
-            :rotation="rotation.val"
-            :cropping="cropping.val"
-            :size="size.val"
-            :straightening="straightening.val"
-            :sepia="sepia.val"
-            :noise="noise.val"
-            :ink="ink.val"
-            :defaultStraightenAmount="defaultStraightenAmount.val"
-            :defaultBrightness="defaultBrightness.val"
-            :defaultContrast="defaultContrast.val"
-            :defaultVibrance="defaultVibrance.val"
-            :defaultHue="defaultHue.val"
-            :defaultSaturation="defaultSaturation.val"
-            :defaultRed="defaultRed.val"
-            :defaultBlue="defaultBlue.val"
-            :defaultGreen="defaultGreen.val"
-            :defaultSmooth="defaultSmooth.val"
-            :defaultRotation="defaultRotation.val"
-            :defaultSize="defaultSize.val"
-            :defaultSepia="defaultSepia.val"
-            :defaultNoise="defaultNoise.val"
-            :defaultInk="defaultInk.val"
-          ></router-view>
+          <router-view/>
         </div>
       </div>
     </div>
@@ -195,45 +120,7 @@
                 <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
               </div>
               <div class="desktopControls pr-5">
-                <router-view
-                  @updateLightVal="updateLightVal"
-                  @updateColorVal="updateColorVal"
-                  @updateShapeVal="updateShapeVal"
-                  @doneChangingFilter="doneChangingFilter"
-                  @doneChangingShape="doneChangingShape"
-                  @changeStateButton="changeStateButton"
-                  :red="red.val"
-                  :green="green.val"
-                  :blue="blue.val"
-                  :brightness="brightness.val"
-                  :contrast="contrast.val"
-                  :vibrance="vibrance.val"
-                  :hue="hue.val"
-                  :saturation="saturation.val"
-                  :smooth="smooth.val"
-                  :rotation="rotation.val"
-                  :cropping="cropping.val"
-                  :size="size.val"
-                  :straightening="straightening.val"
-                  :sepia="sepia.val"
-                  :noise="noise.val"
-                  :ink="ink.val"
-                  :defaultStraightenAmount="defaultStraightenAmount.val"
-                  :defaultBrightness="defaultBrightness.val"
-                  :defaultContrast="defaultContrast.val"
-                  :defaultVibrance="defaultVibrance.val"
-                  :defaultHue="defaultHue.val"
-                  :defaultSaturation="defaultSaturation.val"
-                  :defaultRed="defaultRed.val"
-                  :defaultBlue="defaultBlue.val"
-                  :defaultGreen="defaultGreen.val"
-                  :defaultSmooth="defaultSmooth.val"
-                  :defaultRotation="defaultRotation.val"
-                  :defaultSize="defaultSize.val"
-                  :defaultSepia="defaultSepia.val"
-                  :defaultNoise="defaultNoise.val"
-                  :defaultInk="defaultInk.val"
-                ></router-view>
+                <router-view/>
               </div>
             </div>
           </div>
@@ -277,45 +164,7 @@
         </div>
         <div class="column is-one-quarter">
           <div class="desktopControls has-text-centered pr-5">
-            <router-view
-              @updateLightVal="updateLightVal"
-              @updateColorVal="updateColorVal"
-              @updateShapeVal="updateShapeVal"
-              @doneChangingFilter="doneChangingFilter"
-              @doneChangingShape="doneChangingShape"
-              @changeStateButton="changeStateButton"
-              :red="red.val"
-              :green="green.val"
-              :blue="blue.val"
-              :brightness="brightness.val"
-              :contrast="contrast.val"
-              :vibrance="vibrance.val"
-              :hue="hue.val"
-              :saturation="saturation.val"
-              :smooth="smooth.val"
-              :rotation="rotation.val"
-              :cropping="cropping.val"
-              :size="size.val"
-              :straightening="straightening.val"
-              :sepia="sepia.val"
-              :noise="noise.val"
-              :ink="ink.val"
-              :defaultStraightenAmount="defaultStraightenAmount.val"
-              :defaultBrightness="defaultBrightness.val"
-              :defaultContrast="defaultContrast.val"
-              :defaultVibrance="defaultVibrance.val"
-              :defaultHue="defaultHue.val"
-              :defaultSaturation="defaultSaturation.val"
-              :defaultRed="defaultRed.val"
-              :defaultBlue="defaultBlue.val"
-              :defaultGreen="defaultGreen.val"
-              :defaultSmooth="defaultSmooth.val"
-              :defaultRotation="defaultRotation.val"
-              :defaultSize="defaultSize.val"
-              :defaultSepia="defaultSepia.val"
-              :defaultNoise="defaultNoise.val"
-              :defaultInk="defaultInk.val"
-            ></router-view>
+            <router-view/>
           </div>
         </div>
       </div>
@@ -359,17 +208,15 @@ export default {
   created(){
     //redirect to light transformations
     //no landing page
-    const ref = this;
-    console.log(this)
-    console.log(screen.width)
-    if(screen.width > 1100){
+    if(this.getWindowWidth() > 1100){
       //desktop
-      ref.desktopMode = true
-      ref.containerWidth = ref.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT)
-      console.log(this.containerWidth)
+      console.log('thinks that screen is big')
+      this.$store.dispatch('setDesktopMode', true)
+      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
     } else {
-      ref.desktopMode = false
-      ref.containerWidth = ref.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT)
+      console.log('thinks we"re on mobile')
+      this.$store.dispatch('setDesktopMode', false)
+      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
     }
   },
   components: {
@@ -379,8 +226,10 @@ export default {
   props: {
     msg: String
   },
-  data() {
+  computed () {
     return {
+      //mobile first!
+      desktopMode: false,
       originalImg: null,
       originalVisible: false,
       img: null,
@@ -395,8 +244,7 @@ export default {
       containerHeight: IMAGE_HEIGHT,
       containerWidth: null,
       outputVisible: false,
-      //mobile first!
-      desktopMode: false,
+
       //different image properties
       //each one is an object, some alterations might be more complicated than just a number
       brightness: {
@@ -523,7 +371,15 @@ export default {
       }
     }
   },
+  data() {
+    return {
+
+    }
+  },
   methods: {
+    getWindowWidth(){
+      return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    },
     undoAll(){
       this.resetFilterShapeVals()
       const path = this.$route.name;
@@ -635,7 +491,7 @@ export default {
       this.updateFilterVal(newVal);
     },
     getPercentOfScreenVal(percent){
-      const width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      const width  = this.getWindowWidth()
       return width * percent
     },
     getFilterCanvas(img){
