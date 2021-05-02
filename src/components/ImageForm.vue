@@ -1,7 +1,6 @@
 <template>
   <!-- mobile version of dom -->
   <div v-if="desktopMode == false">
-    <h1>MOBILE</h1>
     <div v-if="uploaded" class="columns is-centered navbar-offset">
       <div class="column is-three-quarters">
         <section class="container has-text-centered">
@@ -226,148 +225,254 @@ export default {
   props: {
     msg: String
   },
-  computed () {
-    return {
-      //mobile first!
-      desktopMode: false,
-      originalImg: null,
-      originalVisible: false,
-      img: null,
-      uploaded: false,
-      imgFileName: null,
-      cropperVisible: false,
-      shapeImg: null,
-      filterImg: null,
-      originalDisplayImg: null,
-      imgFileExt: null,
-      originalAspectRatio: null,
-      containerHeight: IMAGE_HEIGHT,
-      containerWidth: null,
-      outputVisible: false,
-
-      //different image properties
-      //each one is an object, some alterations might be more complicated than just a number
-      brightness: {
-        val: 0
+  computed: {
+    desktopMode: function () {
+      return this.$store.state.desktopMode
+    },
+    originalImg: function () {
+      return this.$store.state.originalImg
+    },
+    originalVisible: function () {
+      return this.$store.state.originalVisible
+    },
+    // img: null,
+    uploaded: function () {
+      return this.$store.state.uploaded
+    },
+    imgFileName: function () {
+      return this.$store.state.imgFileName
+    },
+    cropperVisible: function () {
+      return this.$store.state.cropperVisible
+    },
+    shapeImg: function () {
+      return this.$store.state.shapeImg
+    },
+    filterImg: function () {
+      return this.$store.state.filterImg
+    },
+    originalDisplayImg: function () {
+      return this.$store.state.originalDisplayImg
+    },
+    imgFileExt: function () {
+      return this.$store.state.imgFileExt
+    },
+    originalAspectRatio: function () {
+      return this.$store.state.originalAspectRatio
+    },
+    containerHeight: function () {
+      return this.$store.state.containerHeight
+    },
+    containerWidth: function () {
+      return this.$store.state.containerWidth
+    },
+    outputVisible: function () {
+      return this.$store.state.outputVisible
+    },
+    // different image properties
+    // each one is an object, some alterations might be more complicated than just a number
+    brightness: {
+      val: function () {
+        return this.$store.state.brightness.val
+      }
+    },
+    contrast: {
+      val: function () {
+        return this.$store.state.contrast.val
+      }
+    },
+    vibrance: {
+      val: function () {
+        return this.$store.state.vibrance.val
+      }
+    },
+    hue: {
+      val: function () {
+        return this.$store.state.hue.val
+      }
+    },
+    saturation: {
+      val: function () {
+        return this.$store.state.saturation.val
+      }
+    },
+    red: {
+      val: function () {
+        return this.$store.state.red.val
+      }
+    },
+    blue: {
+      val: function () {
+        return this.$store.state.blue.val
+      }
+    },
+    green: {
+      val: function () {
+        return this.$store.state.green.val
+      }
+    },
+    // shadows: {
+    //   val: 0
+    // },
+    // highlights: {
+    //   val: 0
+    // },
+    smooth: {
+      val: function () {
+        return this.$store.state.smooth.val
+      }
+    },
+    rotation: {
+      val: function () {
+        return this.$store.state.rotation.val
+      }
+    },
+    cropping: {
+      val: function () {
+        return this.$store.state.cropping.val
       },
-      contrast: {
-        val: 0
-      },
-      vibrance: {
-        val: 0
-      },
-      hue: {
-        val: 0
-      },
-      saturation: {
-        val: 0
-      },
-      red: {
-        val: 0
-      },
-      blue: {
-        val: 0
-      },
-      green: {
-        val: 0
-      },
-      // shadows: {
-      //   val: 0
-      // },
-      // highlights: {
-      //   val: 0
-      // },
-      smooth: {
-        val: 50
-      },
-      rotation: {
-        val: 0
-      },
-      cropping: {
-        val: false,
-        defaultSize: 0.8
-      },
-      cropped: {
-        val: false
-      },
-      size: {
-        val: 100
-      },
-      sizeX: {
-        val: 100
-      },
-      sizeY: {
-        val: 100
-      },
-      straightening: {
-        val: false
-      },
-      straightenAmount: {
-        val: 0
-      },
-      straightened: {
-        val: false
-      },
-      sepia: {
-        val: 0
-      },
-      noise: {
-        val: 0
-      },
-      ink: {
-        val: 0
-      },
-      //defaults
-      defaultBrightness: {
-        val: 0
-      },
-      defaultContrast: {
-        val: 0
-      },
-      defaultVibrance: {
-        val: 0
-      },
-      defaultHue: {
-        val: 0
-      },
-      defaultSaturation: {
-        val: 0
-      },
-      defaultRed: {
-        val: 0
-      },
-      defaultBlue: {
-        val: 0
-      },
-      defaultGreen: {
-        val: 0
-      },
-      defaultSmooth: {
-        val: 50
-      },
-      defaultRotation: {
-        val: 0
-      },
-      defaultSize: {
-        val: 100
-      },
-      defaultSizeX: {
-        val: 100
-      },
-      defaultSizeY: {
-        val: 100
-      },
-      defaultStraightenAmount: {
-        val: 0
-      },
-      defaultSepia: {
-        val: 0
-      },
-      defaultNoise: {
-        val: 0
-      },
-      defaultInk: {
-        val: 0
+      defaultSize: function () {
+        return this.$store.state.cropping.defaultSize
+      }
+    },
+    cropped: {
+      val: function () {
+        return this.$store.state.cropped.val
+      }
+    },
+    cropped: {
+      val: function () {
+        return this.$store.state.cropped.val
+      }
+    },
+    //I think we aint using this no more.
+    // size: {
+    //   val: 100
+    // },
+    sizeX: {
+      val: function () {
+        return this.$store.state.sizeX.val
+      }
+    },
+    sizeY: {
+      val: function () {
+        return this.$store.state.sizeY.val
+      }
+    },
+    straightening: {
+      val: function () {
+        return this.$store.state.straightening.val
+      }
+    },
+    straightenAmount: {
+      val: function () {
+        return this.$store.state.straightenAmount.val
+      }
+    },
+    straightened: {
+      val: function () {
+        return this.$store.state.straightened.val
+      }
+    },
+    sepia: {
+      val: function () {
+        return this.$store.state.sepia.val
+      }
+    },
+    noise: {
+      val: function () {
+        return this.$store.state.noise.val
+      }
+    },
+    ink: {
+      val: function () {
+        return this.$store.state.ink.val
+      }
+    },
+    //defaults
+    defaultBrightness: {
+      val: function () {
+        return this.$store.state.defaultBrightness.val
+      }
+    },
+    defaultContrast: {
+      val: function () {
+        return this.$store.state.defaultContrast.val
+      }
+    },
+    defaultVibrance: {
+      val: function () {
+        return this.$store.state.defaultVibrance.val
+      }
+    },
+    defaultHue: {
+      val: function () {
+        return this.$store.state.defaultHue.val
+      }
+    },
+    defaultSaturation: {
+      val: function () {
+        return this.$store.state.defaultSaturation.val
+      }
+    },
+    defaultRed: {
+      val: function () {
+        return this.$store.state.defaultRed.val
+      }
+    },
+    defaultBlue: {
+      val: function () {
+        return this.$store.state.defaultBlue.val
+      }
+    },
+    defaultGreen: {
+      val: function () {
+        return this.$store.state.defaultGreen.val
+      }
+    },
+    defaultSmooth: {
+      val: function () {
+        return this.$store.state.defaultSmooth.val
+      }
+    },
+    defaultRotation: {
+      val: function () {
+        return this.$store.state.defaultRotation.val
+      }
+    },
+    // defaultSize: {
+    //   val: function () {
+    //     return this.$store.state.defaultSize.val
+    //   }
+    // },
+    defaultSizeX: {
+      val: function () {
+        return this.$store.state.defaultSizeX.val
+      }
+    },
+    defaultSizeY: {
+      val: function () {
+        return this.$store.state.defaultSizeY.val
+      }
+    },
+    defaultStraightenAmount: {
+      val: function () {
+        return this.$store.state.defaultStraightenAmount.val
+      }
+    },
+    defaultSepia: {
+      val: function () {
+        return this.$store.state.defaultSepia.val
+      }
+    },
+    defaultNoise: {
+      val: function () {
+        return this.$store.state.defaultNoise.val
+      }
+    },
+    defaultInk: {
+      val: function () {
+        return this.$store.state.defaultInk.val
       }
     }
   },
@@ -413,7 +518,7 @@ export default {
       this.blue.val = this.defaultBlue.val;
       this.green.val = this.defaultGreen.val;
       //shape
-      this.size.val = this.defaultSize.val;
+      //this.size.val = this.defaultSize.val;
       this.sizeX.val = this.defaultSizeX.val;
       this.sizeY.val = this.defaultSizeY.val;
       this.rotation.val = this.defaultRotation.val;
