@@ -166,6 +166,9 @@ export default createStore({
     SET_ORIGINAL_IMG (state, img) {
       state.originalImg = img
     },
+    SET_ORIGINAL_DISPLAY_IMG (state, img) {
+      state.displayImg = img
+    },
     SET_ORIGINAL_VISIBLE (state, mode) {
       state.originalVisible = mode
     },
@@ -278,7 +281,29 @@ export default createStore({
     },
     setImgFileName (context, name) {
       context.commit('SET_IMG_FILE_NAME', name)
-    }
+    },
+    setCropperVisible (context, mode) {
+      context.commit('SET_CROPPER_VISIBLE', mode)
+    },
+    setShapeImg (context, img) {
+      context.commit('SET_SHAPE_IMG', img)
+    },
+    setFilterImg (context, img) {
+      context.commit('SET_FILTER_IMG', img)
+    },
+    setOriginalDisplayImg (context, img) {
+      context.commit('SET_ORIGINAL_DISPLAY_IMG', img)
+    },
+    setImgFileExt (context, extension) {
+      context.commit('SET_IMG_FILE_EXT', extension)
+    },
+    //not sure we need
+    setOriginalAspectRatio (context, ratio) {
+      context.commit('SET_ORIGINAL_ASPECT_RATIO', ratio)
+    },
+    setOutputVisible (context, mode) {
+      context.commit('SET_OUTPUT_VISIBLE', mode)
+    },
     setBrightness (context, amount) {
       context.commit('SET_BRIGHTNESS', amount)
     },
