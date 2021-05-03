@@ -28,128 +28,34 @@ export default createStore({
       outputVisible: false,
       //different image properties
       //each one is an object, some alterations might be more complicated than just a number
-      brightness: {
-        val: 0
-      },
-      contrast: {
-        val: 0
-      },
-      vibrance: {
-        val: 0
-      },
-      hue: {
-        val: 0
-      },
-      saturation: {
-        val: 0
-      },
-      red: {
-        val: 0
-      },
-      blue: {
-        val: 0
-      },
-      green: {
-        val: 0
-      },
+      brightness: 0,
+      contrast: 0,
+      vibrance: 0,
+      hue: 0,
+      saturation: 0,
+      red: 0,
+      blue: 0,
+      green: 0,
       // shadows: {
       //   val: 0
       // },
       // highlights: {
       //   val: 0
       // },
-      smooth: {
-        val: 50
-      },
-      rotation: {
-        val: 0
-      },
-      cropping: {
-        val: false,
-        defaultSize: 0.8
-      },
-      cropped: {
-        val: false
-      },
-      size: {
-        val: 100
-      },
-      sizeX: {
-        val: 100
-      },
-      sizeY: {
-        val: 100
-      },
-      straightening: {
-        val: false
-      },
-      straightenAmount: {
-        val: 0
-      },
-      straightened: {
-        val: false
-      },
-      sepia: {
-        val: 0
-      },
-      noise: {
-        val: 0
-      },
-      ink: {
-        val: 0
-      },
-      //defaults
-      defaultBrightness: {
-        val: 0
-      },
-      defaultContrast: {
-        val: 0
-      },
-      defaultVibrance: {
-        val: 0
-      },
-      defaultHue: {
-        val: 0
-      },
-      defaultSaturation: {
-        val: 0
-      },
-      defaultRed: {
-        val: 0
-      },
-      defaultBlue: {
-        val: 0
-      },
-      defaultGreen: {
-        val: 0
-      },
-      defaultSmooth: {
-        val: 50
-      },
-      defaultRotation: {
-        val: 0
-      },
-      defaultSize: {
-        val: 100
-      },
-      defaultSizeX: {
-        val: 100
-      },
-      defaultSizeY: {
-        val: 100
-      },
-      defaultStraightenAmount: {
-        val: 0
-      },
-      defaultSepia: {
-        val: 0
-      },
-      defaultNoise: {
-        val: 0
-      },
-      defaultInk: {
-        val: 0
-      }
+      smooth: 50,
+      rotation: 0,
+      cropping: false,
+      cropped: false,
+      //not sure this is useful
+      size: 100,
+      sizeX: 100,
+      sizeY: 100,
+      straightening: false,
+      straightenAmount: 0,
+      straightened: false,
+      sepia: 0,
+      noise: 0,
+      ink: 0
     }
   },
   mutations: {
@@ -200,64 +106,64 @@ export default createStore({
       state.outputVisible = mode
     },
     SET_BRIGHTNESS (state, amount) {
-      state.brightness.val = amount
+      state.brightness = amount
     },
     SET_CONTRAST (state, amount) {
-      state.contrast.val = amount
+      state.contrast = amount
     },
     SET_SMOOTH (state, amount) {
-      state.smooth.val = amount
+      state.smooth = amount
     },
     SET_SEPIA (state, amount) {
-      state.sepia.val = amount
+      state.sepia = amount
     },
     SET_NOISE (state, amount) {
-      state.noise.val = amount
+      state.noise = amount
     },
     SET_INK (state, amount) {
-      state.ink.val = amount
+      state.ink = amount
     },
     SET_VIBRANCE (state, amount) {
-      state.vibrance.val = amount
+      state.vibrance = amount
     },
     SET_SATURATION (state, amount) {
-      state.saturation.val = amount
+      state.saturation = amount
     },
     SET_HUE (state, amount) {
-      state.hue.val = amount
+      state.hue = amount
     },
     SET_RED (state, amount) {
-      state.red.val = amount
+      state.red = amount
     },
     SET_BLUE (state, amount) {
-      state.blue.val = amount
+      state.blue = amount
     },
     SET_GREEN (state, amount) {
-      state.green.val = amount
+      state.green = amount
     },
     SET_SIZEX (state, amount) {
-      state.sizeX.val = amount
+      state.sizeX = amount
     },
     SET_SIZEY (state, amount) {
-      state.sizeY.val = amount
+      state.sizeY = amount
     },
     SET_ROTATION (state, amount) {
-      state.rotation.val = amount
+      state.rotation = amount
     },
     SET_CROPPING (state, mode) {
-      state.cropping.val = mode
+      state.cropping = mode
     },
     SET_CROPPED (state, mode) {
-      state.cropped.val = mode
+      state.cropped = mode
     },
     SET_STRAIGHTENING (state, mode) {
-      state.straightening.val = mode
+      state.straightening = mode
     },
     SET_STRAIGHTENED (state, mode) {
-      state.straighened.val = mode
+      state.straighened = mode
     },
     SET_STRAIGHTENAMOUNT (state, amount) {
-      state.straightenAmount.val = amount
+      state.straightenAmount = amount
     }
   },
   actions: {
@@ -361,7 +267,7 @@ export default createStore({
     setStraightened (context, mode) {
       context.commit('SET_STRAIGHTENED', mode)
     },
-    setSraighten (context, amount) {
+    setStraighten (context, amount) {
       context.commit('SET_STRAIGHTENAMOUNT', amount)
     }
   }

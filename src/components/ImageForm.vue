@@ -79,7 +79,7 @@
   </div>
   <div v-else>
     <!--desktop-->
-    <div v-if="uploaded" class="columns is-centered navbar-offset">
+    <div v-show="uploaded" class="columns is-centered navbar-offset">
       <div class="column">
         <section class="has-text-centered">
           <div class="columns">
@@ -139,7 +139,7 @@
     </div> -->
 
     <!-- Not uploaded/editing yet -->
-    <div v-else class="columns desktopCanvasOffset navbar-offset">
+    <div v-show="!uploaded" class="columns desktopCanvasOffset navbar-offset">
         <div class="column is-three-quarters">
           <section class="hero is-primary is-large header-image">
               <div class="hero-body">
@@ -271,45 +271,29 @@ export default {
     },
     // different image properties
     // each one is an object, some alterations might be more complicated than just a number
-    brightness: {
-      val: function () {
-        return this.$store.state.brightness.val
-      }
+    brightness: function () {
+      return this.$store.state.brightness
     },
-    contrast: {
-      val: function () {
-        return this.$store.state.contrast.val
-      }
+    contrast: function () {
+      return this.$store.state.contrast
     },
-    vibrance: {
-      val: function () {
-        return this.$store.state.vibrance.val
-      }
+    vibrance: function () {
+      return this.$store.state.vibrance
     },
-    hue: {
-      val: function () {
-        return this.$store.state.hue.val
-      }
+    hue: function () {
+      return this.$store.state.hue
     },
-    saturation: {
-      val: function () {
-        return this.$store.state.saturation.val
-      }
+    saturation: function () {
+      return this.$store.state.saturation
     },
-    red: {
-      val: function () {
-        return this.$store.state.red.val
-      }
+    red: function () {
+      return this.$store.state.red
     },
-    blue: {
-      val: function () {
-        return this.$store.state.blue.val
-      }
+    blue: function () {
+      return this.$store.state.blue
     },
-    green: {
-      val: function () {
-        return this.$store.state.green.val
-      }
+    green: function () {
+      return this.$store.state.green
     },
     // shadows: {
     //   val: 0
@@ -317,168 +301,75 @@ export default {
     // highlights: {
     //   val: 0
     // },
-    smooth: {
-      val: function () {
-        return this.$store.state.smooth.val
-      }
+    smooth: function () {
+      return this.$store.state.smooth
     },
-    rotation: {
-      val: function () {
-        return this.$store.state.rotation.val
-      }
+    rotation: function () {
+      return this.$store.state.rotation
     },
-    cropping: {
-      val: function () {
-        return this.$store.state.cropping.val
-      },
-      defaultSize: function () {
-        return this.$store.state.cropping.defaultSize
-      }
+    cropping: function () {
+      return this.$store.state.cropping
     },
-    cropped: {
-      val: function () {
-        return this.$store.state.cropped.val
-      }
+    cropped: function () {
+      return this.$store.state.cropped
     },
-    cropped: {
-      val: function () {
-        return this.$store.state.cropped.val
-      }
+    cropped: function () {
+      return this.$store.state.cropped
     },
     //I think we aint using this no more.
     // size: {
     //   val: 100
     // },
-    sizeX: {
-      val: function () {
-        return this.$store.state.sizeX.val
-      }
+    sizeX: function () {
+      return this.$store.state.sizeX
     },
-    sizeY: {
-      val: function () {
-        return this.$store.state.sizeY.val
-      }
+    sizeY: function () {
+      return this.$store.state.sizeY
     },
-    straightening: {
-      val: function () {
-        return this.$store.state.straightening.val
-      }
+    straightening: function () {
+      return this.$store.state.straightening
     },
-    straightenAmount: {
-      val: function () {
-        return this.$store.state.straightenAmount.val
-      }
+    straightenAmount: function () {
+      return this.$store.state.straightenAmount
     },
-    straightened: {
-      val: function () {
-        return this.$store.state.straightened.val
-      }
+    straightened: function () {
+      return this.$store.state.straightened
     },
-    sepia: {
-      val: function () {
-        return this.$store.state.sepia.val
-      }
+    sepia: function () {
+      return this.$store.state.sepia
     },
-    noise: {
-      val: function () {
-        return this.$store.state.noise.val
-      }
+    noise: function () {
+      return this.$store.state.noise
     },
-    ink: {
-      val: function () {
-        return this.$store.state.ink.val
-      }
-    },
-    //defaults
-    defaultBrightness: {
-      val: function () {
-        return this.$store.state.defaultBrightness.val
-      }
-    },
-    defaultContrast: {
-      val: function () {
-        return this.$store.state.defaultContrast.val
-      }
-    },
-    defaultVibrance: {
-      val: function () {
-        return this.$store.state.defaultVibrance.val
-      }
-    },
-    defaultHue: {
-      val: function () {
-        return this.$store.state.defaultHue.val
-      }
-    },
-    defaultSaturation: {
-      val: function () {
-        return this.$store.state.defaultSaturation.val
-      }
-    },
-    defaultRed: {
-      val: function () {
-        return this.$store.state.defaultRed.val
-      }
-    },
-    defaultBlue: {
-      val: function () {
-        return this.$store.state.defaultBlue.val
-      }
-    },
-    defaultGreen: {
-      val: function () {
-        return this.$store.state.defaultGreen.val
-      }
-    },
-    defaultSmooth: {
-      val: function () {
-        return this.$store.state.defaultSmooth.val
-      }
-    },
-    defaultRotation: {
-      val: function () {
-        return this.$store.state.defaultRotation.val
-      }
-    },
-    // defaultSize: {
-    //   val: function () {
-    //     return this.$store.state.defaultSize.val
-    //   }
-    // },
-    defaultSizeX: {
-      val: function () {
-        return this.$store.state.defaultSizeX.val
-      }
-    },
-    defaultSizeY: {
-      val: function () {
-        return this.$store.state.defaultSizeY.val
-      }
-    },
-    defaultStraightenAmount: {
-      val: function () {
-        return this.$store.state.defaultStraightenAmount.val
-      }
-    },
-    defaultSepia: {
-      val: function () {
-        return this.$store.state.defaultSepia.val
-      }
-    },
-    defaultNoise: {
-      val: function () {
-        return this.$store.state.defaultNoise.val
-      }
-    },
-    defaultInk: {
-      val: function () {
-        return this.$store.state.defaultInk.val
-      }
+    ink: function () {
+      return this.$store.state.ink
     }
   },
   data() {
     return {
-
+      defaultBrightness: 0,
+      defaultContrast: 0,
+      defaultVibrance: 0,
+      defaultHue: 0,
+      defaultSaturation: 0,
+      defaultRed: 0,
+      defaultBlue: 0,
+      defaultGreen: 0,
+      defaultSmooth: 50,
+      defaultRotation: 0,
+      //not sure used
+      defaultSize: 100,
+      defaultSizeX: 100,
+      defaultSizeY: 100,
+      defaultStraightenAmount: 0,
+      defaultSepia: 0,
+      defaultNoise: 0,
+      defaultInk: 0,
+      defaultCropSize: .8,
+      defaultCropping: false,
+      defaultCropped: false,
+      defaultStraightening: false,
+      defaultStraigtened: false
     }
   },
   methods: {
@@ -504,41 +395,41 @@ export default {
     resetFilterShapeVals(){
       console.log('called reset filter shape vals')
       //light/effects stuff
-      this.brightness.val = this.defaultBrightness.val;
-      this.contrast.val = this.defaultContrast.val;
-      this.smooth.val = this.defaultSmooth.val;
-      this.sepia.val = this.defaultSepia.val;
-      this.noise.val = this.defaultNoise.val;
-      this.ink.val = this.defaultInk.val;
+      this.$store.dispatch('setBrightness', this.defaultBrightness)
+      this.$store.dispatch('setContrast', this.defaultContrast)
+      this.$store.dispatch('setSmooth', this.defaultSmooth)
+      this.$store.dispatch('setSepia', this.defaultSepia)
+      this.$store.dispatch('setNoise', this.defaultNoise)
+      this.$store.dispatch('setInk', this.defaultInk)
       //color
-      this.vibrance.val = this.defaultVibrance.val;
-      this.hue.val = this.defaultHue.val;
-      this.saturation.val = this.defaultSaturation.val;
-      this.red.val = this.defaultRed.val;
-      this.blue.val = this.defaultBlue.val;
-      this.green.val = this.defaultGreen.val;
+      this.$store.dispatch('setVibrance', this.defaultVibrance)
+      this.$store.dispatch('setHue', this.defaultHue)
+      this.$store.dispatch('setSaturation', this.defaultSaturation)
+      this.$store.dispatch('setRed', this.defaultRed)
+      this.$store.dispatch('setBlue', this.defaultBlue)
+      this.$store.dispatch('setGreen', this.defaultGreen)
       //shape
       //this.size.val = this.defaultSize.val;
-      this.sizeX.val = this.defaultSizeX.val;
-      this.sizeY.val = this.defaultSizeY.val;
-      this.rotation.val = this.defaultRotation.val;
-      this.cropping.val = false;
-      this.cropped.val = false;
-      this.straightening.val = false;
-      this.straightened.val = false;
-      this.straightenAmount.val = this.defaultStraightenAmount.val;
+      this.$store.dispatch('setSizeX', this.defaultSizeX)
+      this.$store.dispatch('setSizeY', this.defaultSizeY)
+      this.$store.dispatch('setRotation', this.defaultRotation)
+      this.$store.dispatch('setCropping', this.defaultCropping)
+      this.$store.dispatch('setCropped', this.defaultCropped)
+      this.$store.dispatch('setStraightening', this.defaultStraightening)
+      this.$store.dispatch('setStraightened', this.defaultStraigtened)
+      this.$store.dispatch('setStraighten', this.defaultStraightenAmount)
     },
     submit(e) {
       //delete old canvas
       //for re-uploading
       //first check if valid file format/save file format
       const file = e.target.files[0];
-      this.imgFileName = file.name;
+      this.$store.dispatch('setImgFileName', file.name)
       const fileExt = file.name.split('.').pop();
       if (fileExt === "png" || fileExt === "PNG") {
-        this.imgFileExt = "image/png"
+        this.$store.dispatch('setImgFileExt', "image/png")
       } else if (fileExt === "jpg" || fileExt === "jpeg" || fileExt === "JPG" || fileExt === "JPEG") {
-        this.imgFileExt = "image/jpeg"
+        this.$store.dispatch('setImgFileExt', "image/jpeg")
       } else {
         alert('Sorry, only jpg/jpeg/pngs accepted currently.')
         return
@@ -551,7 +442,7 @@ export default {
       const reader = new FileReader();
       const img = new Image();
       const ref = this
-
+      console.log(this.$refs)
       img.addEventListener("load", function () {
         //always fit it to the canvas. We use the original img on download.
         ref.fitImgToCanvas(reader.result, 'cropper', this, ref, true)
@@ -823,6 +714,7 @@ export default {
       //takes in an image id, loads
       //submit call is a flag for when we are calling this function
       //on submit image
+      console.log(cropperRef)
       vueRef.$refs[cropperRef].replace(newImgURL);
       const newWidthRatio = vueRef.containerWidth / image.width;
       const newHeightRatio = IMAGE_HEIGHT / image.height;
@@ -832,9 +724,9 @@ export default {
         vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
         //correctly sized img
         const correctlySizedImg = vueRef.$refs[cropperRef].getCroppedCanvas().toDataURL(vueRef.imgFileExt, 1)
-        vueRef.shapeImg = correctlySizedImg
+        vueRef.$store.dispatch('setShapeImg', correctlySizedImg)
         if (submitCall) {
-          vueRef.originalDisplayImg = correctlySizedImg
+          vueRef.$store.dispatch('setShapeImg', correctlySizedImg)
         }
       }, IMAGE_LOAD_TIME)
     },
