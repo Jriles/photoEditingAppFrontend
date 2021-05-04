@@ -1,13 +1,13 @@
 <template>
-  <div class="mb-2">
+  <div class="mb-1">
     <label for="input" class="label has-text-white tool-name">{{ name }}</label>
   </div>
   <div class="columns is-mobile">
-    <div class="column is-10">
-      <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 slider-custom-margin">
+    <div class="column is-two-thirds">
+      <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" :min="min" :max="max" class="w-100 mt-2">
     </div>
-    <div class="column auto">
-      <button class="button is-black is-small has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
+    <div class="column is-1">
+      <button class="button is-black is-small ml-5 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
     </div>
   </div>
 </template>
@@ -18,6 +18,7 @@ import glfx from 'glfx';
 
 export default {
   name: "default",
+  emits: [ 'doneApplyingChange'],
   watch: {
 
   },
@@ -33,12 +34,10 @@ export default {
     valProp: {
       default: 0
     }
-
   },
   created(){
     this.$options.name = this.name
     console.log(this.width)
-
   },
   //needs to match transformation name in ImageForm
   data() {
@@ -48,23 +47,15 @@ export default {
     }
   },
   methods: {
-    emitNewVal(e){
-      this.val = e.target.value
-      const changeObj = {
-        "newVal": this.val,
-        "valType": this.name
-      }
-      this.$emit('updateVal', changeObj)
+    emitNewVal(){
+      console.log(this.name)
+      this.$store.dispatch('set' + this.name, this.val)
     },
     undo(){
       console.log(this.default)
       this.val = this.default
-      const changeObj = {
-        "newVal": this.val,
-        "valType": this.name
-      }
-      this.$emit('updateVal', changeObj)
-      this.$emit('doneApplyingChange', changeObj)
+      this.emitNewVal()
+      //this.$emit('doneApplyingChange', changeObj)
     },
     emitDoneSliding(e){
       this.val = e.target.value
@@ -80,7 +71,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.slider-custom-margin{
-  margin-top: 2px;
-}
+
 </style>

@@ -55,7 +55,34 @@ export default createStore({
       straightened: false,
       sepia: 0,
       noise: 0,
-      ink: 0
+      ink: 0,
+      //defaults, here bc single source of truth
+      //we want defaults on inputs so we can reset
+      // + on img form so we can undo all at once
+      // :. single source of truth bish
+      defaultBrightness: 0,
+      defaultContrast: 0,
+      defaultVibrance: 0,
+      defaultHue: 0,
+      defaultSaturation: 0,
+      defaultRed: 0,
+      defaultBlue: 0,
+      defaultGreen: 0,
+      defaultSmooth: 50,
+      defaultRotation: 0,
+      //not sure used
+      defaultSize: 100,
+      defaultSizeX: 100,
+      defaultSizeY: 100,
+      defaultStraightenAmount: 0,
+      defaultSepia: 0,
+      defaultNoise: 0,
+      defaultInk: 0,
+      defaultCropSize: .8,
+      defaultCropping: false,
+      defaultCropped: false,
+      defaultStraightening: false,
+      defaultStraigtened: false
     }
   },
   mutations: {
@@ -72,7 +99,7 @@ export default createStore({
     SET_ORIGINAL_IMG (state, img) {
       state.originalImg = img
     },
-    SET_ORIGINAL_DISPLAY_IMG (state, img) {
+    SET_DISPLAY_IMG (state, img) {
       state.displayImg = img
     },
     SET_ORIGINAL_VISIBLE (state, mode) {
@@ -141,6 +168,9 @@ export default createStore({
     SET_GREEN (state, amount) {
       state.green = amount
     },
+    SET_SIZE (state, amount) {
+      state.size = amount
+    },
     SET_SIZEX (state, amount) {
       state.sizeX = amount
     },
@@ -197,8 +227,8 @@ export default createStore({
     setFilterImg (context, img) {
       context.commit('SET_FILTER_IMG', img)
     },
-    setOriginalDisplayImg (context, img) {
-      context.commit('SET_ORIGINAL_DISPLAY_IMG', img)
+    setDisplayImg (context, img) {
+      context.commit('SET_DISPLAY_IMG', img)
     },
     setImgFileExt (context, extension) {
       context.commit('SET_IMG_FILE_EXT', extension)
@@ -245,6 +275,9 @@ export default createStore({
     },
     setGreen (context, amount) {
       context.commit('SET_GREEN', amount)
+    },
+    setSize (context, amount) {
+      context.commit('SET_SIZE', amount)
     },
     setSizeX (context, amount) {
       context.commit('SET_SIZEX', amount)

@@ -1,8 +1,8 @@
 <template>
   <div class="columns">
     <div class="column">
-      <button v-if="!val" class="button is-black is-normal" @click="changeState">{{ localEnableAction + " " + localName }}</button>
-      <button v-else class="button is-black is-normal" @click="changeState">{{ localDisableAction + " " + localName }}</button>
+      <button v-if="!val" class="button is-black is-normal" @click="changeState">{{ localEnableAction + " " + name }}</button>
+      <button v-else class="button is-black is-normal" @click="changeState">{{ localDisableAction + " " + name }}</button>
     </div>
   </div>
 </template>
@@ -28,28 +28,22 @@ export default {
       default: false
     }
   },
-  // created(){
-  //   console.log(this.$options.name)
-  //   console.log('name in created: ' + this.name)
-  //   this.$options.name = this.name
-  // },
+  created(){
+    this.$options.name = this.name
+  },
   //needs to match transformation name in ImageForm
   data() {
     return {
       val: this.valProp,
       localEnableAction: this.enableAction,
-      localDisableAction: this.disableAction,
-      localName: this.name
+      localDisableAction: this.disableAction
     }
   },
   methods: {
     //for example cropping mode on
     changeState(e){
       this.val = !this.val
-      const changeObj = {
-        "valType": this.localName
-      }
-      this.$emit('changeState', changeObj)
+      this.$store.dispatch('set' + this.name, this.val)
     }
   }
 }

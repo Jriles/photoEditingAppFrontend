@@ -48,23 +48,14 @@ export default {
     }
   },
   methods: {
-    emitNewVal(e){
-      this.val = e.target.value
-      const changeObj = {
-        "newVal": this.val,
-        "valType": this.name
-      }
-      this.$emit('updateVal', changeObj)
+    emitNewVal(){
+      console.log(this.val)
+      this.$store.dispatch('set' + this.name, this.val)
     },
     undo(){
       console.log(this.default)
       this.val = this.default
-      const changeObj = {
-        "newVal": this.val,
-        "valType": this.name
-      }
-      this.$emit('updateVal', changeObj)
-      this.$emit('doneApplyingChange', changeObj)
+      this.emitNewVal()
     },
     emitDoneSliding(e){
       this.val = e.target.value

@@ -1,10 +1,10 @@
 <template>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="vibrance" :valProp="localVibrance" :defaultProp="localDefaultVibrance"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="hue" :valProp="localHue" :defaultProp="localDefaultHue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="saturation" :valProp="localSaturation" :defaultProp="localDefaultSaturation"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="red" min="0" max="100" :valProp="localRed" :defaultProp="localDefaultRed"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="blue" min="0" max="100" :valProp="localBlue" :defaultProp="localDefaultBlue"></effect-slider>
-  <effect-slider @updateVal="updateColorVal" @doneApplyingChange="doneApplyingChange" name="green" min="0" max="100" :valProp="localGreen" :defaultProp="localDefaultGreen"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Vibrance" :valProp="vibrance" :defaultProp="defaultVibrance"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Hue" :valProp="hue" :defaultProp="defaultHue"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Saturation" :valProp="saturation" :defaultProp="defaultSaturation"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Red" min="0" max="100" :valProp="red" :defaultProp="defaultRed"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Blue" min="0" max="100" :valProp="blue" :defaultProp="defaultBlue"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Green" min="0" max="100" :valProp="green" :defaultProp="defaultGreen"></effect-slider>
 </template>
 
 <script>
@@ -12,58 +12,50 @@ import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Color',
-  emits: ['updateColorVal', 'doneChangingFilter'],
-  props: {
-    vibrance: {
-      default: 0
+  emits: ['doneChangingFilter'],
+  computed: {
+    vibrance: function () {
+      return this.$store.state.vibrance
     },
-    hue: {
-      default: 0
+    hue: function () {
+      return this.$store.state.hue
     },
-    saturation: {
-      default: 0
+    saturation: function () {
+      return this.$store.state.saturation
     },
-    red: {
-      default: 0
+    red: function () {
+      return this.$store.state.red
     },
-    blue: {
-      default: 0
+    blue: function () {
+      return this.$store.state.blue
     },
-    green: {
-      default: 0
+    green: function () {
+      return this.$store.state.green
     },
     //defaults
-    defaultVibrance: Number,
-    defaultHue: Number,
-    defaultSaturation: Number,
-    defaultRed: Number,
-    defaultBlue: Number,
-    defaultGreen: Number
-  },
-  data() {
-    return {
-      localVibrance: this.vibrance,
-      localHue: this.hue,
-      localSaturation: this.saturation,
-      localRed: this.red,
-      localBlue: this.blue,
-      localGreen: this.green,
-      //default
-      localDefaultVibrance: this.defaultVibrance,
-      localDefaultHue: this.defaultHue,
-      localDefaultSaturation: this.defaultSaturation,
-      localDefaultRed: this.defaultRed,
-      localDefaultBlue: this.defaultBlue,
-      localDefaultGreen: this.defaultGreen
+    defaultVibrance: function () {
+      return this.$store.state.defaultVibrance
+    },
+    defaultHue: function () {
+      return this.$store.state.defaultHue
+    },
+    defaultSaturation: function () {
+      return this.$store.state.defaultSaturation
+    },
+    defaultRed: function () {
+      return this.$store.state.defaultRed
+    },
+    defaultBlue: function () {
+      return this.$store.state.defaultBlue
+    },
+    defaultGreen: function () {
+      return this.$store.state.defaultGreen
     }
   },
   components: {
     'effect-slider': EffectSliderComp
   },
   methods: {
-    updateColorVal(newVal) {
-      this.$emit("updateColorVal", newVal);
-    },
     doneApplyingChange(newVal) {
       this.$emit("doneChangingFilter", newVal);
     }

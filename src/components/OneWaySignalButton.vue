@@ -1,8 +1,8 @@
 <template>
   <div class="columns">
     <div class="column">
-      <button v-if="!val" class="button is-black is-normal" @click="changeState">{{ localName }}</button>
-      <button v-else class="button is-black is-normal" @click="changeState">{{ localName }}</button>
+      <button v-if="!val" class="button is-black is-normal" @click="changeState">{{ name }}</button>
+      <button v-else class="button is-black is-normal" @click="changeState">{{ name }}</button>
     </div>
   </div>
 </template>
@@ -19,17 +19,17 @@ export default {
   },
   data() {
     return {
-      localName: this.name
+      val: this.valProp
     }
+  },
+  created(){
+    this.$options.name = this.name
   },
   methods: {
     //for example cropping mode on
     changeState(e){
       this.val = !this.val
-      const changeObj = {
-        "valType": this.localName
-      }
-      this.$emit('changeState', changeObj)
+      this.$store.dispatch('set' + this.name, this.val)
     }
   }
 }

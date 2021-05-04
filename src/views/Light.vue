@@ -1,12 +1,12 @@
 <template>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="brightness" :valProp="localBrightness" :defaultProp="localDefaultBrightness"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="contrast" :valProp="localContrast" :defaultProp="localDefaultContrast"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Brightness" :valProp="brightness" :defaultProp="defaultBrightness"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Contrast" :valProp="contrast" :defaultProp="defaultContrast"></effect-slider>
   <!-- <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="highlights" :valProp="localHighlights"></effect-slider> -->
   <!-- <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="shadows" :valProp="localShadows"></effect-slider> -->
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="smooth" :valProp="localSmooth" min="0" max="50" :defaultProp="localDefaultSmooth"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="sepia" :valProp="localSepia" min="0" max="100" :defaultProp="localDefaultSepia"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="noise" :valProp="localNoise" min="0" max="100" :defaultProp="localDefaultNoise"></effect-slider>
-  <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="ink" :valProp="localInk" min="-100" max="100" :defaultProp="localDefaultInk"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Smooth" :valProp="smooth" min="0" max="50" :defaultProp="defaultSmooth"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Sepia" :valProp="sepia" min="0" max="100" :defaultProp="defaultSepia"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Noise" :valProp="noise" min="0" max="100" :defaultProp="defaultNoise"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Ink" :valProp="ink" min="-100" max="100" :defaultProp="defaultInk"></effect-slider>
 </template>
 
 <script>
@@ -14,66 +14,50 @@ import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Light',
-  emits: ['updateLightVal', 'doneChangingFilter'],
-  props: {
-    brightness: {
-      default: 0
+  emits: [ 'doneChangingFilter'],
+  computed: {
+    brightness: function () {
+      return this.$store.state.brightness
     },
-    contrast: {
-      default: 0
+    contrast: function () {
+      return this.$store.state.contrast
     },
-    highlights: {
-      default: 0
+    smooth: function () {
+      return this.$store.state.smooth
     },
-    shadows: {
-      default: 0
+    sepia: function () {
+      return this.$store.state.sepia
     },
-    smooth: {
-      default: 0
+    noise: function () {
+      return this.$store.state.noise
     },
-    sepia: {
-      default: 0
-    },
-    noise: {
-      default: 0
-    },
-    ink: {
-      default: 0
+    ink: function () {
+      return this.$store.state.ink
     },
     //defaults
-    defaultBrightness: Number,
-    defaultContrast: Number,
-    defaultSmooth: Number,
-    defaultSepia: Number,
-    defaultNoise: Number,
-    defaultInk: Number
-  },
-  data() {
-    return {
-      localBrightness: this.brightness,
-      localContrast: this.contrast,
-      localHighlights: this.highlights,
-      localShadows: this.shadows,
-      localSmooth: this.smooth,
-      localSepia: this.sepia,
-      localNoise: this.noise,
-      localInk: this.ink,
-      //defaults
-      localDefaultBrightness: this.defaultBrightness,
-      localDefaultContrast: this.defaultContrast,
-      localDefaultSmooth: this.defaultSmooth,
-      localDefaultSepia: this.defaultSepia,
-      localDefaultNoise: this.defaultNoise,
-      localDefaultInk: this.defaultInk
+    defaultBrightness: function () {
+      return this.$store.state.defaultBrightness
+    },
+    defaultContrast: function () {
+      return this.$store.state.defaultContrast
+    },
+    defaultSmooth: function () {
+      return this.$store.state.defaultSmooth
+    },
+    defaultSepia: function () {
+      return this.$store.state.defaultSepia
+    },
+    defaultNoise: function () {
+      return this.$store.state.defaultNoise
+    },
+    defaultInk: function () {
+      return this.$store.state.defaultInk
     }
   },
   components: {
     'effect-slider': EffectSliderComp
   },
   methods: {
-    updateLightVal(newVal) {
-      this.$emit("updateLightVal", newVal);
-    },
     doneApplyingChange(newVal) {
       this.$emit("doneChangingFilter", newVal);
     }

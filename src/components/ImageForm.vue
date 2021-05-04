@@ -29,14 +29,14 @@
             </div>
           </div>
           <div class="mt-5">
-            <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
+            <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
             <img id="originalImg" v-show="false" :src="originalImg"/>
           </div>
           <div id="imgBucket" class="mt-5">
             <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
             <img id="shapeImg" class="hidden" :src="shapeImg"/>
             <img id="filterImg" class="hidden" :src="filterImg"/>
-            <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+            <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
             <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
             <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
           </div>
@@ -85,14 +85,14 @@
           <div class="columns">
             <div class="column desktopCanvasOffset is-three-quarters">
               <div>
-                <img id="originalDisplayImg" v-show="originalVisible" :src="originalDisplayImg"/>
+                <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
                 <img id="originalImg" v-show="false" :src="originalImg"/>
               </div>
               <div id="imgBucket">
                 <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
                 <img id="shapeImg" class="hidden" :src="shapeImg"/>
                 <img id="filterImg" class="hidden" :src="filterImg"/>
-                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping.val" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
                 <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
                 <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
               </div>
@@ -186,24 +186,6 @@ const IMAGE_LOAD_TIME = 150;
 export default {
   name: 'ImageForm',
   emits: ['updateColorVal', 'updateShapeVal'],
-  watch:{
-    $route (to, from){
-      if(this.uploaded){
-        const path = to.path;
-        switch(path){
-          case "/transformations/color":
-            this.initWebGLCanvas()
-            break
-          case "/transformations/light":
-            this.initWebGLCanvas()
-            break
-          case "/transformations/shape":
-            this.reInitCropperjsCanvas();
-            break
-        }
-      }
-    }
-  },
   created(){
     //redirect to light transformations
     //no landing page
@@ -251,8 +233,8 @@ export default {
     filterImg: function () {
       return this.$store.state.filterImg
     },
-    originalDisplayImg: function () {
-      return this.$store.state.originalDisplayImg
+    displayImg: function () {
+      return this.$store.state.displayImg
     },
     imgFileExt: function () {
       return this.$store.state.imgFileExt
@@ -313,13 +295,9 @@ export default {
     cropped: function () {
       return this.$store.state.cropped
     },
-    cropped: function () {
-      return this.$store.state.cropped
+    size: function () {
+      return this.$store.state.size
     },
-    //I think we aint using this no more.
-    // size: {
-    //   val: 100
-    // },
     sizeX: function () {
       return this.$store.state.sizeX
     },
@@ -343,36 +321,166 @@ export default {
     },
     ink: function () {
       return this.$store.state.ink
+    },
+    //need defaults here
+    //light effexs
+    defaultBrightness: function () {
+      return this.$store.state.defaultBrightness
+    },
+    defaultContrast: function () {
+      return this.$store.state.defaultContrast
+    },
+    defaultSmooth: function () {
+      return this.$store.state.defaultSmooth
+    },
+    defaultSepia: function () {
+      return this.$store.state.defaultSepia
+    },
+    defaultNoise: function () {
+      return this.$store.state.defaultNoise
+    },
+    defaultInk: function () {
+      return this.$store.state.defaultInk
+    },
+    // color
+    defaultVibrance: function () {
+      return this.$store.state.defaultVibrance
+    },
+    defaultHue: function () {
+      return this.$store.state.defaultHue
+    },
+    defaultSaturation: function () {
+      return this.$store.state.defaultSaturation
+    },
+    defaultRed: function () {
+      return this.$store.state.defaultRed
+    },
+    defaultBlue: function () {
+      return this.$store.state.defaultBlue
+    },
+    defaultGreen: function () {
+      return this.$store.state.defaultGreen
+    },
+    //shape
+    defaultRotation: function () {
+      return this.$store.state.defaultRotation
+    },
+    defaultSize: function () {
+      return this.$store.state.defaultSize
+    },
+    defaultSizeX: function () {
+      return this.$store.state.defaultSizeX
+    },
+    defaultSizeY: function () {
+      return this.$store.state.defaultSizeY
+    },
+    defaultStraightenAmount: function () {
+      return this.$store.state.defaultStraightenAmount
+    },
+    defaultCropSize: function () {
+      return this.$store.state.defaultCropSize
+    },
+    defaultCropping: function () {
+      return this.$store.state.defaultCropping
+    },
+    defaultCropped: function () {
+      return this.$store.state.defaultCropped
+    },
+    defaultStraightening: function () {
+      return this.$store.state.defaultStraightening
+    },
+    defaultStraigtened: function () {
+      return this.$store.state.defaultStraigtened
     }
   },
-  data() {
-    return {
-      defaultBrightness: 0,
-      defaultContrast: 0,
-      defaultVibrance: 0,
-      defaultHue: 0,
-      defaultSaturation: 0,
-      defaultRed: 0,
-      defaultBlue: 0,
-      defaultGreen: 0,
-      defaultSmooth: 50,
-      defaultRotation: 0,
-      //not sure used
-      defaultSize: 100,
-      defaultSizeX: 100,
-      defaultSizeY: 100,
-      defaultStraightenAmount: 0,
-      defaultSepia: 0,
-      defaultNoise: 0,
-      defaultInk: 0,
-      defaultCropSize: .8,
-      defaultCropping: false,
-      defaultCropped: false,
-      defaultStraightening: false,
-      defaultStraigtened: false
+  watch: {
+    $route (to, from){
+      console.log(this.uploaded)
+      if (this.uploaded) {
+        const path = to.path;
+        console.log(path)
+        switch(path){
+          case "/transformations/color":
+            this.initWebGLCanvas()
+            break
+          case "/transformations/light":
+            this.initWebGLCanvas()
+            break
+          case "/transformations/shape":
+            console.log('thinks we should init shape')
+            this.initCropperjsCanvas()
+            break
+        }
+      }
+    },
+    brightness: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    contrast: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    vibrance: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    hue: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    saturation: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    red: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    blue: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    green: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    smooth: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    sepia: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    noise: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    ink: function (newValue, oldValue) {
+      //need to call updateFilterVal with new value
+      this.updateFilterVal()
+    },
+    rotation: function (newValue, oldValue) {
+      this.applyShapeChanges('cropper')
+    },
+    size: function (newValue, oldValue) {
+      this.applyShapeChanges('cropper')
+    },
+    straightening: function (newValue, oldValue) {
+      this.changeStateButton('Straigtening')
     }
   },
+  // data() {
+  //   return {
+  //
+  //   }
+  // },
   methods: {
+    capitalizeFirstLetter(string) {
+      console.log(string)
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    },
     getWindowWidth(){
       return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     },
@@ -388,7 +496,7 @@ export default {
           this.initWebGLCanvas()
           break
         case "shape":
-          this.reInitCropperjsCanvas()
+          this.initCropperjsCanvas()
           break
       }
     },
@@ -409,7 +517,7 @@ export default {
       this.$store.dispatch('setBlue', this.defaultBlue)
       this.$store.dispatch('setGreen', this.defaultGreen)
       //shape
-      //this.size.val = this.defaultSize.val;
+      //this.size = this.defaultSize;
       this.$store.dispatch('setSizeX', this.defaultSizeX)
       this.$store.dispatch('setSizeY', this.defaultSizeY)
       this.$store.dispatch('setRotation', this.defaultRotation)
@@ -437,19 +545,24 @@ export default {
       this.resetFilterShapeVals()
       this.removeCanvasIfExists()
 
-      //here we need to ask if the image is too big
-      //const objURL = URL.createObjectURL(file)
       const reader = new FileReader();
       const img = new Image();
       const ref = this
       console.log(this.$refs)
       img.addEventListener("load", function () {
+        console.log('thinks img loaded')
         //always fit it to the canvas. We use the original img on download.
-        ref.fitImgToCanvas(reader.result, 'cropper', this, ref, true)
-
+        ref.fitImgToCanvas(reader.result, 'cropper', this, ref)
+        console.log('got through fitting')
         const path = ref.$route.name;
         //waiting for images to load
         setTimeout(function() {
+          //first lets set our display img
+          //now that we have successfully resized.
+          const displayImg = ref.$refs['cropper'].getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
+          ref.$store.dispatch('setDisplayImg', displayImg)
+          //also setting shape img here apparently
+          ref.$store.dispatch('setShapeImg', displayImg)
           switch (path) {
             case "color":
               ref.initWebGLCanvas()
@@ -462,23 +575,25 @@ export default {
               break
           }
         }, IMAGE_LOAD_TIME);
-        ref.originalAspectRatio = this.width / this.height;
+        const aspectRatio = this.width / this.height;
+        ref.$store.dispatch('setOriginalAspectRatio', aspectRatio)
       }, false);
 
       reader.addEventListener("load", function () {
-        //filter img does not get resized, it is not displayed, except on cropper js, which doesnt care about size.
-        ref.filterImg = reader.result
-        ref.originalImg = reader.result
-        console.log('set vars with obj url')
 
-        ref.uploaded = true
+        //filter img does not get resized, as it is not displayed, except on cropper js, which doesnt care about size.
+        ref.$store.dispatch('setFilterImg', reader.result)
+        ref.$store.dispatch('setOriginalImg', reader.result)
+        ref.$store.dispatch('setUploaded', true)
         //set download
+        console.log('about to set img src')
         img.src = reader.result;
-        ref.img = reader.result;
-        console.log(reader.result)
+        //collect garbage
+        //ref.img = reader.result;
       }, false);
 
-      const objURL = reader.readAsDataURL(file)
+      //need this
+      reader.readAsDataURL(file)
     },
     updateColorVal(newVal){
       this.updateFilterVal(newVal);
@@ -498,64 +613,67 @@ export default {
       const texture = canvas.texture(img);
       canvas.draw(texture).update()
 
-      if (this.brightness.val !== this.defaultBrightness.val || this.contrast.val !== this.defaultContrast.val) {
-        canvas.draw(texture).brightnessContrast((this.brightness.val * .01), (this.contrast.val * .01)).update();
+      if (this.brightness !== this.defaultBrightness || this.contrast !== this.defaultContrast) {
+        canvas.draw(texture).brightnessContrast((this.brightness * .01), (this.contrast * .01)).update();
       }
 
-      if (this.vibrance.val !== this.defaultVibrance.val) {
+      if (this.vibrance !== this.defaultVibrance) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).vibrance((this.vibrance.val * .01)).update();
+        canvas.draw(texture).vibrance((this.vibrance * .01)).update();
       }
 
-      if (this.hue.val !== this.defaultHue.val || this.saturation.val !== this.defaultSaturation.val) {
+      if (this.hue !== this.defaultHue || this.saturation !== this.defaultSaturation) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).hueSaturation((this.hue.val * .01), (this.saturation.val * .01)).update();
+        canvas.draw(texture).hueSaturation((this.hue * .01), (this.saturation * .01)).update();
       }
 
-      if (this.red.val !== this.defaultRed.val ||
-          this.green.val !== this.defaultGreen.val ||
-          this.blue.val !== this.defaultBlue.val) {
+      if (this.red !== this.defaultRed ||
+          this.green !== this.defaultGreen ||
+          this.blue !== this.defaultBlue) {
         //colors!
         texture.loadContentsOf(canvas);
-        const redVal = this.red.val * .01;
-        const blueVal = this.blue.val * .01;
-        const greenVal = this.green.val * .01;
+        const redVal = this.red * .01;
+        const blueVal = this.blue * .01;
+        const greenVal = this.green * .01;
         canvas.draw(texture).curves([[0,0], [.25, .25 - redVal], [.75, .75 + redVal], [1,1]], [[0,0], [.25, .25 - greenVal], [.75, .75 + greenVal], [1,1]], [[0,0], [.25, .25 - blueVal], [.75, .75 + blueVal], [1,1]]).update();
       }
 
-      if (this.smooth.val !== this.defaultSmooth.val) {
+      if (this.smooth !== this.defaultSmooth) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).denoise(this.smooth.val).update();
+        canvas.draw(texture).denoise(this.smooth).update();
       }
 
-      if (this.sepia.val !== this.defaultSepia.val) {
+      if (this.sepia !== this.defaultSepia) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).sepia(this.sepia.val * .01).update();
+        canvas.draw(texture).sepia(this.sepia * .01).update();
       }
 
-      if (this.noise.val !== this.defaultNoise.val) {
+      if (this.noise !== this.defaultNoise) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).noise(this.noise.val * .01).update();
+        canvas.draw(texture).noise(this.noise * .01).update();
       }
 
-      if (this.ink.val !== this.defaultInk.val) {
+      if (this.ink !== this.defaultInk) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).ink(this.ink.val * .01).update();
+        canvas.draw(texture).ink(this.ink * .01).update();
       }
       texture.destroy();
       return canvas
     },
+    //still need this
     applyShapeChanges(cropperName){
-      this.$refs[cropperName].rotateTo(this.rotation.val);
-      this.$refs[cropperName].scaleX(this.sizeX.val * .01)
-      this.$refs[cropperName].scaleY(this.sizeY.val * .01)
-      //this.$refs[cropperName].scale(this.size.val * .01, this.size.val * .01)
-      this.straighten(cropperName)
+      this.$refs[cropperName].rotateTo(this.rotation);
+      this.$refs[cropperName].scaleX(this.size * .01)
+      this.$refs[cropperName].scaleY(this.size * .01)
+      //this.$refs[cropperName].scale(this.size * .01, this.size * .01)
+      if (this.straightening || this.straightened) {
+        this.straighten(cropperName)
+      }
     },
-    updateFilterVal(newVal){
+    //and still need this
+    updateFilterVal(){
       //dont apply changes if no photo
       if (this.uploaded) {
-        this[newVal['valType']].val = newVal['newVal']
         var shapeImg = document.getElementById('shapeImg')
         const imgBucket = document.getElementById('imgBucket');
         const oldCanvas = document.getElementsByTagName("canvas")[0];
@@ -565,54 +683,30 @@ export default {
         imgBucket.insertBefore(displayCanvas, filterImg)
       }
     },
-    updateShapeVal(newVal){
-      //get cropper
-      if (this.uploaded) {
-        this[newVal['valType']].val = newVal['newVal']
-        if (newVal['valType'] === 'size'){
-          this.sizeX.val = newVal['newVal']
-          this.sizeY.val = newVal['newVal']
-        }
-        this.applyShapeChanges('cropper')
-      }
-    },
     initWebGLCanvas() {
-      console.log('called init webgl canvas')
       //remove cropper
       const ref = this;
-      this.cropperVisible = false;
+      this.$store.dispatch('setCropperVisible', false)
       this.removeCanvasIfExists()
 
       if (ref.imgTooBig(shapeImg, ref)) {
-        console.log('thoguht the image had to be shrunk')
-        ref.fitImgToCanvas(this.shapeImg, 'storageCropper', shapeImg, ref, false)
+        ref.fitImgToCanvas(this.shapeImg, 'storageCropper', shapeImg, ref)
       }
 
       setTimeout(function() {
-        const shapeImg = document.getElementById('shapeImg')
-        ref.$refs.storageCropper.replace(ref.originalDisplayImg);
-        const canvas = ref.getFilterCanvas(shapeImg)
-        shapeImg.parentNode.insertBefore(canvas, shapeImg);
+        const shapeImgElem = document.getElementById('shapeImg')
+
+        ref.$refs.storageCropper.replace(ref.displayImg);
+        const canvas = ref.getFilterCanvas(shapeImgElem)
+        shapeImgElem.parentNode.insertBefore(canvas, shapeImgElem);
       }, IMAGE_LOAD_TIME);
     },
     initCropperjsCanvas() {
-      this.cropperVisible = true
-      this.$refs.cropper.replace(this.originalImg);
-      this.$refs.storageCropper.replace(this.originalDisplayImg);
-      this.$refs.outputCropper.replace(this.originalImg);
-    },
-    reInitCropperjsCanvas() {
-      this.cropperVisible = true;
       this.removeCanvasIfExists()
+      this.$store.dispatch('setCropperVisible', true)
       this.$refs.cropper.replace(this.filterImg);
-      const changeObj = {
-        "newVal": this.rotation.val,
-        "valType": "rotation"
-      }
-      const ref = this
-      setTimeout(function() {
-        ref.updateShapeVal(changeObj)
-      }, IMAGE_LOAD_TIME);
+      this.$refs.storageCropper.replace(this.displayImg);
+      this.$refs.outputCropper.replace(this.originalImg);
     },
     removeCanvasIfExists(){
       const canvi = document.getElementsByTagName("canvas");
@@ -623,7 +717,7 @@ export default {
       }
     },
     doneChangingShape(){
-      var originalDisplayImg = document.getElementById('originalDisplayImg')
+      var displayImg = document.getElementById('displayImg')
       this.applyShapeChanges('storageCropper')
       this.shapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL(this.imgFileExt, 1)
     },
@@ -631,69 +725,68 @@ export default {
       var originalImg = document.getElementById('originalImg')
       this.filterImg = this.getFilterCanvas(originalImg).toDataURL(this.imgFileExt, 1)
     },
-    changeStateButton(newVal){
-      console.log(newVal)
-      if (newVal['valType'] === "Straightening") {
-        this.straightening.val = !this.straightening.val
+    changeStateButton (stateToChange) {
+      if (stateToChange === "Straightening") {
+        this.straightening = !this.straightening
       }
 
-      if (newVal['valType'] === "Cropping") {
+      if (stateToChange === "Cropping") {
         //flip it!
-        this.cropping.val = !this.cropping.val
+        this.cropping = !this.cropping
       }
 
-      if (newVal['valType'] === "Aspect Ratio") {
+      if (stateToChange === "Aspect Ratio") {
         this.$refs.cropper.setAspectRatio(this.originalAspectRatio)
       }
 
-      if (newVal['valType'] === "Flip Along X"){
-        this.sizeX.val = -1 * this.sizeX.val
+      if (stateToChange === "Flip Along X"){
+        this.sizeX = -1 * this.sizeX
         this.applyShapeChanges('cropper')
-      } else if (newVal['valType'] === "Flip Along Y") {
-        this.sizeY.val = -1 * this.sizeY.val
+      } else if (stateToChange === "Flip Along Y") {
+        this.sizeY = -1 * this.sizeY
         this.applyShapeChanges('cropper')
       }
       //ask if we are cropping
-      this.changeCropState('cropper', newVal)
+      this.changeCropState('cropper', stateToChange)
     },
-    changeCropState(cropperName, newVal){
+    changeCropState(cropperName, state){
       //if we have yet to crop anything
-      if (this.cropped.val === false) {
-        if (this.straightening.val || this.cropping.val) {
+      if (this.cropped === false) {
+        if (this.straightening || this.cropping) {
           this.$refs[cropperName].initCrop()
         } else {
           this.$refs[cropperName].clear()
         }
       }
 
-      if (this.cropping.val) {
-        if (newVal['valType'] === 'Save') {
-          this.cropping.val = false
-          this.cropped.val = true
+      if (this.cropping) {
+        if (state === 'Save') {
+          this.cropping = false
+          this.cropped = true
           //this.prepOutput()
-        } else if (newVal['valType'] === 'Cancel') {
+        } else if (state === 'Cancel') {
           this.$refs[cropperName].clear()
-          this.cropping.val = false
-          this.cropped.val = false
+          this.cropping = false
+          this.cropped = false
         }
       }
 
-      if (this.straightening.val) {
-        if (newVal['valType'] === 'Save') {
-          this.straightened.val = true
+      if (this.straightening) {
+        if (state === 'Save') {
+          this.straightened = true
           //this.prepOutput()
-          this.straightening.val = false
-        } else if (newVal['valType'] === 'Cancel') {
+          this.straightening = false
+        } else if (state === 'Cancel') {
           this.$refs[cropperName].clear()
-          this.straightenAmount.val = 0
+          this.straightenAmount = 0
           this.straighten('cropper')
           //this.prepOutput()
-          this.straightening.val = false
-          this.straightened.val = false
+          this.straightening = false
+          this.straightened = false
         }
       }
 
-      if (this.straightening.val && newVal['valType'] === "Straightening") {
+      if (this.straightening && state === "Straightening") {
         //need to set crop box to max
         const cropperData = this.$refs[cropperName].getCanvasData()
         this.$refs[cropperName].setCropBoxData({
@@ -710,11 +803,11 @@ export default {
       }
       return false
     },
-    fitImgToCanvas(newImgURL, cropperRef, image, vueRef, submitCall){
+    fitImgToCanvas(newImgURL, cropperRef, image, vueRef){
+      console.log('called fit img to canvas')
       //takes in an image id, loads
       //submit call is a flag for when we are calling this function
       //on submit image
-      console.log(cropperRef)
       vueRef.$refs[cropperRef].replace(newImgURL);
       const newWidthRatio = vueRef.containerWidth / image.width;
       const newHeightRatio = IMAGE_HEIGHT / image.height;
@@ -722,20 +815,13 @@ export default {
       //need to make a copy
       setTimeout(function() {
         vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
-        //correctly sized img
-        const correctlySizedImg = vueRef.$refs[cropperRef].getCroppedCanvas().toDataURL(vueRef.imgFileExt, 1)
-        vueRef.$store.dispatch('setShapeImg', correctlySizedImg)
-        if (submitCall) {
-          vueRef.$store.dispatch('setShapeImg', correctlySizedImg)
-        }
+        console.log('got through scaling')
       }, IMAGE_LOAD_TIME)
     },
     straighten(cropperName){
       //rotate and crop to fit as we rotate
-      if (this.straightening.val || this.straightened.val) {
-        this.$refs[cropperName].rotateTo(this.straightenAmount.val)
-        this.$refs[cropperName].scale(1 + (.021 * Math.abs(this.straightenAmount.val)))
-      }
+      this.$refs[cropperName].rotateTo(this.straightenAmount)
+      this.$refs[cropperName].scale(1 + (.021 * Math.abs(this.straightenAmount)))
     },
     prepOutput(){
       //take in original (unsized) img
@@ -753,7 +839,7 @@ export default {
       setTimeout(function() {
         //apply rotation, size, cropping
         ref.applyShapeChanges('outputCropper')
-        if (ref.cropped.val || ref.straightened.val){
+        if (ref.cropped || ref.straightened){
           //need cropper info
           const cropperData = ref.$refs.cropper.getCropBoxData()
           console.log(cropperData)
