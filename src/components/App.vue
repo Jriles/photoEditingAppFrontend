@@ -46,7 +46,7 @@
   <footer class="footer has-background-grey-dark">
     <div class="content has-text-centered has-background-grey-dark">
       <!-- Your share button code -->
-      <div class="buttons is-centered">
+      <!-- <div class="buttons is-centered">
         <div class="fb-share-button"
         data-href="<%= BASE_URL %>transformations/light"
         data-layout="button" size="large" lazy="true">
@@ -55,7 +55,7 @@
           href="https://twitter.com/intent/tweet?text=Check%20out%3A%20https%3A%2F%2Feazysnap.com!">
         <button class="button is-small is-black"><font-awesome-icon :icon="['fab', 'twitter']" />Tweet!</button></a>
         <a href="https://cloud.google.com/sustainability"><button class="button is-small is-success">Sustainability</button></a>
-      </div>
+      </div> -->
       <p class="has-text-white">
         Please bookmark EazySnap if you like it!
         <br>

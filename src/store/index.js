@@ -59,6 +59,19 @@ export default createStore({
       straightening: false,
       straightenAmount: 0,
       straightened: false,
+      //need to hold on to crop box details
+      //for cropping and straightening
+      //for cropping, these get set whenever we save during cropping
+      cropBoxTop: false,
+      cropBoxLeft: false,
+      cropBoxWidth: false,
+      cropBoxHeight: false,
+      //for straightening
+      //these only get set once.
+      straightenCropBoxTop: false,
+      straightenCropBoxLeft: false,
+      straightenCropBoxWidth: false,
+      straightenCropBoxHeight: false,
       sepia: 0,
       noise: 0,
       ink: 0,
@@ -92,7 +105,6 @@ export default createStore({
   },
   mutations: {
     SET_DESKTOP_MODE (state, mode) {
-      console.log('mode: ' + mode)
       state.desktopMode = mode
     },
     SET_CONTAINER_WIDTH (state, percent) {
@@ -196,10 +208,24 @@ export default createStore({
       state.straightening = mode
     },
     SET_STRAIGHTENED (state, mode) {
-      state.straighened = mode
+      state.straightened = mode
     },
     SET_STRAIGHTENAMOUNT (state, amount) {
       state.straightenAmount = amount
+    },
+    SET_CROP_BOX_DATA (state, data) {
+      console.log('called set crop box data')
+      console.log(data)
+      state.cropBoxTop = data.top,
+      state.cropBoxLeft = data.left,
+      state.cropBoxWidth = data.width,
+      state.cropBoxHeight = data.height
+    },
+    SET_STRAIGHTEN_CROP_BOX_DATA (state, data) {
+      state.straightenCropBoxTop = data.top,
+      state.straightenCropBoxLeft = data.left,
+      state.straightenCropBoxWidth = data.width,
+      state.straightenCropBoxHeight = data.height
     }
   },
   actions: {
@@ -309,6 +335,12 @@ export default createStore({
     },
     setStraightenAmount (context, amount) {
       context.commit('SET_STRAIGHTENAMOUNT', amount)
+    },
+    setCropBoxData (context, data) {
+      context.commit('SET_CROP_BOX_DATA', data)
+    },
+    setStraightenCropBoxData (context, data) {
+      context.commit('SET_STRAIGHTEN_CROP_BOX_DATA', data)
     }
   }
 })

@@ -117,7 +117,7 @@ export default {
       this.$store.dispatch('setStraightening', true)
     },
     doneApplyingChange () {
-      this.$emit("doneChangingShape", e.target.name);
+      this.$emit("doneChangingShape");
     }
   }
 }

@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     doneApplyingChange(newVal) {
-      this.$emit("doneChangingFilter", newVal);
+      this.$emit("doneChangingFilter");
     }
   }
 }
