@@ -18,6 +18,7 @@ import glfx from 'glfx';
 
 export default {
   name: "default",
+  emits: [ 'doneApplyingChange'],
   watch: {
 
   },

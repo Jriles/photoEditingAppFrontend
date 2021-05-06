@@ -46,6 +46,12 @@ export default createStore({
       rotation: 0,
       cropping: false,
       cropped: false,
+      cancel: false,
+      save: false,
+      flipX: false,
+      flipY: false,
+      originalAspectRatio: null,
+      resetApectRatio: false,
       //not sure this is useful
       size: 100,
       sizeX: 100,
@@ -70,7 +76,6 @@ export default createStore({
       defaultGreen: 0,
       defaultSmooth: 50,
       defaultRotation: 0,
-      //not sure used
       defaultSize: 100,
       defaultSizeX: 100,
       defaultSizeY: 100,
@@ -126,6 +131,7 @@ export default createStore({
     SET_IMG_FILE_EXT (state, extension) {
       state.imgFileExt = extension
     },
+    //call this to set img originalAspectRatio
     SET_ORIGINAL_ASPECT_RATIO (state, ratio) {
       state.originalAspectRatio = ratio
     },
@@ -233,7 +239,7 @@ export default createStore({
     setImgFileExt (context, extension) {
       context.commit('SET_IMG_FILE_EXT', extension)
     },
-    //not sure we need
+    //used for cropper
     setOriginalAspectRatio (context, ratio) {
       context.commit('SET_ORIGINAL_ASPECT_RATIO', ratio)
     },
@@ -277,7 +283,8 @@ export default createStore({
       context.commit('SET_GREEN', amount)
     },
     setSize (context, amount) {
-      context.commit('SET_SIZE', amount)
+      context.commit('SET_SIZEX', amount)
+      context.commit('SET_SIZEY', amount)
     },
     setSizeX (context, amount) {
       context.commit('SET_SIZEX', amount)
@@ -300,7 +307,7 @@ export default createStore({
     setStraightened (context, mode) {
       context.commit('SET_STRAIGHTENED', mode)
     },
-    setStraighten (context, amount) {
+    setStraightenAmount (context, amount) {
       context.commit('SET_STRAIGHTENAMOUNT', amount)
     }
   }

@@ -41,7 +41,7 @@
             <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
           </div>
           <div v-show="uploaded" class="has-text-centered pl-5 pr-5">
-            <router-view/>
+            <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
           </div>
         </section>
       </div>
@@ -72,7 +72,7 @@
       </div>
       <div class="column">
         <div class="has-text-centered pl-5 pr-5">
-          <router-view/>
+          <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
         </div>
       </div>
     </div>
@@ -119,7 +119,7 @@
                 <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
               </div>
               <div class="desktopControls pr-5">
-                <router-view/>
+                <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@
         </div>
         <div class="column is-one-quarter">
           <div class="desktopControls has-text-centered pr-5">
-            <router-view/>
+            <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
           </div>
         </div>
       </div>
@@ -464,11 +464,20 @@ export default {
     rotation: function (newValue, oldValue) {
       this.applyShapeChanges('cropper')
     },
-    size: function (newValue, oldValue) {
+    sizeX: function (newValue, oldValue) {
+      this.applyShapeChanges('cropper')
+    },
+    sizeY: function (newValue, oldValue) {
       this.applyShapeChanges('cropper')
     },
     straightening: function (newValue, oldValue) {
       this.changeStateButton('Straigtening')
+    },
+    cropping: function (newValue, oldValue) {
+      this.changeStateButton('Cropping')
+    },
+    straightenAmount: function (newValue, oldValue) {
+      this.applyShapeChanges('cropper')
     }
   },
   // data() {
@@ -477,6 +486,14 @@ export default {
   //   }
   // },
   methods: {
+    eventsHandler(eventName){
+      if (eventName === "Save" || eventName === "Cancel"
+         || eventName === "Flip Vertically"
+         || eventName === "Flip Horizontally"
+         || eventName === "Aspect Ratio") {
+           this.changeStateButton(eventName)
+         }
+    },
     capitalizeFirstLetter(string) {
       console.log(string)
       return string.charAt(0).toUpperCase() + string.slice(1);
@@ -663,9 +680,10 @@ export default {
     //still need this
     applyShapeChanges(cropperName){
       this.$refs[cropperName].rotateTo(this.rotation);
-      this.$refs[cropperName].scaleX(this.size * .01)
-      this.$refs[cropperName].scaleY(this.size * .01)
-      //this.$refs[cropperName].scale(this.size * .01, this.size * .01)
+      //for cropper window
+      // this.$refs[cropperName].scaleX(this.sizeX * .01)
+      // this.$refs[cropperName].scaleY(this.sizeY * .01)
+      this.$refs[cropperName].scale(this.sizeX * .01, this.sizeY * .01)
       if (this.straightening || this.straightened) {
         this.straighten(cropperName)
       }
@@ -726,24 +744,16 @@ export default {
       this.filterImg = this.getFilterCanvas(originalImg).toDataURL(this.imgFileExt, 1)
     },
     changeStateButton (stateToChange) {
-      if (stateToChange === "Straightening") {
-        this.straightening = !this.straightening
-      }
-
-      if (stateToChange === "Cropping") {
-        //flip it!
-        this.cropping = !this.cropping
-      }
-
       if (stateToChange === "Aspect Ratio") {
         this.$refs.cropper.setAspectRatio(this.originalAspectRatio)
       }
 
-      if (stateToChange === "Flip Along X"){
-        this.sizeX = -1 * this.sizeX
+      if (stateToChange === "Flip Horizontally"){
+        console.log('yeet')
+        this.$store.dispatch('setSizeX', -1 * this.sizeX)
         this.applyShapeChanges('cropper')
-      } else if (stateToChange === "Flip Along Y") {
-        this.sizeY = -1 * this.sizeY
+      } else if (stateToChange === "Flip Vertically") {
+        this.$store.dispatch('setSizeY', -1 * this.sizeY)
         this.applyShapeChanges('cropper')
       }
       //ask if we are cropping
@@ -761,28 +771,26 @@ export default {
 
       if (this.cropping) {
         if (state === 'Save') {
-          this.cropping = false
-          this.cropped = true
+          this.$store.dispatch('setCropping', false)
+          this.$store.dispatch('setCropped', true)
           //this.prepOutput()
         } else if (state === 'Cancel') {
           this.$refs[cropperName].clear()
-          this.cropping = false
-          this.cropped = false
+          this.$store.dispatch('setCropping', false)
+          this.$store.dispatch('setCropped', false)
         }
       }
 
       if (this.straightening) {
         if (state === 'Save') {
-          this.straightened = true
-          //this.prepOutput()
-          this.straightening = false
+          this.$store.dispatch('setStraightened', true)
+          this.$store.dispatch('setStraightening', false)
         } else if (state === 'Cancel') {
           this.$refs[cropperName].clear()
-          this.straightenAmount = 0
+          this.$store.dispatch('setStraighten', 0)
           this.straighten('cropper')
-          //this.prepOutput()
-          this.straightening = false
-          this.straightened = false
+          this.$store.dispatch('setStraightened', false)
+          this.$store.dispatch('setStraightening', false)
         }
       }
 

@@ -37,7 +37,6 @@ export default {
   },
   created(){
     this.$options.name = this.name
-    console.log(this.width)
   },
   //needs to match transformation name in ImageForm
   data() {
@@ -48,11 +47,10 @@ export default {
   },
   methods: {
     emitNewVal(){
-      console.log(this.name)
-      this.$store.dispatch('set' + this.name, this.val)
+      const property = "set" + this.name.split(" ").join("")
+      this.$store.dispatch(property, this.val)
     },
     undo(){
-      console.log(this.default)
       this.val = this.default
       this.emitNewVal()
       //this.$emit('doneApplyingChange', changeObj)

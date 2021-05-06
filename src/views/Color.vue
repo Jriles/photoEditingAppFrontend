@@ -12,7 +12,7 @@ import EffectSliderComp from '../components/EffectSliderComp.vue'
 
 export default {
   name: 'Color',
-  emits: ['doneChangingFilter'],
+  emits: ['doneChangingFilter', 'doneChangingShape', 'doneApplyingChange', 'eventBus'],
   computed: {
     vibrance: function () {
       return this.$store.state.vibrance

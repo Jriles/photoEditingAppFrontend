@@ -1,52 +1,51 @@
 <template>
   <!--crop-->
   <div class="columns mt-4">
-    <div class="column" v-if="!straightening && !cropping">
-      <state-button enableAction="Start" disableAction="Stop" name="Cropping" @changeState="changeStateButton" :valProp="cropping"></state-button>
+    <div v-show="!cropping" class="column">
+      <button class="button is-black is-normal" @click="startCropping">Start Cropping</button>
     </div>
-    <div class="column" v-if="cropping">
-      <signal-button name="Save" @changeState="changeStateButton"></signal-button>
+    <div class="column" v-show="cropping">
+      <button class="button is-black is-normal" @click="emitEvent" name="Save">Save</button>
     </div>
-    <div class="column" v-if="cropping">
-      <signal-button name="Cancel" @changeState="changeStateButton"></signal-button>
+    <div class="column" v-show="cropping">
+      <button class="button is-black is-normal" @click="emitEvent" name="Cancel">Cancel</button>
     </div>
-    <div class="column" v-if="cropping">
-      <state-button name="Aspect Ratio" enableAction="Reset" disableAction="Reset" @changeState="changeStateButton" :valProp="cropping"></state-button>
+    <div class="column" v-show="cropping">
+      <button class="button is-black is-normal" @click="emitEvent" name="Aspect Ratio">Reset Crop Aspect Ratio</button>
     </div>
   </div>
   <!--straighten-->
   <div class="columns mt-4">
-    <div class="column" v-if="!cropping && !straightening">
-      <state-button enableAction="Start" disableAction="Stop" name="Straightening" :valProp="straightening"></state-button>
+    <div class="column" v-show="!cropping && !straightening">
+      <button class="button is-black is-normal" @click="startStraightening">Start Straightening</button>
     </div>
-    <div class="column" v-if="straightening">
-      <signal-button name="Save" @changeState="changeStateButton"></signal-button>
+    <div class="column" v-show="straightening">
+      <button class="button is-black is-normal" @click="emitEvent" name="Save">Save</button>
     </div>
-    <div class="column" v-if="straightening">
-      <signal-button name="Cancel" @changeState="changeStateButton"></signal-button>
+    <div class="column" v-show="straightening">
+      <button class="button is-black is-normal" @click="emitEvent" name="Cancel">Cancel</button>
     </div>
   </div>
-  <effect-slider v-if="straightening" @updateVal="updateShapeVal" @doneApplyingChange="doneApplyingChange" name="StraightenAmount" min="-45" max="45" :defaultProp="defaultStraightenAmount" :valProp="straightenAmount"></effect-slider>
+  <div v-show="straightening">
+    <effect-slider @doneApplyingChange="doneApplyingChange" name="Straighten Amount" min="-45" max="45" :defaultProp="defaultStraightenAmount" :valProp="straightenAmount"></effect-slider>
+  </div>
   <effect-number @doneApplyingChange="doneApplyingChange" name="Rotation" min="-180" max="180" :valProp="rotation" :defaultProp="defaultRotation" :symbol="String.fromCharCode(176)"></effect-number>
   <effect-number @doneApplyingChange="doneApplyingChange" name="Size" min="0" max="1000" :valProp="size" :defaultProp="defaultSize" :symbol="String.fromCharCode(37)"></effect-number>
   <div class="w-100 mt-5">
-    <signal-button name="Flip Along X" @changeState="changeStateButton"></signal-button>
+    <button class="button is-black is-normal" @click="emitEvent" name="Flip Vertically">Flip Vertically</button>
   </div>
   <div class="w-100 mt-3">
-    <signal-button name="Flip Along Y" @changeState="changeStateButton"></signal-button>
+    <button class="button is-black is-normal" @click="emitEvent" name="Flip Horizontally">Flip Horizontally</button>
   </div>
 </template>
 
 <script>
 import EffectSliderComp from '../components/EffectSliderComp.vue'
 import EffectNumberComp from '../components/EffectNumberComp.vue'
-import StateButtonComp from '../components/StateButtonComp.vue'
-//signal buttons dont affect state, they just submit signals like save or cancel.
-import OneWaySignalButton from '../components/OneWaySignalButton.vue'
 
 export default {
   name: 'Shape',
-  emits: ['doneChangingShape', 'changeStateButton'],
+  emits: ['doneChangingShape', 'eventBus', 'doneApplyingChange', 'doneChangingFilter'],
   computed: {
     size: function () {
       return this.$store.state.size
@@ -54,8 +53,13 @@ export default {
     rotation: function () {
       return this.$store.state.rotation
     },
-    cropping: function () {
-      return this.$store.state.cropping
+    cropping: {
+      get () {
+        return this.$store.state.cropping
+      },
+      set (value) {
+        this.cropping = value
+      }
     },
     cropped: function () {
       return this.$store.state.cropped
@@ -100,16 +104,20 @@ export default {
   },
   components: {
     'effect-slider': EffectSliderComp,
-    'effect-number': EffectNumberComp,
-    'state-button': StateButtonComp,
-    'signal-button': OneWaySignalButton
+    'effect-number': EffectNumberComp
   },
   methods: {
-    doneApplyingChange(newVal) {
-      this.$emit("doneChangingShape", newVal);
+    emitEvent (e) {
+      this.$emit("eventBus", e.target.name);
     },
-    changeStateButton(newVal) {
-      this.$emit("changeStateButton", newVal);
+    startCropping () {
+      this.$store.dispatch('setCropping', true)
+    },
+    startStraightening () {
+      this.$store.dispatch('setStraightening', true)
+    },
+    doneApplyingChange () {
+      this.$emit("doneChangingShape", e.target.name);
     }
   }
 }
