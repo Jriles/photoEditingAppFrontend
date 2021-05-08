@@ -182,6 +182,7 @@ const MOBILE_CANVAS_PERCENT = .8;
 const DESKTOP_CANVAS_PERCENT = .7;
 //how long we wait for an image to load before doing work
 const IMAGE_LOAD_TIME = 150;
+const DISPLAY_IMAGE_QUALITY = .5;
 
 export default {
   name: 'ImageForm',
@@ -236,8 +237,20 @@ export default {
     displayImg: function () {
       return this.$store.state.displayImg
     },
+    originalImgCanvas: function () {
+      return this.$store.state.originalImgCanvas
+    },
+    // originalImgTexture: function () {
+    //   return this.$store.state.originalImgTexture
+    // },
     imgFileExt: function () {
       return this.$store.state.imgFileExt
+    },
+    imgWidth: function () {
+      return this.$store.state.imgWidth
+    },
+    imgHeight: function () {
+      return this.$store.state.imgHeight
     },
     originalAspectRatio: function () {
       return this.$store.state.originalAspectRatio
@@ -458,7 +471,7 @@ export default {
     },
     red: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+     this.updateFilterVal()
     },
     blue: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
@@ -506,11 +519,11 @@ export default {
       this.applyShapeChanges('cropper')
     }
   },
-  // data() {
-  //   return {
-  //
-  //   }
-  // },
+  data() {
+    return {
+      originalImgTexture: null
+    }
+  },
   methods: {
     eventsHandler(eventName){
       if (eventName === "Save" || eventName === "Cancel"
@@ -591,27 +604,37 @@ export default {
       const ref = this
       img.addEventListener("load", function () {
         //always fit it to the canvas. We use the original img on download.
-        ref.fitImgToCanvas(reader.result, 'cropper', this, ref)
+        ref.fitImgToCanvas(reader.result, 'cropper', this.width, this.height, ref)
         const path = ref.$route.name;
         //waiting for images to load
         setTimeout(function() {
           //first lets set our display img
           //now that we have successfully resized.
-          const displayImg = ref.$refs['cropper'].getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
+          const displayImg = ref.$refs['cropper'].getCroppedCanvas().toDataURL(ref.imgFileExt, DISPLAY_IMAGE_QUALITY)
           ref.$store.dispatch('setDisplayImg', displayImg)
           //also setting shape img here apparently
           ref.$store.dispatch('setShapeImg', displayImg)
-          switch (path) {
-            case "color":
-              ref.initWebGLCanvas()
-              break
-            case "light":
-              ref.initWebGLCanvas()
-              break
-            case "shape":
-              ref.initCropperjsCanvas()
-              break
-          }
+          setTimeout(function() {
+            const canvas = ref.getGLFXCanvas()
+            const shapeImgElem = document.getElementById('shapeImg')
+            const texture = ref.getGLFXTexture(canvas, shapeImgElem)
+            console.log(texture)
+            const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
+            ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
+            //ref.$store.dispatch('setOriginalImgTexture', texture)
+            ref.originalImgTexture = texture
+            switch (path) {
+              case "color":
+                ref.initWebGLCanvas()
+                break
+              case "light":
+                ref.initWebGLCanvas()
+                break
+              case "shape":
+                ref.initCropperjsCanvas()
+                break
+            }
+          }, IMAGE_LOAD_TIME);
         }, IMAGE_LOAD_TIME);
         const aspectRatio = this.width / this.height;
         ref.$store.dispatch('setOriginalAspectRatio', aspectRatio)
@@ -632,36 +655,55 @@ export default {
       //need this
       reader.readAsDataURL(file)
     },
-    updateColorVal(newVal){
-      this.updateFilterVal(newVal);
-    },
-    updateLightVal(newVal){
-      this.updateFilterVal(newVal);
-    },
+    // updateColorVal(newVal){
+    //   this.updateFilterVal(newVal);
+    // },
+    // updateLightVal(newVal){
+    //   this.updateFilterVal(newVal);
+    // },
     getPercentOfScreenVal(percent){
       const width  = this.getWindowWidth()
       return width * percent
     },
-    getFilterCanvas(img){
+    adjustPropertyIfAlreadySet (propertyVal, defaultVal, previousVal) {
+      if (propertyVal !== defaultVal) {
+        console.log('previousVal: ' + previousVal)
+        console.log('currentVal: ' + propertyVal)
+        if (propertyVal > previousVal) {
+          return propertyVal - previousVal
+        } else {
+          return propertyVal + previousVal
+        }
+      }
+      return propertyVal
+    },
+    getGLFXCanvas () {
       const canvas = glfx.canvas();
       const gl = canvas.getContext('webgl');
       gl.getExtension('WEBGL_color_buffer_float');
-
-      const texture = canvas.texture(img);
+      return canvas
+    },
+    getGLFXTexture (canvas, img) {
+      return canvas.texture(img)
+    },
+    applyTextureToGLFXCanvas (canvas, texture) {
       canvas.draw(texture).update()
-
+      return canvas
+    },
+    applyFilters(canvas, texture) {
+      canvas.draw(texture).update()
       if (this.brightness !== this.defaultBrightness || this.contrast !== this.defaultContrast) {
-        canvas.draw(texture).brightnessContrast((this.brightness * .01), (this.contrast * .01)).update();
+        canvas.draw(texture).brightnessContrast((this.brightness * .01), (this.contrast * .01)).update()
       }
 
       if (this.vibrance !== this.defaultVibrance) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).vibrance((this.vibrance * .01)).update();
+        canvas.draw(texture).vibrance((this.vibrance * .01)).update()
       }
 
       if (this.hue !== this.defaultHue || this.saturation !== this.defaultSaturation) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).hueSaturation((this.hue * .01), (this.saturation * .01)).update();
+        canvas.draw(texture).hueSaturation((this.hue * .01), (this.saturation * .01)).update()
       }
 
       if (this.red !== this.defaultRed ||
@@ -672,29 +714,29 @@ export default {
         const redVal = this.red * .01;
         const blueVal = this.blue * .01;
         const greenVal = this.green * .01;
-        canvas.draw(texture).curves([[0,0], [.25, .25 - redVal], [.75, .75 + redVal], [1,1]], [[0,0], [.25, .25 - greenVal], [.75, .75 + greenVal], [1,1]], [[0,0], [.25, .25 - blueVal], [.75, .75 + blueVal], [1,1]]).update();
+        canvas.draw(texture).curves([[0,0], [.25, .25 - redVal], [.75, .75 + redVal], [1,1]], [[0,0], [.25, .25 - greenVal], [.75, .75 + greenVal], [1,1]], [[0,0], [.25, .25 - blueVal], [.75, .75 + blueVal], [1,1]]).update()
       }
 
       if (this.smooth !== this.defaultSmooth) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).denoise(this.smooth).update();
+        canvas.draw(texture).denoise(this.smooth).update()
       }
 
       if (this.sepia !== this.defaultSepia) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).sepia(this.sepia * .01).update();
+        canvas.draw(texture).sepia(this.sepia * .01).update()
       }
 
       if (this.noise !== this.defaultNoise) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).noise(this.noise * .01).update();
+        canvas.draw(texture).noise(this.noise * .01).update()
       }
 
       if (this.ink !== this.defaultInk) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).ink(this.ink * .01).update();
+        canvas.draw(texture).ink(this.ink * .01).update()
       }
-      texture.destroy();
+      //ONLY UPDATE CANVAS ONCE!
       return canvas
     },
     //still need this
@@ -711,13 +753,20 @@ export default {
     updateFilterVal(){
       //dont apply changes if no photo
       if (this.uploaded) {
-        var shapeImg = document.getElementById('shapeImg')
+        const shapeImgElem = document.getElementById('shapeImg')
+        // const canvas = this.getGLFXCanvas()
+        // const texture = this.getGLFXTexture(canvas, shapeImgElem)
+        // const texturedCanvas = this.applyTextureToGLFXCanvas(canvas, texture)
+        this.originalImgTexture.loadContentsOf(shapeImgElem)
+        const canvasWFilters = this.applyFilters(this.originalImgCanvas, this.originalImgTexture)
+        canvasWFilters.update()
+        //var shapeImg = document.getElementById('shapeImg')
         const imgBucket = document.getElementById('imgBucket');
         const oldCanvas = document.getElementsByTagName("canvas")[0];
-        const displayCanvas = this.getFilterCanvas(shapeImg);
-
-        imgBucket.removeChild(oldCanvas);
-        imgBucket.insertBefore(displayCanvas, filterImg)
+        if (oldCanvas) {
+          imgBucket.removeChild(oldCanvas);
+        }
+        imgBucket.insertBefore(canvasWFilters, filterImg)
       }
     },
     initWebGLCanvas() {
@@ -726,16 +775,17 @@ export default {
       this.$store.dispatch('setCropperVisible', false)
       this.removeCanvasIfExists()
 
-      if (ref.imgTooBig(this.shapeImg, ref)) {
-        ref.fitImgToCanvas(this.shapeImg, 'storageCropper', shapeImg, ref)
-      }
+      // if (ref.imgTooBig(this.imgWidth, this.imgHeight, ref)) {
+      //   ref.fitImgToCanvas(this.shapeImg, 'storageCropper', this.imgWidth, this.imgHeight, ref)
+      // }
 
       setTimeout(function() {
-        const shapeImgElem = document.getElementById('shapeImg')
-
         ref.$refs.storageCropper.replace(ref.displayImg);
-        const canvas = ref.getFilterCanvas(shapeImgElem)
-        shapeImgElem.parentNode.insertBefore(canvas, shapeImgElem);
+        //put together textured canvas on submit
+        //use store state to apply here
+        //const canvasWFilters = ref.applyFilters(ref.originalImgCanvas, ref.originalImgTexture)
+        console.log('called initWebGLCanvas')
+        ref.updateFilterVal()
       }, IMAGE_LOAD_TIME);
     },
     initCropperjsCanvas() {
@@ -780,11 +830,15 @@ export default {
       this.applyShapeChanges('storageCropper')
       const newShapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL(this.imgFileExt, 1)
       this.$store.dispatch('setShapeImg', newShapeImg)
+      //need img data
+      const cropperCanData = this.$refs.cropper.getCanvasData()
+      this.$store.dispatch('setImgWidth', cropperCanData.width)
+      this.$store.dispatch('setImgHeight', cropperCanData.height)
     },
     doneChangingFilter(){
       var originalImg = document.getElementById('originalImg')
-      const newFilterImg = this.getFilterCanvas(originalImg).toDataURL(this.imgFileExt, 1)
-      this.$store.dispatch('setFilterImg', newFilterImg)
+      //const newFilterImg = this.applyFilters(this.originalImgCanvas, this.originalImgTexture).toDataURL(this.imgFileExt, 1)
+      //this.$store.dispatch('setFilterImg', newFilterImg)
     },
     changeStateButton (property) {
       //set shape states on cropper
@@ -877,18 +931,21 @@ export default {
       })
     },
     imgTooBig (image, vueRef) {
-      if (image.width > vueRef.containerWidth || image.height > IMAGE_HEIGHT) {
+      console.log(image)
+      console.log('image.width' + image.width)
+      //if (image.width > vueRef.containerWidth || image.height > IMAGE_HEIGHT) {
+      if (image.width > vueRef.containerWidth) {
         return true
       }
       return false
     },
-    fitImgToCanvas (newImgURL, cropperRef, image, vueRef){
+    fitImgToCanvas (newImgURL, cropperRef, height, width, vueRef){
       //takes in an image id, loads
       //submit call is a flag for when we are calling this function
       //on submit image
       vueRef.$refs[cropperRef].replace(newImgURL);
-      const newWidthRatio = vueRef.containerWidth / image.width;
-      const newHeightRatio = IMAGE_HEIGHT / image.height;
+      const newWidthRatio = vueRef.containerWidth / width;
+      const newHeightRatio = IMAGE_HEIGHT / height;
       const ratioToUse = Math.min(newWidthRatio, newHeightRatio)
       //need to make a copy
       setTimeout(function() {
@@ -904,7 +961,7 @@ export default {
       //take in original (unsized) img
       //apply all filter changes
       const originalImg = document.getElementById('originalImg')
-      var originalImgWFilters = this.getFilterCanvas(originalImg).toDataURL()
+      var originalImgWFilters = this.applyFilters(this.originalImgCanvas, this.originalImgTexture).toDataURL()
       // upload to output cropper
 
       //***** THIS MUST BE BEFORE THIS ******//

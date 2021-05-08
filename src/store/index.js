@@ -26,6 +26,15 @@ export default createStore({
       containerHeight: IMAGE_HEIGHT,
       containerWidth: null,
       outputVisible: false,
+      //this img is used by webgl to show user shape and current filter changes.
+      //it is not used in any other capacity
+      //we need this because we do not want to apply all filter changes every frame
+      originalImgCanvas: null,
+      originalImgTexture: null,
+      //saved after submitting, making changes in cropperjs.
+      //used to resize img if necessary
+      imgWidth: 0,
+      imgHeight: 0,
       //different image properties
       //each one is an object, some alterations might be more complicated than just a number
       brightness: 0,
@@ -226,6 +235,18 @@ export default createStore({
       state.straightenCropBoxLeft = data.left,
       state.straightenCropBoxWidth = data.width,
       state.straightenCropBoxHeight = data.height
+    },
+    SET_IMG_WIDTH (state, width) {
+      state.imgWidth = width
+    },
+    SET_IMG_HEIGHT (state, height) {
+      state.imgHeight = height
+    },
+    SET_ORIGINAL_IMG_CANVAS (state, canvas) {
+      state.originalImgCanvas = canvas
+    },
+    SET_ORIGINAL_IMG_TEXTURE (state, texture) {
+      state.originalImgTexture = texture
     }
   },
   actions: {
@@ -341,6 +362,18 @@ export default createStore({
     },
     setStraightenCropBoxData (context, data) {
       context.commit('SET_STRAIGHTEN_CROP_BOX_DATA', data)
+    },
+    setImgWidth (context, width) {
+      context.commit('SET_IMG_WIDTH', width)
+    },
+    setImgHeight (context, height) {
+      context.commit('SET_IMG_HEIGHT', height)
+    },
+    setOriginalImgCanvas (context, canvas) {
+      context.commit('SET_ORIGINAL_IMG_CANVAS', canvas)
+    },
+    setOriginalImgTexture (context, texture) {
+      context.commit('SET_ORIGINAL_IMG_TEXTURE', texture)
     }
   }
 })
