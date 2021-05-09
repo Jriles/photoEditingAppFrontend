@@ -1,6 +1,6 @@
 <template>
   <!-- mobile version of dom -->
-  <div v-if="desktopMode == false">
+  <!-- <div v-if="desktopMode == false">
     <div v-if="uploaded" class="columns is-centered navbar-offset">
       <div class="column is-three-quarters">
         <section class="container has-text-centered">
@@ -33,7 +33,7 @@
             <img id="originalImg" v-show="false" :src="originalImg"/>
           </div>
           <div id="imgBucket" class="mt-5">
-            <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+
             <img id="shapeImg" class="hidden" :src="shapeImg"/>
             <img id="filterImg" class="hidden" :src="filterImg"/>
             <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
@@ -46,11 +46,11 @@
         </section>
       </div>
     </div>
-    <!-- not yet uploaded to mobile -->
+
     <div v-else class="columns mobile-placeholder navbar-offset">
       <div class="column is-three-quarters">
         <section class="hero is-primary is-large header-image">
-            <!-- Hero content: will be in the middle -->
+
             <div class="hero-body">
                 <div class="container has-text-centered">
                     <h1 class="title has-text-white">
@@ -76,10 +76,10 @@
         </div>
       </div>
     </div>
-  </div>
-  <div v-else>
+  </div> -->
+  <div>
     <!--desktop-->
-    <div v-show="uploaded" class="columns is-centered navbar-offset">
+    <div class="columns is-centered navbar-offset">
       <div class="column">
         <section class="has-text-centered">
           <div class="columns">
@@ -95,9 +95,24 @@
                 <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
                 <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
                 <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+                <div v-if="!uploaded" class="custom-canvas-overlay">
+                  <h1 class="title has-text-white main-title">
+                      Transform Your Images
+                  </h1>
+                  <div class="file is-primary is-centered">
+                    <label class="file-label">
+                      <input class="file-input" type="file" name="photo" @change="submit">
+                      <span class="file-cta has-background-black">
+                        <span class="file-label">
+                          Choose a file…
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="column mt-6" v-show="uploaded">
+            <div class="column mt-6">
               <div class="file is-primary is-centered">
                 <label class="file-label">
                   <input class="file-input" type="file" name="photo" @change="submit">
@@ -115,7 +130,7 @@
               <div class="is-centered mt-5">
                 <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
               </div>
-              <div class="is centered mt-5 mb-5" v-show="uploaded">
+              <div class="is centered mt-5 mb-5">
                 <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
               </div>
               <div class="desktopControls pr-5">
@@ -139,24 +154,12 @@
     </div> -->
 
     <!-- Not uploaded/editing yet -->
-    <div v-show="!uploaded" class="columns desktopCanvasOffset navbar-offset">
+    <div v-show="false" class="columns desktopCanvasOffset navbar-offset">
         <div class="column is-three-quarters">
           <section class="hero is-primary is-large header-image">
               <div class="hero-body">
                   <div class="container has-text-centered">
-                      <h1 class="title has-text-white main-title">
-                          Transform Your Images
-                      </h1>
-                        <div class="file is-primary is-centered">
-                          <label class="file-label">
-                            <input class="file-input" type="file" name="photo" @change="submit">
-                            <span class="file-cta has-background-black">
-                              <span class="file-label">
-                                Choose a file…
-                              </span>
-                            </span>
-                          </label>
-                        </div>
+
                   </div>
               </div>
           </section>
@@ -177,7 +180,7 @@ import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
 
 //max width is 75% of screen
-const IMAGE_HEIGHT = screen.height - 200;
+const IMAGE_HEIGHT = screen.height - 400;
 const MOBILE_CANVAS_PERCENT = .8;
 const DESKTOP_CANVAS_PERCENT = .7;
 //how long we wait for an image to load before doing work
@@ -190,16 +193,42 @@ export default {
   created(){
     //redirect to light transformations
     //no landing page
-    if(this.getWindowWidth() > 1100){
+    var imgURL;
+    if(this.isDesktop()){
       //desktop
       console.log('thinks that screen is big')
+      imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
       this.$store.dispatch('setDesktopMode', true)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    } else {
-      console.log('thinks we"re on mobile')
-      this.$store.dispatch('setDesktopMode', false)
+    } else if (this.isTablet()){
+      //tablet
+      imgURL = require('@/assets/img/tablet/manWCatTablet.jpg')
+      this.$store.dispatch('setTabletMode', true)
+      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
+    } else if(this.isMobile()) {
+      //mobile
+      imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
+      this.$store.dispatch('setMobileMode', false)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
     }
+    const path = this.$route.name;
+    //const defaultImgElem = document.getElementById('defaultImg')
+    const img = new Image();
+    const ref = this;
+    var fullUrl = window.location.origin + this.$route.path
+    img.addEventListener("load", function () {
+      console.log('default img elem loaded')
+      const canvas = ref.getGLFXCanvas()
+      const texture = ref.getGLFXTexture(canvas, this)
+      const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
+      const defaultImgURL = texturedCanvas.toDataURL('image/jpg', DISPLAY_IMAGE_QUALITY)
+      ref.$store.dispatch('setFilterImg', defaultImgURL)
+      ref.$store.dispatch('setShapeImg', defaultImgURL)
+      ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
+      ref.$store.dispatch('setOriginalImgTexture', texture)
+      ref.initPageBasedOnPath(path)
+    })
+    img.src = imgURL;
   },
   components: {
     VueCropper,
@@ -211,6 +240,12 @@ export default {
   computed: {
     desktopMode: function () {
       return this.$store.state.desktopMode
+    },
+    tabletMode: function () {
+      return this.$store.state.tabletMode
+    },
+    mobileMode: function () {
+      return this.$store.state.mobileMode
     },
     originalImg: function () {
       return this.$store.state.originalImg
@@ -240,9 +275,9 @@ export default {
     originalImgCanvas: function () {
       return this.$store.state.originalImgCanvas
     },
-    // originalImgTexture: function () {
-    //   return this.$store.state.originalImgTexture
-    // },
+    originalImgTexture: function () {
+      return this.$store.state.originalImgTexture
+    },
     imgFileExt: function () {
       return this.$store.state.imgFileExt
     },
@@ -434,68 +469,56 @@ export default {
   },
   watch: {
     $route (to, from){
-      if (this.uploaded) {
-        const path = to.path;
-        switch(path){
-          case "/transformations/color":
-            this.initWebGLCanvas()
-            break
-          case "/transformations/light":
-            this.initWebGLCanvas()
-            break
-          case "/transformations/shape":
-            this.initCropperjsCanvas()
-            break
-        }
-      }
+      const path = this.$route.name;
+      this.initPageBasedOnPath(path)
     },
     brightness: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     contrast: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     vibrance: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     hue: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     saturation: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     red: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-     this.updateFilterVal()
+     this.updateFilterVal(shapeImg)
     },
     blue: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     green: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     smooth: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     sepia: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     noise: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     ink: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.updateFilterVal()
+      this.updateFilterVal(shapeImg)
     },
     rotation: function (newValue, oldValue) {
       this.applyShapeChanges('cropper')
@@ -521,10 +544,54 @@ export default {
   },
   data() {
     return {
-      originalImgTexture: null
+      //originalImgTexture: null
+      glfxDisplayImg: null,
+      cropperjsDisplayImg: null
     }
   },
   methods: {
+    isMobile () {
+      if (this.getWindowWidth() < 500) {
+        return true
+      }
+      return false
+    },
+    isTablet () {
+      if (this.getWindowWidth() > 500 && this.getWindowWidth() < 1100){
+        return true
+      }
+      return false
+    },
+    isDesktop () {
+      if (this.getWindowWidth() > 1100) {
+        return true
+      }
+      return false
+    },
+    //returns a number, 1 for desktop, 2 for tablet and 3 for mobile
+    getDeviceType () {
+      if (this.isDesktop()){
+        return 1
+      } else if (this.isTablet()) {
+        return 2
+      } else if (this.isMobile()) {
+        return 3
+      }
+    },
+    initPageBasedOnPath(path) {
+      console.log(path)
+      switch(path){
+        case "color":
+          this.initWebGLCanvas()
+          break
+        case "light":
+          this.initWebGLCanvas()
+          break
+        case "shape":
+          this.initCropperjsCanvas()
+          break
+      }
+    },
     eventsHandler(eventName){
       if (eventName === "Save" || eventName === "Cancel"
          || eventName === "Flip Vertically"
@@ -543,17 +610,7 @@ export default {
       this.resetFilterShapeVals()
       const path = this.$route.name;
       //waiting for images to load
-      switch (path) {
-        case "color":
-          this.initWebGLCanvas()
-          break
-        case "light":
-          this.initWebGLCanvas()
-          break
-        case "shape":
-          this.initCropperjsCanvas()
-          break
-      }
+      this.initPageBasedOnPath(path)
     },
     resetFilterShapeVals(){
       //light/effects stuff
@@ -614,26 +671,18 @@ export default {
           ref.$store.dispatch('setDisplayImg', displayImg)
           //also setting shape img here apparently
           ref.$store.dispatch('setShapeImg', displayImg)
+          //we want to change this here so we can avoid an if down the road.
+          this.glfxDisplayImg = document.getElementById('shapeImg');
           setTimeout(function() {
             const canvas = ref.getGLFXCanvas()
             const shapeImgElem = document.getElementById('shapeImg')
             const texture = ref.getGLFXTexture(canvas, shapeImgElem)
-            console.log(texture)
             const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
             ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
+            ref.$store.dispatch('setOriginalImgTexture', texture)
             //ref.$store.dispatch('setOriginalImgTexture', texture)
             ref.originalImgTexture = texture
-            switch (path) {
-              case "color":
-                ref.initWebGLCanvas()
-                break
-              case "light":
-                ref.initWebGLCanvas()
-                break
-              case "shape":
-                ref.initCropperjsCanvas()
-                break
-            }
+            ref.initPageBasedOnPath(path)
           }, IMAGE_LOAD_TIME);
         }, IMAGE_LOAD_TIME);
         const aspectRatio = this.width / this.height;
@@ -641,7 +690,6 @@ export default {
       }, false);
 
       reader.addEventListener("load", function () {
-
         //filter img does not get resized, as it is not displayed, except on cropper js, which doesnt care about size.
         ref.$store.dispatch('setFilterImg', reader.result)
         ref.$store.dispatch('setOriginalImg', reader.result)
@@ -693,17 +741,17 @@ export default {
     applyFilters(canvas, texture) {
       canvas.draw(texture).update()
       if (this.brightness !== this.defaultBrightness || this.contrast !== this.defaultContrast) {
-        canvas.draw(texture).brightnessContrast((this.brightness * .01), (this.contrast * .01)).update()
+        canvas.draw(texture).brightnessContrast((this.brightness), (this.contrast)).update()
       }
 
       if (this.vibrance !== this.defaultVibrance) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).vibrance((this.vibrance * .01)).update()
+        canvas.draw(texture).vibrance((this.vibrance)).update()
       }
 
       if (this.hue !== this.defaultHue || this.saturation !== this.defaultSaturation) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).hueSaturation((this.hue * .01), (this.saturation * .01)).update()
+        canvas.draw(texture).hueSaturation((this.hue), (this.saturation)).update()
       }
 
       if (this.red !== this.defaultRed ||
@@ -711,10 +759,7 @@ export default {
           this.blue !== this.defaultBlue) {
         //colors!
         texture.loadContentsOf(canvas);
-        const redVal = this.red * .01;
-        const blueVal = this.blue * .01;
-        const greenVal = this.green * .01;
-        canvas.draw(texture).curves([[0,0], [.25, .25 - redVal], [.75, .75 + redVal], [1,1]], [[0,0], [.25, .25 - greenVal], [.75, .75 + greenVal], [1,1]], [[0,0], [.25, .25 - blueVal], [.75, .75 + blueVal], [1,1]]).update()
+        canvas.draw(texture).curves([[0,0], [.25, .25 - this.red], [.75, .75 + this.red], [1,1]], [[0,0], [.25, .25 - this.green], [.75, .75 + this.green], [1,1]], [[0,0], [.25, .25 - this.blue], [.75, .75 + this.blue], [1,1]]).update()
       }
 
       if (this.smooth !== this.defaultSmooth) {
@@ -724,19 +769,18 @@ export default {
 
       if (this.sepia !== this.defaultSepia) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).sepia(this.sepia * .01).update()
+        canvas.draw(texture).sepia(this.sepia).update()
       }
 
       if (this.noise !== this.defaultNoise) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).noise(this.noise * .01).update()
+        canvas.draw(texture).noise(this.noise).update()
       }
 
       if (this.ink !== this.defaultInk) {
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).ink(this.ink * .01).update()
+        canvas.draw(texture).ink(this.ink).update()
       }
-      //ONLY UPDATE CANVAS ONCE!
       return canvas
     },
     //still need this
@@ -750,26 +794,17 @@ export default {
       }
     },
     //and still need this
-    updateFilterVal(){
-      //dont apply changes if no photo
-      if (this.uploaded) {
-        const shapeImgElem = document.getElementById('shapeImg')
-        // const canvas = this.getGLFXCanvas()
-        // const texture = this.getGLFXTexture(canvas, shapeImgElem)
-        // const texturedCanvas = this.applyTextureToGLFXCanvas(canvas, texture)
-        this.originalImgTexture.loadContentsOf(shapeImgElem)
-        const canvasWFilters = this.applyFilters(this.originalImgCanvas, this.originalImgTexture)
-        canvasWFilters.update()
-        //var shapeImg = document.getElementById('shapeImg')
-        const imgBucket = document.getElementById('imgBucket');
-        const oldCanvas = document.getElementsByTagName("canvas")[0];
-        if (oldCanvas) {
-          imgBucket.removeChild(oldCanvas);
-        }
-        imgBucket.insertBefore(canvasWFilters, filterImg)
+    updateFilterVal(img){
+      this.originalImgTexture.loadContentsOf(img)
+      const imgBucket = document.getElementById('imgBucket');
+      const oldCanvas = document.getElementsByTagName("canvas")[0];
+      if (oldCanvas) {
+        imgBucket.removeChild(oldCanvas);
       }
+      imgBucket.insertBefore(this.applyFilters(this.originalImgCanvas, this.originalImgTexture), filterImg)
     },
     initWebGLCanvas() {
+      console.log('called init webgl canvas')
       //remove cropper
       const ref = this;
       this.$store.dispatch('setCropperVisible', false)
@@ -785,7 +820,8 @@ export default {
         //use store state to apply here
         //const canvasWFilters = ref.applyFilters(ref.originalImgCanvas, ref.originalImgTexture)
         console.log('called initWebGLCanvas')
-        ref.updateFilterVal()
+
+        ref.updateFilterVal(shapeImg)
       }, IMAGE_LOAD_TIME);
     },
     initCropperjsCanvas() {
@@ -1018,17 +1054,14 @@ export default {
     margin-left: 1%;
   }
 
-  .header-image {
-    background-image: url("~@/assets/img/catman copy.jpg");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    background-color: #999;
-  }
-
   .file-cta:hover{
     background-color: white !important;
     color: black !important;
+  }
+
+  .custom-canvas-overlay{
+    position: relative;
+    bottom: 400px;
+    z-index: 1;
   }
 </style>

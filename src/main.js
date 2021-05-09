@@ -9,6 +9,7 @@ import { faTwitter } from '@fortawesome/free-brands-svg-icons'
 require('cropperjs/dist/cropper.js')
 require('cropperjs/dist/cropper.css')
 require('@/assets/main.scss');
+//require("@/assets/img/tablet/manWCatTablet.jpg")
 
 library.add(faTwitter)
 library.add(faUndo)

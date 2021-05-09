@@ -11,6 +11,8 @@ export default createStore({
   state () {
     return {
       desktopMode: false,
+      tabletMode: false,
+      mobileMode: false,
       originalImg: null,
       originalVisible: false,
       //img: null,
@@ -51,7 +53,7 @@ export default createStore({
       // highlights: {
       //   val: 0
       // },
-      smooth: 50,
+      smooth: .5,
       rotation: 0,
       cropping: false,
       cropped: false,
@@ -96,11 +98,11 @@ export default createStore({
       defaultRed: 0,
       defaultBlue: 0,
       defaultGreen: 0,
-      defaultSmooth: 50,
+      defaultSmooth: .5,
       defaultRotation: 0,
-      defaultSize: 100,
-      defaultSizeX: 100,
-      defaultSizeY: 100,
+      defaultSize: 1,
+      defaultSizeX: 1,
+      defaultSizeY: 1,
       defaultStraightenAmount: 0,
       defaultSepia: 0,
       defaultNoise: 0,
@@ -115,6 +117,12 @@ export default createStore({
   mutations: {
     SET_DESKTOP_MODE (state, mode) {
       state.desktopMode = mode
+    },
+    SET_TABLET_MODE (state, mode) {
+      state.tabletMode = mode
+    },
+    SET_MOBILE_MODE (state, mode) {
+      state.mobileMode = mode
     },
     SET_CONTAINER_WIDTH (state, percent) {
       state.containerWidth = percent
@@ -252,6 +260,12 @@ export default createStore({
   actions: {
     setDesktopMode (context, mode) {
       context.commit('SET_DESKTOP_MODE', mode)
+    },
+    setTabletMode (context, mode) {
+      context.commit('SET_TABLET_MODE', mode)
+    },
+    setMobileMode (context, mode) {
+      context.commit('SET_MOBILE_MODE', mode)
     },
     setContainerWidth (context, percent) {
       context.commit('SET_CONTAINER_WIDTH', percent)
