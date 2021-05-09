@@ -69,7 +69,7 @@
       <div class="column">
         <section class="has-text-centered">
           <div class="columns">
-            <div class="column desktopCanvasOffset is-three-quarters">
+            <div class="column is-three-quarters">
               <div>
                 <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
                 <img id="originalImg" v-show="false" :src="originalImg"/>
@@ -77,9 +77,9 @@
               <div id="imgBucket">
                 <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
                 <div v-if="!uploaded" class="custom-canvas-overlay-mobile">
-                  <h1 class="title has-text-white main-title">
+                  <h3 class="title has-text-white mobile-tagline">
                       Transform Your Images
-                  </h1>
+                  </h3>
                   <div class="file is-primary is-centered">
                     <label class="file-label">
                       <input class="file-input" type="file" name="photo" @change="submit">
@@ -1022,5 +1022,11 @@ export default {
     position: absolute;
     top: 100px;
     z-index: 1;
+    width: 100%;
+    text-align: center;
+  }
+
+  .mobile-tagline{
+    left:
   }
 </style>
