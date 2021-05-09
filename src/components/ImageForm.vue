@@ -1,83 +1,5 @@
 <template>
-  <!-- mobile version of dom -->
-  <!-- <div v-if="desktopMode == false">
-    <div v-if="uploaded" class="columns is-centered navbar-offset">
-      <div class="column is-three-quarters">
-        <section class="container has-text-centered">
-          <div class="columns mt-6 mb-6">
-            <div class="column">
-              <div class="file is-primary is-centered">
-                <label class="file-label">
-                  <input class="file-input" type="file" name="photo" @change="submit">
-                  <span class="file-cta has-background-black">
-                    <span class="file-label">
-                      Choose a file…
-                    </span>
-                  </span>
-                </label>
-              </div>
-            </div>
-            <div class="column" v-show="uploaded">
-              <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
-              <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
-            </div>
-            <div class="column" v-show="uploaded">
-              <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
-            </div>
-            <div class="column" v-show="uploaded">
-              <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
-            </div>
-          </div>
-          <div class="mt-5">
-            <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
-            <img id="originalImg" v-show="false" :src="originalImg"/>
-          </div>
-          <div id="imgBucket" class="mt-5">
-
-            <img id="shapeImg" class="hidden" :src="shapeImg"/>
-            <img id="filterImg" class="hidden" :src="filterImg"/>
-            <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-          </div>
-          <div v-show="uploaded" class="has-text-centered pl-5 pr-5">
-            <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
-          </div>
-        </section>
-      </div>
-    </div>
-
-    <div v-else class="columns mobile-placeholder navbar-offset">
-      <div class="column is-three-quarters">
-        <section class="hero is-primary is-large header-image">
-
-            <div class="hero-body">
-                <div class="container has-text-centered">
-                    <h1 class="title has-text-white">
-                        Transform Your Images
-                    </h1>
-                      <div class="file is-primary is-centered">
-                        <label class="file-label">
-                          <input class="file-input" type="file" name="photo" @change="submit">
-                          <span class="file-cta has-background-black">
-                            <span class="file-label">
-                              Choose a file…
-                            </span>
-                          </span>
-                        </label>
-                      </div>
-                </div>
-            </div>
-        </section>
-      </div>
-      <div class="column">
-        <div class="has-text-centered pl-5 pr-5">
-          <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
-        </div>
-      </div>
-    </div>
-  </div> -->
-  <div>
+  <div v-if="desktopMode">
     <!--desktop-->
     <div class="columns is-centered navbar-offset">
       <div class="column">
@@ -95,7 +17,7 @@
                 <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
                 <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
                 <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-                <div v-if="!uploaded" class="custom-canvas-overlay">
+                <div v-if="!uploaded" class="custom-canvas-overlay-desktop">
                   <h1 class="title has-text-white main-title">
                       Transform Your Images
                   </h1>
@@ -112,8 +34,8 @@
                 </div>
               </div>
             </div>
-            <div class="column mt-6">
-              <div class="file is-primary is-centered">
+            <div class="column">
+              <div v-show="uploaded" class="file is-primary is-centered">
                 <label class="file-label">
                   <input class="file-input" type="file" name="photo" @change="submit">
                   <span class="file-cta has-background-black">
@@ -141,35 +63,70 @@
         </section>
       </div>
     </div>
-    <!-- <div v-else class="columns is-centered placeholder">
-      <div class="column is-three-quarters">
-        <section class="container has-text-centered">
-          <div class="columns mt-4">
+  </div>
+  <div v-if="mobileMode">
+    <div class="columns is-centered navbar-offset">
+      <div class="column">
+        <section class="has-text-centered">
+          <div class="columns">
+            <div class="column desktopCanvasOffset is-three-quarters">
+              <div>
+                <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
+                <img id="originalImg" v-show="false" :src="originalImg"/>
+              </div>
+              <div id="imgBucket">
+                <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+                <div v-if="!uploaded" class="custom-canvas-overlay-mobile">
+                  <h1 class="title has-text-white main-title">
+                      Transform Your Images
+                  </h1>
+                  <div class="file is-primary is-centered">
+                    <label class="file-label">
+                      <input class="file-input" type="file" name="photo" @change="submit">
+                      <span class="file-cta has-background-black">
+                        <span class="file-label">
+                          Choose a file…
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <img id="shapeImg" class="hidden" :src="shapeImg"/>
+                <img id="filterImg" class="hidden" :src="filterImg"/>
+                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+                <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+                <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+              </div>
+            </div>
             <div class="column">
-
+              <div v-show="uploaded" class="file is-primary is-centered">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="photo" @change="submit">
+                  <span class="file-cta has-background-black">
+                    <span class="file-label">
+                      Choose a file…
+                    </span>
+                  </span>
+                </label>
+              </div>
+              <div class="is-centered mt-5">
+                <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
+                <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
+              </div>
+              <div class="is-centered mt-5">
+                <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
+              </div>
+              <div class="is centered mt-5 mb-5">
+                <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
+              </div>
+              <div class="desktopControls pr-5">
+                <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
+              </div>
             </div>
           </div>
         </section>
       </div>
-    </div> -->
-
-    <!-- Not uploaded/editing yet -->
-    <div v-show="false" class="columns desktopCanvasOffset navbar-offset">
-        <div class="column is-three-quarters">
-          <section class="hero is-primary is-large header-image">
-              <div class="hero-body">
-                  <div class="container has-text-centered">
-
-                  </div>
-              </div>
-          </section>
-        </div>
-        <div class="column is-one-quarter">
-          <div class="desktopControls has-text-centered pr-5">
-            <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
-          </div>
-        </div>
-      </div>
+    </div>
   </div>
 </template>
 
@@ -207,8 +164,9 @@ export default {
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
     } else if(this.isMobile()) {
       //mobile
+      console.log('thinks we on mobile boi')
       imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
-      this.$store.dispatch('setMobileMode', false)
+      this.$store.dispatch('setMobileMode', true)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
     }
     const path = this.$route.name;
@@ -703,12 +661,6 @@ export default {
       //need this
       reader.readAsDataURL(file)
     },
-    // updateColorVal(newVal){
-    //   this.updateFilterVal(newVal);
-    // },
-    // updateLightVal(newVal){
-    //   this.updateFilterVal(newVal);
-    // },
     getPercentOfScreenVal(percent){
       const width  = this.getWindowWidth()
       return width * percent
@@ -1059,9 +1011,16 @@ export default {
     color: black !important;
   }
 
-  .custom-canvas-overlay{
-    position: relative;
-    bottom: 400px;
+  .custom-canvas-overlay-desktop{
+    position: absolute;
+    bottom: 250px;
+    left: 20%;
+    z-index: 1;
+  }
+
+  .custom-canvas-overlay-mobile{
+    position: absolute;
+    top: 100px;
     z-index: 1;
   }
 </style>

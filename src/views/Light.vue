@@ -3,10 +3,10 @@
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Contrast" :valProp="contrast" :defaultProp="defaultContrast"></effect-slider>
   <!-- <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="highlights" :valProp="localHighlights"></effect-slider> -->
   <!-- <effect-slider @updateVal="updateLightVal" @doneApplyingChange="doneApplyingChange" name="shadows" :valProp="localShadows"></effect-slider> -->
-  <effect-slider @doneApplyingChange="doneApplyingChange" name="Smooth" :valProp="smooth" min="0" max=".5" :defaultProp="defaultSmooth"></effect-slider>
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Sepia" :valProp="sepia" min="0" max="1" :defaultProp="defaultSepia"></effect-slider>
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Noise" :valProp="noise" min="0" max="1" :defaultProp="defaultNoise"></effect-slider>
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Ink" :valProp="ink" :defaultProp="defaultInk"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Smooth" :valProp="smooth" min="0" max=".5" :defaultProp="defaultSmooth"></effect-slider>
 </template>
 
 <script>
