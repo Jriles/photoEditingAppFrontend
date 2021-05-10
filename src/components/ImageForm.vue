@@ -12,11 +12,6 @@
               </div>
               <div id="imgBucket">
                 <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
-                <img id="shapeImg" class="hidden" :src="shapeImg"/>
-                <img id="filterImg" class="hidden" :src="filterImg"/>
-                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-                <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-                <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
                 <div v-if="!uploaded" class="custom-canvas-overlay-desktop">
                   <h1 class="title has-text-white main-title">
                       Transform Your Images
@@ -32,30 +27,110 @@
                     </label>
                   </div>
                 </div>
+                <img id="shapeImg" class="hidden" :src="shapeImg"/>
+                <img id="filterImg" class="hidden" :src="filterImg"/>
+                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+                <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+                <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
               </div>
             </div>
             <div class="column">
-              <div v-show="uploaded" class="file is-primary is-centered">
-                <label class="file-label">
-                  <input class="file-input" type="file" name="photo" @change="submit">
-                  <span class="file-cta has-background-black">
-                    <span class="file-label">
-                      Choose a file…
-                    </span>
-                  </span>
-                </label>
+              <div class="desktopControls">
+                <div v-show="uploaded" class="mb-5">
+                  <div v-show="uploaded" class="columns is-mobile">
+                    <div class="column">
+                      <div class="file is-primary is-centered">
+                        <label class="file-label">
+                          <input class="file-input" type="file" name="photo" @change="submit">
+                          <span class="file-cta has-background-black">
+                            <span class="file-label">
+                              <font-awesome-icon icon="file-upload" />
+                            </span>
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="column">
+                      <button id="downloadButton" @click="prepOutput()" class="button is-black"><font-awesome-icon icon="file-download" /></button>
+                    </div>
+                    <div class="column">
+                      <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
+                    </div>
+                    <div class="column">
+                      <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
+                    </div>
+                  </div>
+                </div>
+                <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
               </div>
-              <div class="is-centered mt-5">
-                <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
-                <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div v-if="tabletMode">
+    <!--desktop-->
+    <div class="columns is-centered navbar-offset">
+      <div class="column">
+        <section class="has-text-centered">
+          <div class="columns pr-6">
+            <div class="column desktopCanvasOffset is-three-quarters">
+              <div>
+                <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
+                <img id="originalImg" v-show="false" :src="originalImg"/>
               </div>
-              <div class="is-centered mt-5">
-                <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
+              <div id="imgBucket">
+                <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+                <div v-if="!uploaded" class="custom-canvas-overlay-tablet">
+                  <h2 class="title has-text-white">
+                      Transform Your Images
+                  </h2>
+                  <div class="file is-primary is-centered">
+                    <label class="file-label">
+                      <input class="file-input" type="file" name="photo" @change="submit">
+                      <span class="file-cta has-background-black">
+                        <span class="file-label">
+                          Choose a file…
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <img id="shapeImg" class="hidden" :src="shapeImg"/>
+                <img id="filterImg" class="hidden" :src="filterImg"/>
+                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+                <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+                <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
               </div>
-              <div class="is centered mt-5 mb-5">
-                <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
-              </div>
-              <div class="desktopControls pr-5">
+            </div>
+            <div class="column">
+              <div class="desktopControls">
+                <div v-show="uploaded" class="mb-5">
+                  <div v-show="uploaded" class="columns is-mobile">
+                    <div class="column">
+                      <div class="file is-primary is-centered">
+                        <label class="file-label">
+                          <input class="file-input" type="file" name="photo" @change="submit">
+                          <span class="file-cta has-background-black">
+                            <span class="file-label">
+                              <font-awesome-icon icon="file-upload" />
+                            </span>
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="column">
+                      <button id="downloadButton" @click="prepOutput()" class="button is-black"><font-awesome-icon icon="file-download" /></button>
+                    </div>
+                    <div class="column">
+                      <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
+                    </div>
+                    <div class="column">
+                      <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
+                    </div>
+                  </div>
+                </div>
                 <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
               </div>
             </div>
@@ -77,7 +152,7 @@
               <div id="imgBucket">
                 <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
                 <div v-if="!uploaded" class="custom-canvas-overlay-mobile">
-                  <h3 class="title has-text-white mobile-tagline">
+                  <h3 class="title has-text-white">
                       Transform Your Images
                   </h3>
                   <div class="file is-primary is-centered">
@@ -99,7 +174,7 @@
               </div>
             </div>
             <div class="column">
-              <div v-show="uploaded" class="file is-primary is-centered">
+              <div class="file is-primary is-centered">
                 <label class="file-label">
                   <input class="file-input" type="file" name="photo" @change="submit">
                   <span class="file-cta has-background-black">
@@ -109,15 +184,14 @@
                   </span>
                 </label>
               </div>
-              <div class="is-centered mt-5">
-                <button v-if="originalVisible" class="button is-black" @click="originalVisible = !originalVisible">Hide Original</button>
-                <button v-else class="button is-black" @click="originalVisible = !originalVisible">Show Original</button>
+              <div class="column">
+                <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
               </div>
               <div class="is-centered mt-5">
                 <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
               </div>
               <div class="is centered mt-5 mb-5">
-                <button id="downloadButton" @click="undoAll()" class="button is-black">Undo All</button>
+                <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
               </div>
               <div class="desktopControls pr-5">
                 <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
@@ -550,7 +624,7 @@ export default {
           break
       }
     },
-    eventsHandler(eventName){
+    eventsHandler (eventName) {
       if (eventName === "Save" || eventName === "Cancel"
          || eventName === "Flip Vertically"
          || eventName === "Flip Horizontally"
@@ -558,19 +632,22 @@ export default {
            this.changeStateButton(eventName)
          }
     },
-    capitalizeFirstLetter(string) {
+    capitalizeFirstLetter (string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
-    getWindowWidth(){
+    getWindowWidth () {
       return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     },
-    undoAll(){
+    undoAll () {
       this.resetFilterShapeVals()
       const path = this.$route.name;
       //waiting for images to load
       this.initPageBasedOnPath(path)
     },
-    resetFilterShapeVals(){
+    changeOriginalVisible () {
+      this.$store.dispatch('setOriginalVisible', !this.originalVisible)
+    },
+    resetFilterShapeVals () {
       //light/effects stuff
       this.$store.dispatch('setBrightness', this.defaultBrightness)
       this.$store.dispatch('setContrast', this.defaultContrast)
@@ -998,8 +1075,8 @@ export default {
   }
 
   .desktopControls{
-    position: relative;
-    top: 20px;
+    position: fixed;
+    top: 70px;
   }
 
   .desktopCanvasOffset{
@@ -1013,9 +1090,17 @@ export default {
 
   .custom-canvas-overlay-desktop{
     position: absolute;
-    bottom: 250px;
+    top: 300px;
     left: 20%;
     z-index: 1;
+  }
+
+  .custom-canvas-overlay-tablet{
+    position: absolute;
+    top: 200px;
+    z-index: 1;
+    width: 73.5%;
+    text-align: center;
   }
 
   .custom-canvas-overlay-mobile{
@@ -1024,9 +1109,5 @@ export default {
     z-index: 1;
     width: 100%;
     text-align: center;
-  }
-
-  .mobile-tagline{
-    left:
   }
 </style>

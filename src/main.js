@@ -3,7 +3,8 @@ import App from './components/App.vue'
 import router from './router'
 import store from './store'
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faUndo, faFileDownload, faFileUpload, faImage } from "@fortawesome/free-solid-svg-icons";
+import { faImage as faRegImage } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 require('cropperjs/dist/cropper.js')
@@ -13,6 +14,11 @@ require('@/assets/main.scss');
 
 library.add(faTwitter)
 library.add(faUndo)
+library.add(faFileDownload)
+library.add(faFileUpload)
+library.add(faImage)
+library.add(faRegImage)
+
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 

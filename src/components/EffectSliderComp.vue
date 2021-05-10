@@ -1,12 +1,12 @@
 <template>
-  <div class="mb-1">
+  <div>
     <label for="input" class="label has-text-white tool-name">{{ name }}</label>
   </div>
   <div class="columns is-mobile">
-    <div class="column is-two-thirds">
-      <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" step=".01" :min="min" :max="max" class="w-100 mt-2">
+    <div class="column is-narrow is-two-thirds">
+      <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" step=".01" :min="min" :max="max" class="w-100">
     </div>
-    <div class="column is-1">
+    <div class="column is-narrow is-1">
       <button class="button is-black is-small ml-5 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
     </div>
   </div>
