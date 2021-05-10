@@ -53,7 +53,7 @@
         </div>
         <a class="twitter-share-button"
           href="https://twitter.com/intent/tweet?text=Check%20out%3A%20https%3A%2F%2Feazysnap.com!">
-        <button class="button is-small is-black"><font-awesome-icon :icon="['fab', 'twitter']" />Tweet!</button></a>
+        <button class="button is-small is-black"><font-awesome-icon :icon="['fab', 'twitter']" />&nbsp;Tweet!</button></a>
         <a href="https://cloud.google.com/sustainability"><button class="button is-small is-success">Sustainability</button></a>
       </div>
       <p class="has-text-white">
