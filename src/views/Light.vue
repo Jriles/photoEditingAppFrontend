@@ -6,7 +6,7 @@
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Sepia" :valProp="sepia" min="0" max="1" :defaultProp="defaultSepia"></effect-slider>
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Noise" :valProp="noise" min="0" max="1" :defaultProp="defaultNoise"></effect-slider>
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Ink" :valProp="ink" :defaultProp="defaultInk"></effect-slider>
-  <effect-slider @doneApplyingChange="doneApplyingChange" name="Smooth" :valProp="smooth" min="0" max=".5" :defaultProp="defaultSmooth"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Smooth" :valProp="smooth" min="0" max="50" :defaultProp="defaultSmooth"></effect-slider>
 </template>
 
 <script>
@@ -42,6 +42,7 @@ export default {
       return this.$store.state.defaultContrast
     },
     defaultSmooth: function () {
+      console.log(this.$store.state.defaultSmooth)
       return this.$store.state.defaultSmooth
     },
     defaultSepia: function () {

@@ -327,13 +327,13 @@ export default {
       return this.$store.state.saturation
     },
     red: function () {
-      return this.$store.state.red
+      return Number(this.$store.state.red)
     },
     blue: function () {
-      return this.$store.state.blue
+      return Number(this.$store.state.blue)
     },
     green: function () {
-      return this.$store.state.green
+      return Number(this.$store.state.green)
     },
     // shadows: {
     //   val: 0
@@ -504,7 +504,7 @@ export default {
     },
     red: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-     this.updateFilterVal(shapeImg)
+      this.updateFilterVal(shapeImg)
     },
     blue: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
@@ -737,44 +737,47 @@ export default {
     },
     applyFilters(canvas, texture) {
       canvas.draw(texture).update()
-      if (this.brightness !== this.defaultBrightness || this.contrast !== this.defaultContrast) {
+      if (this.brightness != this.defaultBrightness || this.contrast != this.defaultContrast) {
         canvas.draw(texture).brightnessContrast((this.brightness), (this.contrast)).update()
       }
 
-      if (this.vibrance !== this.defaultVibrance) {
+      if (this.vibrance != this.defaultVibrance) {
         texture.loadContentsOf(canvas);
         canvas.draw(texture).vibrance((this.vibrance)).update()
       }
 
-      if (this.hue !== this.defaultHue || this.saturation !== this.defaultSaturation) {
+      if (this.hue != this.defaultHue || this.saturation != this.defaultSaturation) {
         texture.loadContentsOf(canvas);
         canvas.draw(texture).hueSaturation((this.hue), (this.saturation)).update()
       }
 
-      if (this.red !== this.defaultRed ||
-          this.green !== this.defaultGreen ||
-          this.blue !== this.defaultBlue) {
+      if (this.red != this.defaultRed ||
+          this.green != this.defaultGreen ||
+          this.blue != this.defaultBlue) {
         //colors!
         texture.loadContentsOf(canvas);
-        canvas.draw(texture).curves([[0,0], [.25, .25 - this.red], [.75, .75 + this.red], [1,1]], [[0,0], [.25, .25 - this.green], [.75, .75 + this.green], [1,1]], [[0,0], [.25, .25 - this.blue], [.75, .75 + this.blue], [1,1]]).update()
+        canvas.draw(texture).curves([[0,0], [.25, .25 - this.red], [.75, .75 + this.red], [1,1]],
+                                    [[0,0], [.25, .25 - this.green], [.75, .75 + this.green], [1,1]],
+                                    [[0,0], [.25, .25 - this.blue], [.75, .75 + this.blue], [1,1]]).update()
       }
 
-      if (this.smooth !== this.defaultSmooth) {
+      if (this.smooth != this.defaultSmooth) {
+        console.log(this.smooth)
         texture.loadContentsOf(canvas);
         canvas.draw(texture).denoise(this.smooth).update()
       }
 
-      if (this.sepia !== this.defaultSepia) {
+      if (this.sepia != this.defaultSepia) {
         texture.loadContentsOf(canvas);
         canvas.draw(texture).sepia(this.sepia).update()
       }
 
-      if (this.noise !== this.defaultNoise) {
+      if (this.noise != this.defaultNoise) {
         texture.loadContentsOf(canvas);
         canvas.draw(texture).noise(this.noise).update()
       }
 
-      if (this.ink !== this.defaultInk) {
+      if (this.ink != this.defaultInk) {
         texture.loadContentsOf(canvas);
         canvas.draw(texture).ink(this.ink).update()
       }

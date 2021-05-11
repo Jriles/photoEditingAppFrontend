@@ -2,9 +2,9 @@
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Vibrance" :valProp="vibrance" :defaultProp="defaultVibrance"></effect-slider>
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Hue" :valProp="hue" :defaultProp="defaultHue"></effect-slider>
   <effect-slider @doneApplyingChange="doneApplyingChange" name="Saturation" :valProp="saturation" :defaultProp="defaultSaturation"></effect-slider>
-  <effect-slider @doneApplyingChange="doneApplyingChange" name="Red" min="0" max="100" :valProp="red" :defaultProp="defaultRed"></effect-slider>
-  <effect-slider @doneApplyingChange="doneApplyingChange" name="Blue" min="0" max="100" :valProp="blue" :defaultProp="defaultBlue"></effect-slider>
-  <effect-slider @doneApplyingChange="doneApplyingChange" name="Green" min="0" max="100" :valProp="green" :defaultProp="defaultGreen"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Red" min="0" max="1" :valProp="red" :defaultProp="defaultRed"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Blue" min="0" max="1" :valProp="blue" :defaultProp="defaultBlue"></effect-slider>
+  <effect-slider @doneApplyingChange="doneApplyingChange" name="Green" min="0" max="1" :valProp="green" :defaultProp="defaultGreen"></effect-slider>
 </template>
 
 <script>

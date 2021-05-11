@@ -53,7 +53,7 @@ export default createStore({
       // highlights: {
       //   val: 0
       // },
-      smooth: .5,
+      smooth: 50,
       rotation: 0,
       cropping: false,
       cropped: false,
@@ -98,7 +98,7 @@ export default createStore({
       defaultRed: 0,
       defaultBlue: 0,
       defaultGreen: 0,
-      defaultSmooth: .5,
+      defaultSmooth: 50,
       defaultRotation: 0,
       defaultSize: 1,
       defaultSizeX: 1,
