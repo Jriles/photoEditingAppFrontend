@@ -19,8 +19,16 @@ import glfx from 'glfx';
 export default {
   name: "default",
   emits: [ 'doneApplyingChange'],
-  watch: {
-
+  computed: {
+    desktopMode: function () {
+      return this.$store.state.desktopMode
+    },
+    tabletMode: function () {
+      return this.$store.state.tabletMode
+    },
+    mobileMode: function () {
+      return this.$store.state.mobileMode
+    },
   },
   props: {
     name: String,

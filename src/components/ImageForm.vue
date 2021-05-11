@@ -59,136 +59,124 @@
       <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
     </div>
   </div>
-  <div v-if="tabletMode">
-    <!--desktop-->
-    <div class="columns is-centered navbar-offset">
-      <div class="column">
-        <section class="has-text-centered">
-          <div class="columns pr-6">
-            <div class="column desktopCanvasOffset is-three-quarters">
-              <div>
-                <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
-                <img id="originalImg" v-show="false" :src="originalImg"/>
-              </div>
-              <div id="imgBucket">
-                <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
-                <div v-if="!uploaded" class="custom-canvas-overlay-tablet">
-                  <h2 class="title has-text-white">
-                      Transform Your Images
-                  </h2>
-                  <div class="file is-primary is-centered">
-                    <label class="file-label">
-                      <input class="file-input" type="file" name="photo" @change="submit">
-                      <span class="file-cta has-background-black">
-                        <span class="file-label">
-                          Choose a file…
-                        </span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-                <img id="shapeImg" class="hidden" :src="shapeImg"/>
-                <img id="filterImg" class="hidden" :src="filterImg"/>
-                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-                <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-                <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-              </div>
-            </div>
-            <div class="column">
-              <div class="desktopControls">
-                <div v-show="uploaded" class="mb-5">
-                  <div v-show="uploaded" class="columns is-mobile">
-                    <div class="column">
-                      <div class="file is-primary is-centered">
-                        <label class="file-label">
-                          <input class="file-input" type="file" name="photo" @change="submit">
-                          <span class="file-cta has-background-black">
-                            <span class="file-label">
-                              <font-awesome-icon icon="file-upload" />
-                            </span>
-                          </span>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <button id="downloadButton" @click="prepOutput()" class="button is-black"><font-awesome-icon icon="file-download" /></button>
-                    </div>
-                    <div class="column">
-                      <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
-                    </div>
-                    <div class="column">
-                      <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
-                    </div>
-                  </div>
-                </div>
-                <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
-              </div>
+  <div v-if="tabletMode" class="columns navbar-offset">
+    <div class="column is-three-quarters">
+      <div>
+        <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
+        <img id="originalImg" v-show="false" :src="originalImg"/>
+      </div>
+      <div id="imgBucket">
+        <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+        <div v-if="!uploaded" class="custom-canvas-overlay-tablet">
+          <h2 class="title has-text-white">
+              Transform Your Images
+          </h2>
+          <div class="file is-primary is-centered">
+            <label class="file-label">
+              <input class="file-input" type="file" name="photo" @change="submit">
+              <span class="file-cta has-background-black">
+                <span class="file-label">
+                  Choose a file…
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <img id="shapeImg" class="hidden" :src="shapeImg"/>
+        <img id="filterImg" class="hidden" :src="filterImg"/>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+        <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+      </div>
+    </div>
+    <div class="tabletControls has-text-centered">
+      <div v-show="uploaded" class="mb-5">
+        <div v-show="uploaded" class="columns is-multiline">
+          <div class="column">
+            <div class="file is-primary is-centered">
+              <label class="file-label">
+                <input class="file-input" type="file" name="photo" @change="submit">
+                <span class="file-cta has-background-black">
+                  <span class="file-label">
+                    <font-awesome-icon icon="file-upload" />
+                  </span>
+                </span>
+              </label>
             </div>
           </div>
-        </section>
+          <div class="column">
+            <button id="downloadButton" @click="prepOutput()" class="button is-black"><font-awesome-icon icon="file-download" /></button>
+          </div>
+          <div class="column">
+            <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
+          </div>
+          <div class="column">
+            <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
+          </div>
+        </div>
       </div>
+      <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
     </div>
   </div>
   <div v-if="mobileMode">
-    <div class="columns is-centered navbar-offset">
-      <div class="column">
-        <section class="has-text-centered">
-          <div class="columns">
-            <div class="column is-three-quarters">
-              <div>
-                <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
-                <img id="originalImg" v-show="false" :src="originalImg"/>
-              </div>
-              <div id="imgBucket">
-                <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
-                <div v-if="!uploaded" class="custom-canvas-overlay-mobile">
-                  <h3 class="title has-text-white">
-                      Transform Your Images
-                  </h3>
-                  <div class="file is-primary is-centered">
-                    <label class="file-label">
-                      <input class="file-input" type="file" name="photo" @change="submit">
-                      <span class="file-cta has-background-black">
-                        <span class="file-label">
-                          Choose a file…
-                        </span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-                <img id="shapeImg" class="hidden" :src="shapeImg"/>
-                <img id="filterImg" class="hidden" :src="filterImg"/>
-                <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-                <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-                <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-              </div>
-            </div>
-            <div class="column is-one-quarter">
-              <div class="file is-primary is-centered">
-                <label class="file-label">
-                  <input class="file-input" type="file" name="photo" @change="submit">
-                  <span class="file-cta has-background-black">
-                    <span class="file-label">
-                      Choose a file…
-                    </span>
+    <div class="navbar-offset">
+      <div>
+        <div>
+          <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
+          <img id="originalImg" v-show="false" :src="originalImg"/>
+        </div>
+        <div id="imgBucket">
+          <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+          <div v-if="!uploaded" class="custom-canvas-overlay-mobile">
+            <h3 class="title has-text-white">
+                Transform Your Images
+            </h3>
+            <div class="file is-primary is-centered">
+              <label class="file-label">
+                <input class="file-input" type="file" name="photo" @change="submit">
+                <span class="file-cta has-background-black">
+                  <span class="file-label">
+                    Choose a file…
                   </span>
-                </label>
-              </div>
-              <div class="column">
-                <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
-              </div>
-              <div class="is-centered mt-5">
-                <button id="downloadButton" @click="prepOutput()" class="button is-black">Download Copy</button>
-              </div>
-              <div class="is centered mt-5 mb-5">
-                <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
-              </div>
-              <div class="desktopControls pr-5">
-                <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
-              </div>
+                </span>
+              </label>
             </div>
           </div>
-        </section>
+          <img id="shapeImg" class="hidden" :src="shapeImg"/>
+          <img id="filterImg" class="hidden" :src="filterImg"/>
+          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+        </div>
+      </div>
+      <div v-show="uploaded" class="columns is-mobile mt-1">
+        <div class="column">
+          <div class="file is-primary is-centered">
+            <label class="file-label">
+              <input class="file-input" type="file" name="photo" @change="submit">
+              <span class="file-cta has-background-black">
+                <span class="file-label">
+                  <font-awesome-icon icon="file-upload" />
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="column">
+          <button id="downloadButton" @click="prepOutput()" class="button is-black"><font-awesome-icon icon="file-download" /></button>
+        </div>
+        <div class="column">
+          <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
+        </div>
+        <div class="column">
+          <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
+        </div>
+      </div>
+      <div v-show="!uploaded" class="has-text-centered mt-5">
+        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
+      </div>
+      <div v-show="uploaded" class="has-text-centered mt-1">
+        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
       </div>
     </div>
   </div>
@@ -199,7 +187,7 @@ import glfx from 'glfx';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
-
+import { isMobile, isTablet, isDesktop } from '@/utils/DeviceTesting'
 //max width is 75% of screen
 const IMAGE_HEIGHT = screen.height - 400;
 const MOBILE_CANVAS_PERCENT = .8;
@@ -215,18 +203,18 @@ export default {
     //redirect to light transformations
     //no landing page
     var imgURL;
-    if(this.isDesktop()){
+    if(isDesktop(this.getWindowWidth())){
       //desktop
       console.log('thinks that screen is big')
       imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
       this.$store.dispatch('setDesktopMode', true)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    } else if (this.isTablet()){
+    } else if (isTablet(this.getWindowWidth())){
       //tablet
       imgURL = require('@/assets/img/tablet/manWCatTablet.jpg')
       this.$store.dispatch('setTabletMode', true)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    } else if(this.isMobile()) {
+    } else if(isMobile(this.getWindowWidth())) {
       //mobile
       console.log('thinks we on mobile boi')
       imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
@@ -253,7 +241,7 @@ export default {
     img.src = imgURL;
   },
   components: {
-    VueCropper,
+    VueCropper
     //VueSlickCarousel
   },
   props: {
@@ -572,34 +560,24 @@ export default {
     }
   },
   methods: {
-    isMobile () {
-      if (this.getWindowWidth() < 500) {
-        return true
-      }
-      return false
-    },
-    isTablet () {
-      if (this.getWindowWidth() > 500 && this.getWindowWidth() < 1100){
-        return true
-      }
-      return false
-    },
-    isDesktop () {
-      if (this.getWindowWidth() > 1100) {
-        return true
-      }
-      return false
-    },
-    //returns a number, 1 for desktop, 2 for tablet and 3 for mobile
-    getDeviceType () {
-      if (this.isDesktop()){
-        return 1
-      } else if (this.isTablet()) {
-        return 2
-      } else if (this.isMobile()) {
-        return 3
-      }
-    },
+    // isMobile (windowWidth) {
+    //   if (windowWidth < 500) {
+    //     return true
+    //   }
+    //   return false
+    // },
+    // isTablet (windowWidth) {
+    //   if (windowWidth > 500 && windowWidth < 1100){
+    //     return true
+    //   }
+    //   return false
+    // },
+    // isDesktop (windowWidth) {
+    //   if (windowWidth > 1100) {
+    //     return true
+    //   }
+    //   return false
+    // },
     initPageBasedOnPath(path) {
       console.log(path)
       switch(path){
@@ -626,7 +604,7 @@ export default {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
     getWindowWidth () {
-      return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      return window.innerWidth;
     },
     undoAll () {
       this.resetFilterShapeVals()
@@ -1071,6 +1049,16 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
     height: 100vh;
+  }
+
+  .tabletControls{
+    padding-top: 70px;
+    position: fixed;
+    left: 74%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+    padding-right: 3%;
   }
 
   .desktopCanvasOffset{
