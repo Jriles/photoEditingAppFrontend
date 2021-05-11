@@ -14,13 +14,13 @@
   </div>
   <div v-else>
     <div class="columns is-mobile">
-      <div class="column is-4 is-narrow mobile-column">
+      <div class="column is-one-third is-narrow mobile-column">
         <div for="input" class="label has-text-white tool-name">{{ name }}</div>
       </div>
-      <div class="column is-narrow mobile-column">
+      <div class="column mobile-column">
         <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" step=".01" :min="min" :max="max" class="w-100 mobile-input">
       </div>
-      <div class="column is-2 is-narrow mobile-column">
+      <div class="column is-3 is-narrow mobile-column">
         <button class="button is-black is-small has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
       </div>
     </div>

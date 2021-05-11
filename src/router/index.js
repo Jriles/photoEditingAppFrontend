@@ -11,7 +11,7 @@ import Hints from '../views/Hints.vue'
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home
   },
   {

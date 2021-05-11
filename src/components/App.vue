@@ -5,6 +5,15 @@
         <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
         EazySnap
       </router-link>
+      <router-link to="/transformations/light" class="navbar-item has-text-white has-background-grey-dark">
+        Light
+      </router-link>
+      <router-link to="/transformations/color" class="navbar-item has-text-white has-background-grey-dark">
+        Color
+      </router-link>
+      <router-link to="/transformations/shape" class="navbar-item has-text-white has-background-grey-dark">
+        Shape
+      </router-link>
 
       <a role="button" class="navbar-burger" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active' : showNav }" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
         <span class="has-text-white" aria-hidden="true"></span>
@@ -15,15 +24,6 @@
 
     <div id="navbarBasicExample" class="navbar-menu has-background-grey-dark" v-bind:class="{ 'is-active' : showNav }">
       <div class="navbar-start has-text-white">
-        <router-link to="/transformations/light" class="navbar-item has-text-white has-background-grey-dark">
-          Light
-        </router-link>
-        <router-link to="/transformations/color" class="navbar-item has-text-white has-background-grey-dark">
-          Color
-        </router-link>
-        <router-link to="/transformations/shape" class="navbar-item has-text-white has-background-grey-dark">
-          Shape
-        </router-link>
         <router-link to="/hints" class="navbar-item has-text-white has-background-grey-dark">
           Hints
         </router-link>
