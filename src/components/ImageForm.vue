@@ -190,7 +190,7 @@ import { saveAs } from 'file-saver';
 import { isMobile, isTablet, isDesktop } from '@/utils/DeviceTesting'
 //max width is 75% of screen
 const IMAGE_HEIGHT = window.innerHeight - 50;
-const MOBILE_IMAGE_HEIGHT = window.innerHeight + 300;
+const MOBILE_IMAGE_HEIGHT = window.innerHeight - 350;
 const MOBILE_CANVAS_PERCENT = 1;
 const DESKTOP_CANVAS_PERCENT = .75;
 //how long we wait for an image to load before doing work
