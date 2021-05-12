@@ -243,7 +243,7 @@ export default {
       ref.$store.dispatch('setDisplayImg', defaultImgURL)
       ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
       ref.$store.dispatch('setOriginalImgTexture', texture)
-      ref.initPageBasedOnPath(path)
+      ref.initPageBasedOnPath(path, true)
     })
     img.src = imgURL;
   },
@@ -487,7 +487,7 @@ export default {
   watch: {
     $route (to, from){
       const path = this.$route.name;
-      this.initPageBasedOnPath(path)
+      this.initPageBasedOnPath(path, false)
     },
     brightness: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
@@ -564,7 +564,7 @@ export default {
     }
   },
   methods: {
-    initPageBasedOnPath(path) {
+    initPageBasedOnPath(path, newImage) {
       console.log(path)
       switch(path){
         case "color":
@@ -574,7 +574,7 @@ export default {
           this.initWebGLCanvas()
           break
         case "shape":
-          this.initCropperjsCanvas()
+          this.initCropperjsCanvas(newImage)
           break
       }
     },
@@ -596,7 +596,7 @@ export default {
       this.resetFilterShapeVals()
       const path = this.$route.name;
       //waiting for images to load
-      this.initPageBasedOnPath(path)
+      this.initPageBasedOnPath(path, true)
     },
     changeOriginalVisible () {
       this.$store.dispatch('setOriginalVisible', !this.originalVisible)
@@ -659,7 +659,7 @@ export default {
         ref.$store.dispatch('setOriginalImgTexture', texture)
         //ref.$store.dispatch('setOriginalImgTexture', texture)
         //ref.originalImgTexture = texture
-        ref.initPageBasedOnPath(path)
+        ref.initPageBasedOnPath(path, true)
         const aspectRatio = this.width / this.height;
         ref.$store.dispatch('setOriginalAspectRatio', aspectRatio)
       }, false);
@@ -807,7 +807,7 @@ export default {
         }
       }, IMAGE_LOAD_TIME);
     },
-    initCropperjsCanvas() {
+    initCropperjsCanvas(newImage) {
       this.removeCanvasIfExists()
       this.$store.dispatch('setCropperVisible', true)
       this.$refs.cropper.replace(this.filterImg);
@@ -826,13 +826,21 @@ export default {
           ref.saveCropImgData()
         }
 
+        if (newImage) {
+          //need these to be reset after uploading img
+          ref.saveStraightenImgData()
+          ref.saveCropImgData()
+        }
+
         //NEXT, APPLY THAT DATA TO THE CROPPER
         //order MATTERS here, straighening takes precedence over cropping
         if (ref.cropped === true) {
+          ref.$refs['cropper'].initCrop()
           ref.initCropBoxWindow('cropper')
         }
 
         if (ref.straightened === true) {
+          ref.$refs['cropper'].initCrop()
           ref.initStraightenWindow('cropper')
         }
       }, IMAGE_LOAD_TIME)
@@ -861,6 +869,7 @@ export default {
     changeStateButton (property) {
       //set shape states on cropper
       if (property === "Aspect Ratio") {
+        this.$refs['cropper'].initCrop()
         this.initStraightenWindow('cropper')
         this.saveCropImgData()
       }
@@ -875,6 +884,7 @@ export default {
 
       //cropping handled here
       if (this.cropping && property === "Cropping") {
+        this.$refs['cropper'].initCrop()
         this.initCropBoxWindow('cropper')
       }
 
@@ -905,8 +915,10 @@ export default {
         }
       }
       if (this.straightening && property === "Straightening") {
+        this.$refs['cropper'].initCrop()
         this.initStraightenWindow('cropper')
       }
+      this.doneChangingShape()
     },
     saveStraightenImgData () {
       const cropperCanData = this.$refs.cropper.getCanvasData()
@@ -921,7 +933,6 @@ export default {
       this.$store.dispatch('setCropBoxData', cropperCanData)
     },
     initStraightenWindow (cropper) {
-      this.$refs[cropper].initCrop()
       this.$refs[cropper].setCropBoxData({
         "left": this.straightenCropBoxLeft,
         "top": this.straightenCropBoxTop,
@@ -936,11 +947,6 @@ export default {
       this.$store.dispatch('setCropBoxData', cropBoxData)
     },
     initCropBoxWindow (cropper) {
-      this.$refs[cropper].initCrop()
-      console.log(this.cropBoxLeft)
-      console.log(this.cropBoxTop)
-      console.log(this.cropBoxWidth)
-      console.log(this.cropBoxHeight)
       this.$refs[cropper].setCropBoxData({
         "left": this.cropBoxLeft,
         "top": this.cropBoxTop,
@@ -992,7 +998,7 @@ export default {
 
       //***** THIS MUST BE BEFORE THIS ******//
       // CROPPER MUST BE VISIBLE AT TIME OF REPLACE()
-      this.outputVisible = true
+      this.$store.dispatch('setOutputVisible', true)
       this.$refs.outputCropper.replace(originalImgWFilters)
 
       const ref = this;
@@ -1012,7 +1018,7 @@ export default {
         }
         setTimeout(function() {
           saveAs(ref.$refs.outputCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1), ref.imgFileName)
-          ref.outputVisible = false
+          ref.$store.dispatch('setOutputVisible', false)
         }, IMAGE_LOAD_TIME);
       }, IMAGE_LOAD_TIME);
       //we should now have all alterations accounted for at this point.
@@ -1024,7 +1030,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .navbar-offset{
-    margin-top: 50px !important;
+    margin-top: 51px !important;
   }
 
   .main-title{
