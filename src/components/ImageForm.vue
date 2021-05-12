@@ -6,7 +6,7 @@
         <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
         <img id="originalImg" v-show="false" :src="originalImg"/>
       </div>
-      <div id="imgBucket">
+      <div id="imgBucket" class="desktop-img-bucket">
         <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
         <div v-if="!uploaded" class="custom-canvas-overlay-desktop">
           <h1 class="title has-text-white main-title">
@@ -65,7 +65,7 @@
         <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
         <img id="originalImg" v-show="false" :src="originalImg"/>
       </div>
-      <div id="imgBucket">
+      <div id="imgBucket" class="desktop-img-bucket">
         <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
         <div v-if="!uploaded" class="custom-canvas-overlay-tablet">
           <h2 class="title has-text-white">
@@ -189,9 +189,9 @@ import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
 import { isMobile, isTablet, isDesktop } from '@/utils/DeviceTesting'
 //max width is 75% of screen
-const IMAGE_HEIGHT = screen.height - 400;
+const IMAGE_HEIGHT = window.innerHeight - 50;
 const MOBILE_CANVAS_PERCENT = .8;
-const DESKTOP_CANVAS_PERCENT = .7;
+const DESKTOP_CANVAS_PERCENT = .75;
 //how long we wait for an image to load before doing work
 const IMAGE_LOAD_TIME = 150;
 const DISPLAY_IMAGE_QUALITY = .5;
@@ -203,6 +203,7 @@ export default {
     //redirect to light transformations
     //no landing page
     var imgURL;
+    this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
     if(isDesktop(this.getWindowWidth())){
       //desktop
       console.log('thinks that screen is big')
@@ -236,6 +237,8 @@ export default {
       ref.$store.dispatch('setShapeImg', defaultImgURL)
       ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
       ref.$store.dispatch('setOriginalImgTexture', texture)
+      ref.$store.dispatch('setImgWidth', this.width)
+      ref.$store.dispatch('setImgHeight', this.height)
       ref.initPageBasedOnPath(path)
     })
     img.src = imgURL;
@@ -554,9 +557,6 @@ export default {
   },
   data() {
     return {
-      //originalImgTexture: null
-      glfxDisplayImg: null,
-      cropperjsDisplayImg: null
     }
   },
   methods: {
@@ -663,31 +663,19 @@ export default {
       const img = new Image();
       const ref = this
       img.addEventListener("load", function () {
-        //always fit it to the canvas. We use the original img on download.
-        ref.fitImgToCanvas(reader.result, 'cropper', this.width, this.height, ref)
         const path = ref.$route.name;
-        //waiting for images to load
-        setTimeout(function() {
-          //first lets set our display img
-          //now that we have successfully resized.
-          const displayImg = ref.$refs['cropper'].getCroppedCanvas().toDataURL(ref.imgFileExt, DISPLAY_IMAGE_QUALITY)
-          ref.$store.dispatch('setDisplayImg', displayImg)
-          //also setting shape img here apparently
-          ref.$store.dispatch('setShapeImg', displayImg)
-          //we want to change this here so we can avoid an if down the road.
-          this.glfxDisplayImg = document.getElementById('shapeImg');
-          setTimeout(function() {
-            const canvas = ref.getGLFXCanvas()
-            const shapeImgElem = document.getElementById('shapeImg')
-            const texture = ref.getGLFXTexture(canvas, shapeImgElem)
-            const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
-            ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
-            ref.$store.dispatch('setOriginalImgTexture', texture)
-            //ref.$store.dispatch('setOriginalImgTexture', texture)
-            ref.originalImgTexture = texture
-            ref.initPageBasedOnPath(path)
-          }, IMAGE_LOAD_TIME);
-        }, IMAGE_LOAD_TIME);
+        ref.$store.dispatch('setImgWidth', this.width)
+        ref.$store.dispatch('setImgHeight', this.height)
+        //we want to change this here so we can avoid an if down the road.
+        const canvas = ref.getGLFXCanvas()
+        const shapeImgElem = document.getElementById('shapeImg')
+        const texture = ref.getGLFXTexture(canvas, shapeImgElem)
+        const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
+        ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
+        ref.$store.dispatch('setOriginalImgTexture', texture)
+        //ref.$store.dispatch('setOriginalImgTexture', texture)
+        //ref.originalImgTexture = texture
+        ref.initPageBasedOnPath(path)
         const aspectRatio = this.width / this.height;
         ref.$store.dispatch('setOriginalAspectRatio', aspectRatio)
       }, false);
@@ -696,6 +684,10 @@ export default {
         //filter img does not get resized, as it is not displayed, except on cropper js, which doesnt care about size.
         ref.$store.dispatch('setFilterImg', reader.result)
         ref.$store.dispatch('setOriginalImg', reader.result)
+        //first lets set our display img
+        ref.$store.dispatch('setDisplayImg', reader.result)
+        //also setting shape img here apparently
+        ref.$store.dispatch('setShapeImg', reader.result)
         ref.$store.dispatch('setUploaded', true)
         //set download
         img.src = reader.result;
@@ -784,7 +776,7 @@ export default {
       return canvas
     },
     //still need this
-    applyShapeChanges(cropperName){
+    applyShapeChanges (cropperName) {
       console.log('called apply shape changes')
       this.$refs[cropperName].rotateTo(this.rotation);
       //for cropper window
@@ -810,18 +802,24 @@ export default {
       this.$store.dispatch('setCropperVisible', false)
       this.removeCanvasIfExists()
 
-      // if (ref.imgTooBig(this.imgWidth, this.imgHeight, ref)) {
-      //   ref.fitImgToCanvas(this.shapeImg, 'storageCropper', this.imgWidth, this.imgHeight, ref)
-      // }
-
+      //this is probably not loaded yet, but we need wait if we want real dimensions.
       setTimeout(function() {
-        ref.$refs.storageCropper.replace(ref.displayImg);
-        //put together textured canvas on submit
-        //use store state to apply here
-        //const canvasWFilters = ref.applyFilters(ref.originalImgCanvas, ref.originalImgTexture)
-        console.log('called initWebGLCanvas')
-
-        ref.updateFilterVal(shapeImg)
+        const shapeImgElem = document.getElementById('shapeImg')
+        const width = shapeImgElem.width;
+        const height = shapeImgElem.height;
+        if (ref.imgTooBig(width, height, ref)) {
+          ref.fitImgToCanvas(ref.shapeImg, 'storageCropper', width, height, ref)
+          setTimeout(function() {
+            //resize img to canvas
+            const resizedShapeImg = ref.$refs.storageCropper.getCroppedCanvas().toDataURL('image/jpeg', 1)
+            ref.$store.dispatch('setShapeImg', resizedShapeImg)
+            setTimeout(function() {
+              ref.updateFilterVal(shapeImg)
+            }, IMAGE_LOAD_TIME);
+          }, IMAGE_LOAD_TIME);
+        } else {
+          ref.updateFilterVal(shapeImg)
+        }
       }, IMAGE_LOAD_TIME);
     },
     initCropperjsCanvas() {
@@ -866,15 +864,14 @@ export default {
       this.applyShapeChanges('storageCropper')
       const newShapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL(this.imgFileExt, 1)
       this.$store.dispatch('setShapeImg', newShapeImg)
-      //need img data
-      const cropperCanData = this.$refs.cropper.getCanvasData()
-      this.$store.dispatch('setImgWidth', cropperCanData.width)
-      this.$store.dispatch('setImgHeight', cropperCanData.height)
     },
     doneChangingFilter(){
-      var originalImg = document.getElementById('originalImg')
-      //const newFilterImg = this.applyFilters(this.originalImgCanvas, this.originalImgTexture).toDataURL(this.imgFileExt, 1)
-      //this.$store.dispatch('setFilterImg', newFilterImg)
+      const canvas = this.getGLFXCanvas()
+      const originalImgElem = document.getElementById('originalImg')
+      const texture = this.getGLFXTexture(canvas, originalImgElem)
+      const texturedCanvas = this.applyTextureToGLFXCanvas(canvas, texture)
+      const newFilterImg = this.applyFilters(texturedCanvas,texture).toDataURL(this.imgFileExt, 1)
+      this.$store.dispatch('setFilterImg', newFilterImg)
     },
     changeStateButton (property) {
       //set shape states on cropper
@@ -966,16 +963,22 @@ export default {
         "height": this.cropBoxHeight
       })
     },
-    imgTooBig (image, vueRef) {
-      console.log(image)
-      console.log('image.width' + image.width)
-      //if (image.width > vueRef.containerWidth || image.height > IMAGE_HEIGHT) {
-      if (image.width > vueRef.containerWidth) {
+    imgTooBig (imgWidth, imgHeight, vueRef) {
+      if (imgWidth > vueRef.containerWidth || imgHeight > IMAGE_HEIGHT) {
         return true
       }
       return false
     },
-    fitImgToCanvas (newImgURL, cropperRef, height, width, vueRef){
+    imgTooSmall (imgWidth, imgHeight, vueRef) {
+      //one dimension is can be smaller
+      //but not both
+      //we need to be sizing it up as much as our window allows.
+      if (imgWidth < vueRef.containerWidth && imgHeight < IMAGE_HEIGHT) {
+        return true
+      }
+      return false
+    },
+    fitImgToCanvas (newImgURL, cropperRef, width, height, vueRef){
       //takes in an image id, loads
       //submit call is a flag for when we are calling this function
       //on submit image
@@ -983,6 +986,11 @@ export default {
       const newWidthRatio = vueRef.containerWidth / width;
       const newHeightRatio = IMAGE_HEIGHT / height;
       const ratioToUse = Math.min(newWidthRatio, newHeightRatio)
+
+      //MULTIPLY RATIO BY IMAGE WIDTH/HEIGHT HERE, AND SET.
+      //THAT WAY WHEN WE MULTIPLY AGAIN, we have the values
+
+      console.log(ratioToUse)
       //need to make a copy
       setTimeout(function() {
         vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
@@ -1034,19 +1042,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .navbar-offset{
-    margin-top: 50px;
+    margin-top: 40px !important;
   }
 
   .main-title{
     font-size: 3rem !important;
   }
 
-  .mobile-placeholder{
-    height: 150vh;
-  }
-
   .desktopControls{
-    padding-top: 70px;
+    padding-top: 20px;
     position: fixed;
     left: 80%;
     overflow-y: auto;
@@ -1096,8 +1100,8 @@ export default {
     text-align: center;
   }
 
-  .desktop-container{
-    width: 100%;
+  .desktop-img-bucket {
+    height: 700px;
   }
 
   .columns{
