@@ -91,8 +91,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .mobile-input{
+  .mobile-input {
     margin-top: 0px;
     margin-bottom: 0px;
+  }
+
+  .column {
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 </style>

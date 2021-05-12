@@ -25,9 +25,9 @@
         </div>
         <img id="shapeImg" class="hidden" :src="shapeImg"/>
         <img id="filterImg" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-        <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
       </div>
     </div>
     <div class="desktopControls has-text-centered">
@@ -84,9 +84,9 @@
         </div>
         <img id="shapeImg" class="hidden" :src="shapeImg"/>
         <img id="filterImg" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-        <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
       </div>
     </div>
     <div class="tabletControls has-text-centered">
@@ -144,10 +144,16 @@
           </div>
           <img id="shapeImg" class="hidden" :src="shapeImg"/>
           <img id="filterImg" class="hidden" :src="filterImg"/>
-          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
-          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :minContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         </div>
+      </div>
+      <div v-show="!uploaded" class="has-text-centered mt-5">
+        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
+      </div>
+      <div v-show="uploaded" class="has-text-centered mt-3">
+        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
       </div>
       <div v-show="uploaded" class="columns is-mobile mt-1">
         <div class="column">
@@ -172,12 +178,6 @@
           <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
         </div>
       </div>
-      <div v-show="!uploaded" class="has-text-centered mt-5">
-        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
-      </div>
-      <div v-show="uploaded" class="has-text-centered mt-1">
-        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
-      </div>
     </div>
   </div>
 </template>
@@ -190,7 +190,8 @@ import { saveAs } from 'file-saver';
 import { isMobile, isTablet, isDesktop } from '@/utils/DeviceTesting'
 //max width is 75% of screen
 const IMAGE_HEIGHT = window.innerHeight - 50;
-const MOBILE_CANVAS_PERCENT = .8;
+const MOBILE_IMAGE_HEIGHT = window.innerHeight + 200;
+const MOBILE_CANVAS_PERCENT = 1;
 const DESKTOP_CANVAS_PERCENT = .75;
 //how long we wait for an image to load before doing work
 const IMAGE_LOAD_TIME = 150;
@@ -203,23 +204,26 @@ export default {
     //redirect to light transformations
     //no landing page
     var imgURL;
-    this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
+
     if(isDesktop(this.getWindowWidth())){
       //desktop
       console.log('thinks that screen is big')
       imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
       this.$store.dispatch('setDesktopMode', true)
+      this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
     } else if (isTablet(this.getWindowWidth())){
       //tablet
       imgURL = require('@/assets/img/tablet/manWCatTablet.jpg')
       this.$store.dispatch('setTabletMode', true)
+      this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
     } else if(isMobile(this.getWindowWidth())) {
       //mobile
       console.log('thinks we on mobile boi')
       imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
       this.$store.dispatch('setMobileMode', true)
+      this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
     }
     const path = this.$route.name;
@@ -944,16 +948,7 @@ export default {
       })
     },
     imgTooBig (imgWidth, imgHeight, vueRef) {
-      if (imgWidth > vueRef.containerWidth || imgHeight > IMAGE_HEIGHT) {
-        return true
-      }
-      return false
-    },
-    imgTooSmall (imgWidth, imgHeight, vueRef) {
-      //one dimension is can be smaller
-      //but not both
-      //we need to be sizing it up as much as our window allows.
-      if (imgWidth < vueRef.containerWidth && imgHeight < IMAGE_HEIGHT) {
+      if (imgWidth > vueRef.containerWidth || imgHeight > vueRef.containerHeight) {
         return true
       }
       return false
@@ -964,7 +959,7 @@ export default {
       //on submit image
       vueRef.$refs[cropperRef].replace(newImgURL);
       const newWidthRatio = vueRef.containerWidth / width;
-      const newHeightRatio = IMAGE_HEIGHT / height;
+      const newHeightRatio = vueRef.containerHeight / height;
       const ratioToUse = Math.min(newWidthRatio, newHeightRatio)
 
       //MULTIPLY RATIO BY IMAGE WIDTH/HEIGHT HERE, AND SET.
