@@ -235,10 +235,10 @@ export default {
       const defaultImgURL = texturedCanvas.toDataURL('image/jpg', DISPLAY_IMAGE_QUALITY)
       ref.$store.dispatch('setFilterImg', defaultImgURL)
       ref.$store.dispatch('setShapeImg', defaultImgURL)
+      ref.$store.dispatch('setOriginalImg', defaultImgURL)
+      ref.$store.dispatch('setDisplayImg', defaultImgURL)
       ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
       ref.$store.dispatch('setOriginalImgTexture', texture)
-      ref.$store.dispatch('setImgWidth', this.width)
-      ref.$store.dispatch('setImgHeight', this.height)
       ref.initPageBasedOnPath(path)
     })
     img.src = imgURL;
@@ -560,24 +560,6 @@ export default {
     }
   },
   methods: {
-    // isMobile (windowWidth) {
-    //   if (windowWidth < 500) {
-    //     return true
-    //   }
-    //   return false
-    // },
-    // isTablet (windowWidth) {
-    //   if (windowWidth > 500 && windowWidth < 1100){
-    //     return true
-    //   }
-    //   return false
-    // },
-    // isDesktop (windowWidth) {
-    //   if (windowWidth > 1100) {
-    //     return true
-    //   }
-    //   return false
-    // },
     initPageBasedOnPath(path) {
       console.log(path)
       switch(path){
@@ -664,8 +646,6 @@ export default {
       const ref = this
       img.addEventListener("load", function () {
         const path = ref.$route.name;
-        ref.$store.dispatch('setImgWidth', this.width)
-        ref.$store.dispatch('setImgHeight', this.height)
         //we want to change this here so we can avoid an if down the road.
         const canvas = ref.getGLFXCanvas()
         const shapeImgElem = document.getElementById('shapeImg')
