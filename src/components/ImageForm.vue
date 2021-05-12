@@ -985,7 +985,13 @@ export default {
       //take in original (unsized) img
       //apply all filter changes
       const originalImg = document.getElementById('originalImg')
-      var originalImgWFilters = this.applyFilters(this.originalImgCanvas, this.originalImgTexture).toDataURL()
+      const canvas = this.getGLFXCanvas()
+      const originalImgElem = document.getElementById('originalImg')
+      const texture = this.getGLFXTexture(canvas, originalImgElem)
+      const texturedCanvas = this.applyTextureToGLFXCanvas(canvas, texture)
+      const newFilterImg = this.applyFilters(texturedCanvas,texture).toDataURL(this.imgFileExt, 1)
+
+      var originalImgWFilters = this.applyFilters(texturedCanvas, texture).toDataURL()
       // upload to output cropper
 
       //***** THIS MUST BE BEFORE THIS ******//

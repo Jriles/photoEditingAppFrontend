@@ -1,13 +1,29 @@
 <template>
-  <div class="mb-1">
-    <label for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</label>
-  </div>
-  <div class="columns is-mobile">
-    <div class="column is-two-thirds">
-      <input type="number" name="input" v-model="val" @input="emitNewVal" :min="min" :max="max" class="w-50">
+  <div v-if="desktopMode || tabletMode">
+    <div class="mb-1">
+      <label for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</label>
     </div>
-    <div class="column is-1">
-      <button class="button is-black is-small ml-5 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
+    <div class="columns is-mobile">
+      <div class="column is-two-thirds">
+        <input type="number" name="input" v-model="val" @input="emitNewVal" :min="min" :max="max" class="w-50">
+      </div>
+      <div class="column is-1">
+        <button class="button is-black is-small ml-5 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
+      </div>
+    </div>
+  </div>
+  <div v-if="mobileMode">
+    <div class="columns is-mobile">
+      <div class="column is-one-third">
+        <label for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</label>
+      </div>
+
+      <div class="column is-one-third">
+        <input type="number" name="input" v-model="val" @input="emitNewVal" :min="min" :max="max">
+      </div>
+      <div class="column is-5">
+        <button class="button is-black is-small has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
+      </div>
     </div>
   </div>
 </template>

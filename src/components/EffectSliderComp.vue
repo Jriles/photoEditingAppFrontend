@@ -14,13 +14,13 @@
   </div>
   <div v-else>
     <div class="columns is-mobile">
-      <div class="column is-one-third is-narrow mobile-column">
+      <div class="column is-one-third is-narrow">
         <div for="input" class="label has-text-white tool-name">{{ name }}</div>
       </div>
-      <div class="column mobile-column">
+      <div class="column">
         <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" step=".01" :min="min" :max="max" class="w-100 mobile-input">
       </div>
-      <div class="column is-3 is-narrow mobile-column">
+      <div class="column is-3 is-narrow">
         <button class="button is-black is-small has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
       </div>
     </div>
@@ -91,9 +91,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .mobile-column{
-  }
-
   .mobile-input{
     margin-top: 0px;
     margin-bottom: 0px;

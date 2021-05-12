@@ -1,24 +1,33 @@
 <template>
   <!--crop-->
-  <div class="columns mt-4">
-    <div v-show="!cropping" class="column">
-      <button class="button is-black is-normal" @click="startCropping">Start Cropping</button>
+  <div class="columns is-mobile is-multiline" v-show="!cropping && !straightening">
+    <div class="column">
+      <button class="button is-black is-normal" @click="startCropping"><font-awesome-icon :icon="['fas', 'crop-alt']"/></button>
     </div>
-    <div class="column" v-show="cropping">
-      <button class="button is-black is-normal" @click="emitEvent" name="Save">Save</button>
+    <div class="column">
+      <button class="button is-black is-normal" @click="startStraightening">Straighten</button>
     </div>
-    <div class="column" v-show="cropping">
-      <button class="button is-black is-normal" @click="emitEvent" name="Cancel">Cancel</button>
+    <div class="column">
+      <button class="button is-black is-normal" @click="emitEvent" name="Flip Vertically">Flip &nbsp;<font-awesome-icon :icon="['fas', 'arrows-alt-v']"/></button>
     </div>
-    <div class="column" v-show="cropping">
-      <button class="button is-black is-normal" @click="emitEvent" name="Aspect Ratio">Reset Crop Aspect Ratio</button>
+    <div class="column">
+      <button class="button is-black is-normal" @click="emitEvent" name="Flip Horizontally">Flip &nbsp;<font-awesome-icon :icon="['fas', 'arrows-alt-h']"/></button>
     </div>
   </div>
-  <!--straighten-->
-  <div class="columns mt-4">
-    <div class="column" v-show="!cropping && !straightening">
-      <button class="button is-black is-normal" @click="startStraightening">Start Straightening</button>
+
+  <div class="columns is-mobile" v-show="cropping">
+    <div class="column">
+      <button class="button is-black is-normal" @click="emitEvent" name="Save">Save</button>
     </div>
+    <div class="column">
+      <button class="button is-black is-normal" @click="emitEvent" name="Cancel">Cancel</button>
+    </div>
+  </div>
+  <div class="mb-3" v-show="cropping">
+    <button class="button is-black is-normal" @click="emitEvent" name="Aspect Ratio">Reset Crop Aspect Ratio</button>
+  </div>
+  <!--straighten-->
+  <div class="columns is-mobile" v-show="straightening">
     <div class="column" v-show="straightening">
       <button class="button is-black is-normal" @click="emitEvent" name="Save">Save</button>
     </div>
@@ -31,12 +40,6 @@
   </div>
   <effect-number @doneApplyingChange="doneApplyingChange" name="Rotation" min="-180" max="180" :valProp="rotation" :defaultProp="defaultRotation" :symbol="String.fromCharCode(176)"></effect-number>
   <effect-number @doneApplyingChange="doneApplyingChange" name="Size" min="0" max="1000" :valProp="size" :defaultProp="defaultSize" :symbol="String.fromCharCode(37)"></effect-number>
-  <div class="w-100 mt-5">
-    <button class="button is-black is-normal" @click="emitEvent" name="Flip Vertically">Flip Vertically</button>
-  </div>
-  <div class="w-100 mt-3">
-    <button class="button is-black is-normal" @click="emitEvent" name="Flip Horizontally">Flip Horizontally</button>
-  </div>
 </template>
 
 <script>
