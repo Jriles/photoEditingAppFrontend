@@ -27,7 +27,9 @@ export default createStore({
       originalAspectRatio: null,
       containerHeight: IMAGE_HEIGHT,
       containerWidth: null,
+      //output cropper should be visible for crop changes, fuck me i guess
       outputVisible: false,
+      storageCropperVisible: false,
       //this img is used by webgl to show user shape and current filter changes.
       //it is not used in any other capacity
       //we need this because we do not want to apply all filter changes every frame
@@ -166,6 +168,9 @@ export default createStore({
     },
     SET_OUTPUT_VISIBLE (state, mode) {
       state.outputVisible = mode
+    },
+    SET_STORAGE_CROPPER_VISIBLE (state, mode) {
+      state.storageCropperVisible = mode
     },
     SET_BRIGHTNESS (state, amount) {
       state.brightness = amount
@@ -306,6 +311,9 @@ export default createStore({
     },
     setOutputVisible (context, mode) {
       context.commit('SET_OUTPUT_VISIBLE', mode)
+    },
+    setStorageCropperVisible (context, mode) {
+      context.commit('SET_STORAGE_CROPPER_VISIBLE', mode)
     },
     setBrightness (context, amount) {
       context.commit('SET_BRIGHTNESS', amount)

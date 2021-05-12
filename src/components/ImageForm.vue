@@ -25,8 +25,8 @@
         </div>
         <img id="shapeImg" class="hidden" :src="shapeImg"/>
         <img id="filterImg" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
+        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
       </div>
     </div>
@@ -84,8 +84,8 @@
         </div>
         <img id="shapeImg" class="hidden" :src="shapeImg"/>
         <img id="filterImg" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
+        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
       </div>
     </div>
@@ -144,8 +144,8 @@
           </div>
           <img id="shapeImg" class="hidden" :src="shapeImg"/>
           <img id="filterImg" class="hidden" :src="filterImg"/>
-          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img" @cropend="doneChangingShape"></VueCropper>
-          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" alt="Cropping storage Img" v-show="false" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
           <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         </div>
       </div>
@@ -315,6 +315,10 @@ export default {
     },
     outputVisible: function () {
       return this.$store.state.outputVisible
+    },
+    storageCropperVisible: function () {
+      console.log('STORAGE CROPPER VISIBLE STATE CHANGE')
+      return this.$store.state.storageCropperVisible
     },
     // different image properties
     // each one is an object, some alterations might be more complicated than just a number
@@ -810,6 +814,12 @@ export default {
     initCropperjsCanvas(newImage) {
       this.removeCanvasIfExists()
       this.$store.dispatch('setCropperVisible', true)
+
+      //need to be visible at time of initalization or replace
+      if (newImage) {
+        this.$store.dispatch('setStorageCropperVisible', true)
+      }
+
       this.$refs.cropper.replace(this.filterImg);
       this.$refs.storageCropper.replace(this.displayImg);
       this.$refs.outputCropper.replace(this.originalImg);
@@ -843,9 +853,13 @@ export default {
           ref.$refs['cropper'].initCrop()
           ref.initStraightenWindow('cropper')
         }
+
+        if (newImage) {
+          ref.$store.dispatch('setStorageCropperVisible', false)
+        }
       }, IMAGE_LOAD_TIME)
     },
-    removeCanvasIfExists(){
+    removeCanvasIfExists () {
       const canvi = document.getElementsByTagName("canvas");
       if (canvi.length > 0){
         const imgBucket = document.getElementById('imgBucket');
@@ -853,12 +867,17 @@ export default {
         imgBucket.removeChild(oldCanvas)
       }
     },
-    doneChangingShape(){
+    doneChangingShape () {
+      //must be visible to apply crop changes
       this.applyShapeChanges('storageCropper')
-      const newShapeImg = this.$refs.storageCropper.getCroppedCanvas().toDataURL(this.imgFileExt, 1)
-      this.$store.dispatch('setShapeImg', newShapeImg)
+      this.applyCropChanges('storageCropper')
+      const ref = this;
+      setTimeout(function() {
+        const newShapeImg = ref.$refs.storageCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
+        ref.$store.dispatch('setShapeImg', newShapeImg)
+      }, IMAGE_LOAD_TIME);
     },
-    doneChangingFilter(){
+    doneChangingFilter () {
       const canvas = this.getGLFXCanvas()
       const originalImgElem = document.getElementById('originalImg')
       const texture = this.getGLFXTexture(canvas, originalImgElem)
@@ -978,12 +997,25 @@ export default {
         vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
       }, IMAGE_LOAD_TIME)
     },
-    straighten(cropperName){
+    straighten(cropperName) {
       //rotate and crop to fit as we rotate
       this.$refs[cropperName].rotateTo(this.straightenAmount)
       this.$refs[cropperName].scale(1 + (.021 * Math.abs(this.straightenAmount)))
     },
-    prepOutput(){
+    applyCropChanges(cropper) {
+      if (this.cropped || this.straightened) {
+        //need cropper info
+        const cropperData = this.$refs.cropper.getCropBoxData()
+        this.$refs[cropper].initCrop()
+        this.$refs[cropper].setCropBoxData({
+          "left": cropperData['left'],
+          "top": cropperData['top'],
+          "width": cropperData['width'],
+          "height": cropperData['height']
+        })
+      }
+    },
+    prepOutput () {
       //take in original (unsized) img
       //apply all filter changes
       const originalImg = document.getElementById('originalImg')
@@ -996,26 +1028,14 @@ export default {
       var originalImgWFilters = this.applyFilters(texturedCanvas, texture).toDataURL()
       // upload to output cropper
 
-      //***** THIS MUST BE BEFORE THIS ******//
-      // CROPPER MUST BE VISIBLE AT TIME OF REPLACE()
+      //***** FILTERS MUST BE BEFORE SHAPE ******//
       this.$store.dispatch('setOutputVisible', true)
       this.$refs.outputCropper.replace(originalImgWFilters)
-
       const ref = this;
       setTimeout(function() {
         //apply rotation, size, cropping
         ref.applyShapeChanges('outputCropper')
-        if (ref.cropped || ref.straightened){
-          //need cropper info
-          const cropperData = ref.$refs.cropper.getCropBoxData()
-          ref.$refs.outputCropper.initCrop()
-          ref.img = ref.$refs.outputCropper.setCropBoxData({
-            "left": cropperData['left'],
-            "top": cropperData['top'],
-            "width": cropperData['width'],
-            "height": cropperData['height']
-          })
-        }
+        ref.applyCropChanges('outputCropper')
         setTimeout(function() {
           saveAs(ref.$refs.outputCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1), ref.imgFileName)
           ref.$store.dispatch('setOutputVisible', false)
