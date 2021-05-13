@@ -6,6 +6,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUndo, faFileDownload, faFileUpload, faImage, faCropAlt, faArrowsAltV, faArrowsAltH } from "@fortawesome/free-solid-svg-icons";
 import { faImage as faRegImage } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
+import VueGtag from "vue-gtag-next";
 
 require('cropperjs/dist/cropper.js')
 require('cropperjs/dist/cropper.css')
@@ -29,4 +30,12 @@ createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)
   .use(store)
   .use(router)
+  .use(VueGtag, {
+    property: {
+      id: "G-TRCHPWLB7Y",
+      params: {
+        send_page_view: false
+      }
+    }
+  })
   .mount('#app')

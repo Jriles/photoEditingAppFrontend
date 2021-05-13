@@ -25,7 +25,7 @@
         </div>
         <img id="shapeImg" class="hidden" :src="shapeImg"/>
         <img id="filterImg" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" alt="Cropping Img"></VueCropper>
         <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
       </div>
@@ -495,6 +495,10 @@ export default {
     },
     brightness: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
+      this.$gtag.event('click', {
+        'event_category' : 'brightness'
+      })
+
       this.updateFilterVal(shapeImg)
     },
     contrast: function (newValue, oldValue) {
