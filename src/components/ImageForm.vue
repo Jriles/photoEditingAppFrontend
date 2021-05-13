@@ -188,6 +188,7 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
 import { isMobile, isTablet, isDesktop } from '@/utils/DeviceTesting'
+import { sendGA4InputEvent, sendGA4ClickEvent } from '@/utils/GoogleAnalytics'
 //max width is 75% of screen
 const IMAGE_HEIGHT = window.innerHeight - 50;
 const MOBILE_IMAGE_HEIGHT = window.innerHeight - 350;
@@ -495,10 +496,6 @@ export default {
     },
     brightness: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
-      this.$gtag.event('click', {
-        'event_category' : 'brightness'
-      })
-
       this.updateFilterVal(shapeImg)
     },
     contrast: function (newValue, oldValue) {
@@ -871,7 +868,7 @@ export default {
         imgBucket.removeChild(oldCanvas)
       }
     },
-    doneChangingShape () {
+    doneChangingShape (featureName) {
       //must be visible to apply crop changes
       this.applyShapeChanges('storageCropper')
       this.applyCropChanges('storageCropper')
@@ -880,14 +877,20 @@ export default {
         const newShapeImg = ref.$refs.storageCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
         ref.$store.dispatch('setShapeImg', newShapeImg)
       }, IMAGE_LOAD_TIME);
+
+      //we notify GA here bc we only want to send one event
+      sendGA4InputEvent(this, featureName)
     },
-    doneChangingFilter () {
+    doneChangingFilter (filterName) {
       const canvas = this.getGLFXCanvas()
       const originalImgElem = document.getElementById('originalImg')
       const texture = this.getGLFXTexture(canvas, originalImgElem)
       const texturedCanvas = this.applyTextureToGLFXCanvas(canvas, texture)
       const newFilterImg = this.applyFilters(texturedCanvas,texture).toDataURL(this.imgFileExt, 1)
       this.$store.dispatch('setFilterImg', newFilterImg)
+      //then hit GA4 with the great news!
+      //lmao
+      sendGA4InputEvent(this, filterName)
     },
     changeStateButton (property) {
       //set shape states on cropper
@@ -941,7 +944,7 @@ export default {
         this.$refs['cropper'].initCrop()
         this.initStraightenWindow('cropper')
       }
-      this.doneChangingShape()
+      this.doneChangingShape(property)
     },
     saveStraightenImgData () {
       const cropperCanData = this.$refs.cropper.getCanvasData()

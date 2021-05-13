@@ -59,8 +59,9 @@ export default {
     'effect-slider': EffectSliderComp
   },
   methods: {
-    doneApplyingChange(newVal) {
-      this.$emit("doneChangingFilter");
+    doneApplyingChange(e) {
+      console.log(e)
+      this.$emit("doneChangingFilter", e.valType);
     }
   }
 }

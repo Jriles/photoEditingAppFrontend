@@ -119,8 +119,8 @@ export default {
     startStraightening () {
       this.$store.dispatch('setStraightening', true)
     },
-    doneApplyingChange () {
-      this.$emit("doneChangingShape");
+    doneApplyingChange (e) {
+      this.$emit("doneChangingShape", e.valType);
     }
   }
 }
