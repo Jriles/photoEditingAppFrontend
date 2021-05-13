@@ -17,7 +17,7 @@
               <input class="file-input" type="file" name="photo" @change="submit">
               <span class="file-cta has-background-black">
                 <span class="file-label">
-                  Choose a file…
+                  Choose an Image
                 </span>
               </span>
             </label>
@@ -76,7 +76,7 @@
               <input class="file-input" type="file" name="photo" @change="submit">
               <span class="file-cta has-background-black">
                 <span class="file-label">
-                  Choose a file…
+                  Choose an Image
                 </span>
               </span>
             </label>
@@ -136,7 +136,7 @@
                 <input class="file-input" type="file" name="photo" @change="submit">
                 <span class="file-cta has-background-black">
                   <span class="file-label">
-                    Choose a file…
+                    Choose an Image
                   </span>
                 </span>
               </label>
@@ -602,9 +602,11 @@ export default {
       const path = this.$route.name;
       //waiting for images to load
       this.initPageBasedOnPath(path, true)
+      sendGA4ClickEvent(this, 'Undo All')
     },
     changeOriginalVisible () {
       this.$store.dispatch('setOriginalVisible', !this.originalVisible)
+      sendGA4ClickEvent(this, 'Original Visible')
     },
     resetFilterShapeVals () {
       //light/effects stuff
@@ -686,6 +688,7 @@ export default {
 
       //need this
       reader.readAsDataURL(file)
+      sendGA4ClickEvent(this, 'Uploaded Image')
     },
     getPercentOfScreenVal(percent){
       const width  = this.getWindowWidth()
@@ -1049,6 +1052,7 @@ export default {
         }, IMAGE_LOAD_TIME);
       }, IMAGE_LOAD_TIME);
       //we should now have all alterations accounted for at this point.
+      sendGA4ClickEvent(this, 'Downloaded Image')
     }
   }
 }
