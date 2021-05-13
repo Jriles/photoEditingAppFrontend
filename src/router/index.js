@@ -11,8 +11,7 @@ import Hints from '../views/Hints.vue'
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home
+    redirect: { name: 'light'}
   },
   {
     path: '/journal',
