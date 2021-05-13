@@ -5,7 +5,7 @@ function sendGA4ClickEvent (vueRef, featureName) {
 }
 
 function sendGA4InputEvent (vueRef, featureName) {
-  vueRef.$gtag.event('drag', {
+  vueRef.$gtag.event('feature_use', {
     'feature_name' : featureName
   })
 }
