@@ -89,8 +89,12 @@
         <img id="shapeImg" class="hidden" :src="shapeImg"/>
         <img id="filterImg" class="hidden" :src="filterImg"/>
         <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
-        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
-        <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        <div class="hiddenCropperStyling">
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        </div>
+        <div class="hiddenCropperStyling">
+          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        </div>
       </div>
     </div>
     <div class="tabletControls has-text-centered">
@@ -149,8 +153,12 @@
           <img id="shapeImg" class="hidden" :src="shapeImg"/>
           <img id="filterImg" class="hidden" :src="filterImg"/>
           <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
-          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
-          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          <div class="hiddenCropperStyling">
+            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          </div>
+          <div class="hiddenCropperStyling">
+            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          </div>
         </div>
       </div>
       <div v-show="!uploaded" class="has-text-centered mt-5">
