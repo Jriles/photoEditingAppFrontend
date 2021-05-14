@@ -1,7 +1,7 @@
 <template>
   <div v-if="desktopMode || tabletMode">
     <div>
-      <label for="input" class="label has-text-white tool-name">{{ name }}</label>
+      <h6 for="input" class="label has-text-white tool-name">{{ name }}</h6>
     </div>
     <div class="columns is-mobile">
       <div class="column is-narrow is-two-thirds">
@@ -15,7 +15,7 @@
   <div v-else>
     <div class="columns is-mobile">
       <div class="column is-one-third is-narrow">
-        <div for="input" class="label has-text-white tool-name">{{ name }}</div>
+        <h6 for="input" class="label has-text-white tool-name">{{ name }}</h6>
       </div>
       <div class="column">
         <input type="range" name="input" v-model="val" @input="emitNewVal" @mouseup="emitDoneSliding" step=".01" :min="min" :max="max" class="w-100 mobile-input">

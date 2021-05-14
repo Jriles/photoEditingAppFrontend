@@ -1,7 +1,7 @@
 <template>
   <div v-if="desktopMode || tabletMode">
     <div class="mb-1">
-      <label for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</label>
+      <h6 for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</h6>
     </div>
     <div class="columns is-mobile">
       <div class="column is-two-thirds">
@@ -15,7 +15,7 @@
   <div v-if="mobileMode">
     <div class="columns is-mobile">
       <div class="column is-one-third">
-        <label for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</label>
+        <h6 for="input" class="label has-text-white tool-name">{{ name + " " + symbol }}</h6>
       </div>
 
       <div class="column is-one-third">

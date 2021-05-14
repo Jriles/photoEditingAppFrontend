@@ -23,14 +23,14 @@
             </label>
           </div>
         </div>
-        <img id="shapeImg" class="hidden" :src="shapeImg"/>
-        <img id="filterImg" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" alt="Cropping Img"></VueCropper>
+        <img id="shapeImg" alt="Free photo editor" class="hidden" :src="shapeImg"/>
+        <img id="filterImg" alt="Edit photo brightness" class="hidden" :src="filterImg"/>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" alt="Crop image"></VueCropper>
         <div class="hiddenCropperStyling">
-          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Crop image" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         </div>
         <div class="hiddenCropperStyling">
-          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" alt="Free photo editor" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         </div>
       </div>
     </div>
@@ -86,14 +86,14 @@
             </label>
           </div>
         </div>
-        <img id="shapeImg" class="hidden" :src="shapeImg"/>
-        <img id="filterImg" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
+        <img id="shapeImg" alt="Free photo editor" class="hidden" :src="shapeImg"/>
+        <img id="filterImg" alt="Edit photo brightness" class="hidden" :src="filterImg"/>
+        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Crop image"></VueCropper>
         <div class="hiddenCropperStyling">
-          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Crop image" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         </div>
         <div class="hiddenCropperStyling">
-          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" alt="Free photo editor" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
         </div>
       </div>
     </div>
@@ -150,14 +150,14 @@
               </label>
             </div>
           </div>
-          <img id="shapeImg" class="hidden" :src="shapeImg"/>
-          <img id="filterImg" class="hidden" :src="filterImg"/>
-          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Cropping Img"></VueCropper>
+          <img id="shapeImg" alt="Free photo editor" class="hidden" :src="shapeImg"/>
+          <img id="filterImg" alt="Edit photo brightness" class="hidden" :src="filterImg"/>
+          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight" alt="Crop image"></VueCropper>
           <div class="hiddenCropperStyling">
-            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Crop image" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
           </div>
           <div class="hiddenCropperStyling">
-            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" alt="Free photo editor" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
           </div>
         </div>
       </div>
