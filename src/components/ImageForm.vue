@@ -188,7 +188,7 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
 import { isMobile, isTablet, isDesktop } from '@/utils/DeviceTesting'
-import { sendGA4InputEvent, sendGA4ClickEvent } from '@/utils/GoogleAnalytics'
+import { sendGA4PhotoEditEvent, sendGA4FileEvent } from '@/utils/GoogleAnalytics'
 //max width is 75% of screen
 const IMAGE_HEIGHT = window.innerHeight - 50;
 const MOBILE_IMAGE_HEIGHT = window.innerHeight - 350;
@@ -602,11 +602,11 @@ export default {
       const path = this.$route.name;
       //waiting for images to load
       this.initPageBasedOnPath(path, true)
-      sendGA4ClickEvent(this, 'Undo All')
+      sendGA4FileEvent(this, 'Undo All')
     },
     changeOriginalVisible () {
       this.$store.dispatch('setOriginalVisible', !this.originalVisible)
-      sendGA4ClickEvent(this, 'Original Visible')
+      sendGA4FileEvent(this, 'Original Visible')
     },
     resetFilterShapeVals () {
       //light/effects stuff
@@ -688,7 +688,7 @@ export default {
 
       //need this
       reader.readAsDataURL(file)
-      sendGA4ClickEvent(this, 'Uploaded Image')
+      sendGA4FileEvent(this, 'Uploaded Image')
     },
     getPercentOfScreenVal(percent){
       const width  = this.getWindowWidth()
@@ -882,7 +882,7 @@ export default {
       }, IMAGE_LOAD_TIME);
 
       //we notify GA here bc we only want to send one event
-      sendGA4InputEvent(this, featureName)
+      sendGA4PhotoEditEvent(this, featureName)
     },
     doneChangingFilter (filterName) {
       const canvas = this.getGLFXCanvas()
@@ -893,7 +893,7 @@ export default {
       this.$store.dispatch('setFilterImg', newFilterImg)
       //then hit GA4 with the great news!
       //lmao
-      sendGA4InputEvent(this, filterName)
+      sendGA4PhotoEditEvent(this, filterName)
     },
     changeStateButton (property) {
       //set shape states on cropper
@@ -922,8 +922,6 @@ export default {
           this.$store.dispatch('setCropping', false)
           this.$store.dispatch('setCropped', true)
           this.saveCropBoxData()
-          //save crop box values
-          //this.prepOutput()
         } else if (property === 'Cancel') {
           this.$refs.cropper.clear()
           this.$store.dispatch('setCropping', false)
@@ -1052,7 +1050,7 @@ export default {
         }, IMAGE_LOAD_TIME);
       }, IMAGE_LOAD_TIME);
       //we should now have all alterations accounted for at this point.
-      sendGA4ClickEvent(this, 'Downloaded Image')
+      sendGA4FileEvent(this, 'Downloaded Image')
     }
   }
 }

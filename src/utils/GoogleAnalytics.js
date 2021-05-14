@@ -1,16 +1,16 @@
-function sendGA4ClickEvent (vueRef, featureName) {
-  vueRef.$gtag.event('click', {
+function sendGA4FileEvent (vueRef, featureName) {
+  vueRef.$gtag.event('file_option', {
     'feature_name' : featureName
   })
 }
 
-function sendGA4InputEvent (vueRef, featureName) {
-  vueRef.$gtag.event('input', {
+function sendGA4PhotoEditEvent (vueRef, featureName) {
+  vueRef.$gtag.event('photo_edit', {
     'feature_name' : featureName
   })
 }
 
 module.exports = {
-  sendGA4InputEvent,
-  sendGA4ClickEvent
+  sendGA4FileEvent,
+  sendGA4PhotoEditEvent
 }

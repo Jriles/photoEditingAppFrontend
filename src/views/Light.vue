@@ -42,7 +42,6 @@ export default {
       return this.$store.state.defaultContrast
     },
     defaultSmooth: function () {
-      console.log(this.$store.state.defaultSmooth)
       return this.$store.state.defaultSmooth
     },
     defaultSepia: function () {
@@ -60,7 +59,6 @@ export default {
   },
   methods: {
     doneApplyingChange(e) {
-      console.log(e)
       this.$emit("doneChangingFilter", e.valType);
     }
   }
