@@ -26,8 +26,12 @@
         <img id="shapeImg" class="hidden" :src="shapeImg"/>
         <img id="filterImg" class="hidden" :src="filterImg"/>
         <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" alt="Cropping Img"></VueCropper>
-        <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
-        <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        <div class="hiddenCropperStyling">
+          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Cropping storage Img" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        </div>
+        <div class="hiddenCropperStyling">
+          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
+        </div>
       </div>
     </div>
     <div class="desktopControls has-text-centered">
@@ -208,7 +212,6 @@ export default {
 
     if(isDesktop(this.getWindowWidth())){
       //desktop
-      console.log('thinks that screen is big')
       imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
       this.$store.dispatch('setDesktopMode', true)
       this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
@@ -221,7 +224,6 @@ export default {
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
     } else if(isMobile(this.getWindowWidth())) {
       //mobile
-      console.log('thinks we on mobile boi')
       imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
       this.$store.dispatch('setMobileMode', true)
       this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
@@ -233,7 +235,6 @@ export default {
     const ref = this;
     var fullUrl = window.location.origin + this.$route.path
     img.addEventListener("load", function () {
-      console.log('default img elem loaded')
       const canvas = ref.getGLFXCanvas()
       const texture = ref.getGLFXTexture(canvas, this)
       const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
@@ -318,7 +319,6 @@ export default {
       return this.$store.state.outputVisible
     },
     storageCropperVisible: function () {
-      console.log('STORAGE CROPPER VISIBLE STATE CHANGE')
       return this.$store.state.storageCropperVisible
     },
     // different image properties
@@ -492,7 +492,11 @@ export default {
   watch: {
     $route (to, from){
       const path = this.$route.name;
-      this.initPageBasedOnPath(path, false)
+      //dont reinit page if going from glfx to glfx
+      //no need, less smooth
+      if (!this.glfxToGlfx(to.name, from.name)){
+        this.initPageBasedOnPath(path, false)
+      }
     },
     brightness: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
@@ -569,14 +573,20 @@ export default {
     }
   },
   methods: {
+    glfxToGlfx(toRouteName, fromRouteName) {
+      if ((toRouteName === 'light' && fromRouteName === 'color')
+      || (toRouteName === 'color' && fromRouteName === 'light')) {
+        return true
+      }
+      return false
+    },
     initPageBasedOnPath(path, newImage) {
-      console.log(path)
       switch(path){
         case "color":
-          this.initWebGLCanvas()
+          this.initWebGLCanvas(newImage)
           break
         case "light":
-          this.initWebGLCanvas()
+          this.initWebGLCanvas(newImage)
           break
         case "shape":
           this.initCropperjsCanvas(newImage)
@@ -694,18 +704,6 @@ export default {
       const width  = this.getWindowWidth()
       return width * percent
     },
-    adjustPropertyIfAlreadySet (propertyVal, defaultVal, previousVal) {
-      if (propertyVal !== defaultVal) {
-        console.log('previousVal: ' + previousVal)
-        console.log('currentVal: ' + propertyVal)
-        if (propertyVal > previousVal) {
-          return propertyVal - previousVal
-        } else {
-          return propertyVal + previousVal
-        }
-      }
-      return propertyVal
-    },
     getGLFXCanvas () {
       const canvas = glfx.canvas();
       const gl = canvas.getContext('webgl');
@@ -746,7 +744,6 @@ export default {
       }
 
       if (this.smooth != this.defaultSmooth) {
-        console.log(this.smooth)
         texture.loadContentsOf(canvas);
         canvas.draw(texture).denoise(this.smooth).update()
       }
@@ -769,7 +766,6 @@ export default {
     },
     //still need this
     applyShapeChanges (cropperName) {
-      console.log('called apply shape changes')
       this.$refs[cropperName].rotateTo(this.rotation);
       //for cropper window
       this.$refs[cropperName].scale(this.sizeX * .01, this.sizeY * .01)
@@ -787,12 +783,18 @@ export default {
       }
       imgBucket.insertBefore(this.applyFilters(this.originalImgCanvas, this.originalImgTexture), filterImg)
     },
-    initWebGLCanvas() {
-      console.log('called init webgl canvas')
+    initWebGLCanvas(newImage) {
       //remove cropper
       const ref = this;
       this.$store.dispatch('setCropperVisible', false)
       this.removeCanvasIfExists()
+
+      //need to be visible at time of initalization or replace
+      if (newImage) {
+        console.log('thoguht there was a new image')
+        this.$store.dispatch('setStorageCropperVisible', true)
+        this.$refs.storageCropper.replace(this.displayImg);
+      }
 
       //this is probably not loaded yet, but we need wait if we want real dimensions.
       setTimeout(function() {
@@ -800,18 +802,25 @@ export default {
         const width = shapeImgElem.width;
         const height = shapeImgElem.height;
         if (ref.imgTooBig(width, height, ref)) {
-          console.log('thought img too big')
-          ref.fitImgToCanvas(ref.shapeImg, 'storageCropper', width, height, ref)
+          //use output cropper for resizing
+          //we clean up output cropper at the end anyways
+          ref.fitImgToCanvas(ref.shapeImg, 'outputCropper', width, height, ref)
           setTimeout(function() {
             //resize img to canvas
-            const resizedShapeImg = ref.$refs.storageCropper.getCroppedCanvas().toDataURL('image/jpeg', 1)
+            const resizedShapeImg = ref.$refs.outputCropper.getCroppedCanvas().toDataURL('image/jpeg', 1)
             ref.$store.dispatch('setShapeImg', resizedShapeImg)
             setTimeout(function() {
               ref.updateFilterVal(shapeImg)
+              if (newImage) {
+                ref.$store.dispatch('setStorageCropperVisible', false)
+              }
             }, IMAGE_LOAD_TIME);
           }, IMAGE_LOAD_TIME);
         } else {
           ref.updateFilterVal(shapeImg)
+          if (newImage) {
+            ref.$store.dispatch('setStorageCropperVisible', false)
+          }
         }
       }, IMAGE_LOAD_TIME);
     },
@@ -822,10 +831,10 @@ export default {
       //need to be visible at time of initalization or replace
       if (newImage) {
         this.$store.dispatch('setStorageCropperVisible', true)
+        this.$refs.storageCropper.replace(this.displayImg);
       }
 
       this.$refs.cropper.replace(this.filterImg);
-      this.$refs.storageCropper.replace(this.displayImg);
       this.$refs.outputCropper.replace(this.originalImg);
       const ref = this
       setTimeout(function() {
@@ -949,13 +958,11 @@ export default {
     },
     saveStraightenImgData () {
       const cropperCanData = this.$refs.cropper.getCanvasData()
-      console.log(cropperCanData)
       //save canvas data
       this.$store.dispatch('setStraightenCropBoxData', cropperCanData)
     },
     saveCropImgData () {
       const cropperCanData = this.$refs.cropper.getCanvasData()
-      console.log(cropperCanData)
       //save canvas data
       this.$store.dispatch('setCropBoxData', cropperCanData)
     },
@@ -969,7 +976,6 @@ export default {
     },
     saveCropBoxData () {
       const cropBoxData = this.$refs.cropper.getCropBoxData()
-      console.log(cropBoxData)
       //save canvas data
       this.$store.dispatch('setCropBoxData', cropBoxData)
     },
@@ -998,8 +1004,6 @@ export default {
 
       //MULTIPLY RATIO BY IMAGE WIDTH/HEIGHT HERE, AND SET.
       //THAT WAY WHEN WE MULTIPLY AGAIN, we have the values
-
-      console.log(ratioToUse)
       //need to make a copy
       setTimeout(function() {
         vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
@@ -1058,15 +1062,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .navbar-offset{
+  .navbar-offset {
     margin-top: 51px !important;
   }
 
-  .main-title{
+  .main-title {
     font-size: 3rem !important;
   }
 
-  .desktopControls{
+  .desktopControls {
     padding-top: 20px;
     position: fixed;
     left: 80%;
@@ -1075,7 +1079,7 @@ export default {
     height: 100vh;
   }
 
-  .tabletControls{
+  .tabletControls {
     padding-top: 70px;
     position: fixed;
     left: 74%;
@@ -1085,23 +1089,23 @@ export default {
     padding-right: 3%;
   }
 
-  .desktopCanvasOffset{
+  .desktopCanvasOffset {
     margin-left: 1%;
   }
 
-  .file-cta:hover{
+  .file-cta:hover {
     background-color: white !important;
     color: black !important;
   }
 
-  .custom-canvas-overlay-desktop{
+  .custom-canvas-overlay-desktop {
     position: absolute;
     top: 300px;
     left: 20%;
     z-index: 1;
   }
 
-  .custom-canvas-overlay-tablet{
+  .custom-canvas-overlay-tablet {
     position: absolute;
     top: 200px;
     z-index: 1;
@@ -1109,7 +1113,7 @@ export default {
     text-align: center;
   }
 
-  .custom-canvas-overlay-mobile{
+  .custom-canvas-overlay-mobile {
     position: absolute;
     top: 100px;
     z-index: 1;
@@ -1121,7 +1125,12 @@ export default {
     height: 700px;
   }
 
-  .columns{
+  .columns {
     margin: 0;
+  }
+
+  .hiddenCropperStyling {
+    position: absolute;
+    top: 1000px;
   }
 </style>
