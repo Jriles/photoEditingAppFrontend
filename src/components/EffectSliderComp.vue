@@ -72,10 +72,14 @@ export default {
       const property = "set" + this.name.split(" ").join("")
       this.$store.dispatch(property, this.val)
     },
-    undo(){
+    undo(e){
       this.val = this.default
       this.emitNewVal()
-      //this.$emit('doneApplyingChange', changeObj)
+      const changeObj = {
+        "newVal": this.val,
+        "valType": this.name
+      }
+      this.$emit('doneApplyingChange', changeObj)
     },
     emitDoneSliding(e){
       this.val = e.target.value

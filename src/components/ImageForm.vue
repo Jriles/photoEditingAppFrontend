@@ -902,6 +902,7 @@ export default {
       sendGA4PhotoEditEvent(this, featureName)
     },
     doneChangingFilter (filterName) {
+      console.log('called done changing filter')
       const canvas = this.getGLFXCanvas()
       const originalImgElem = document.getElementById('originalImg')
       const texture = this.getGLFXTexture(canvas, originalImgElem)

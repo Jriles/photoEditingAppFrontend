@@ -77,9 +77,9 @@ export default {
       this.$store.dispatch('set' + this.name, this.val)
       this.emitDoneSliding(e)
     },
-    undo(){
+    undo(e){
       this.val = this.default
-      this.emitNewVal()
+      this.emitNewVal(e)
     },
     emitDoneSliding(e){
       this.val = e.target.value
