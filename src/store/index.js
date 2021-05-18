@@ -237,8 +237,6 @@ export default createStore({
       state.straightenAmount = amount
     },
     SET_CROP_BOX_DATA (state, data) {
-      console.log('called set crop box data')
-      console.log(data)
       state.cropBoxTop = data.top,
       state.cropBoxLeft = data.left,
       state.cropBoxWidth = data.width,

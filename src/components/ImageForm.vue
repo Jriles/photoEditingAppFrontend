@@ -214,8 +214,6 @@ export default {
   name: 'ImageForm',
   emits: ['updateColorVal', 'updateShapeVal'],
   created(){
-    //redirect to light transformations
-    //no landing page
     var imgURL;
 
     if(isDesktop(this.getWindowWidth())){
@@ -238,7 +236,7 @@ export default {
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
     }
     const path = this.$route.name;
-    //const defaultImgElem = document.getElementById('defaultImg')
+
     const img = new Image();
     const ref = this;
     var fullUrl = window.location.origin + this.$route.path
@@ -259,7 +257,6 @@ export default {
   },
   components: {
     VueCropper
-    //VueSlickCarousel
   },
   props: {
     msg: String
@@ -569,9 +566,6 @@ export default {
     sizeY: function (newValue, oldValue) {
       this.applyShapeChanges('cropper')
     },
-    // straightened: function (newValue, oldValue) {
-    //   this.changeStateButton('Straightened')
-    // },
     straightening: function (newValue, oldValue) {
       this.changeStateButton('Straightening')
     },
@@ -628,9 +622,6 @@ export default {
         this.initStraightenWindow(cropper)
       }
     },
-    capitalizeFirstLetter (string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    },
     getWindowWidth () {
       return window.innerWidth;
     },
@@ -661,7 +652,6 @@ export default {
       this.$store.dispatch('setBlue', this.defaultBlue)
       this.$store.dispatch('setGreen', this.defaultGreen)
       //shape
-      //this.size = this.defaultSize;
       this.$store.dispatch('setSizeX', this.defaultSizeX)
       this.$store.dispatch('setSizeY', this.defaultSizeY)
       this.$store.dispatch('setRotation', this.defaultRotation)
@@ -701,8 +691,6 @@ export default {
         const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
         ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
         ref.$store.dispatch('setOriginalImgTexture', texture)
-        //ref.$store.dispatch('setOriginalImgTexture', texture)
-        //ref.originalImgTexture = texture
         ref.initPageBasedOnPath(path, true)
         const aspectRatio = this.width / this.height;
         ref.$store.dispatch('setOriginalAspectRatio', aspectRatio)
@@ -719,8 +707,6 @@ export default {
         ref.$store.dispatch('setUploaded', true)
         //set download
         img.src = reader.result;
-        //collect garbage
-        //ref.img = reader.result;
       }, false);
 
       //need this
@@ -886,7 +872,6 @@ export default {
 
       //need to be visible at time of initalization or replace
       if (newImage) {
-        console.log('thoguht there was a new image')
         this.$store.dispatch('setStorageCropperVisible', true)
         this.$refs.storageCropper.replace(this.displayImg);
       }
@@ -982,7 +967,6 @@ export default {
       }, IMAGE_LOAD_TIME);
     },
     doneChangingFilter (filterName) {
-      console.log('called done changing filter')
       const canvas = this.getGLFXCanvas()
       const originalImgElem = document.getElementById('originalImg')
       const texture = this.getGLFXTexture(canvas, originalImgElem)

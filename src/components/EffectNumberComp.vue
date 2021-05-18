@@ -62,7 +62,6 @@ export default {
   },
   created(){
     this.$options.name = this.name
-    console.log(this.defaultProp)
   },
   //needs to match transformation name in ImageForm
   data() {
