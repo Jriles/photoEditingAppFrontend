@@ -19,6 +19,7 @@ export default createStore({
       uploaded: false,
       imgFileName: null,
       cropperVisible: false,
+      //these are urls
       shapeImg: null,
       filterImg: null,
       originalDisplayImg: null,

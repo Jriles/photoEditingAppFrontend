@@ -60,7 +60,7 @@
           </div>
         </div>
       </div>
-      <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
+      <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter"/>
     </div>
   </div>
   <div v-if="tabletMode" class="columns navbar-offset">
@@ -123,7 +123,7 @@
           </div>
         </div>
       </div>
-      <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
+      <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter"/>
     </div>
   </div>
   <div v-if="mobileMode">
@@ -162,10 +162,10 @@
         </div>
       </div>
       <div v-show="!uploaded" class="has-text-centered mt-5">
-        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
+        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter"/>
       </div>
       <div v-show="uploaded" class="has-text-centered mt-3">
-        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter" @doneChangingShape="doneChangingShape"/>
+        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter"/>
       </div>
       <div v-show="uploaded" class="columns is-mobile mt-1">
         <div class="column">
@@ -295,6 +295,9 @@ export default {
     },
     filterImg: function () {
       return this.$store.state.filterImg
+    },
+    downloadImg: function () {
+      return this.$store.state.downloadImg
     },
     displayImg: function () {
       return this.$store.state.displayImg
@@ -506,6 +509,9 @@ export default {
         this.initPageBasedOnPath(path, false)
       }
     },
+    downloadImg: function(newValue, oldValue) {
+      saveAs(newValue)
+    },
     brightness: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
       this.updateFilterVal(shapeImg)
@@ -601,13 +607,26 @@ export default {
           break
       }
     },
-    eventsHandler (eventName) {
-      if (eventName === "Save" || eventName === "Cancel"
-         || eventName === "Flip Vertically"
-         || eventName === "Flip Horizontally"
-         || eventName === "Aspect Ratio") {
-           this.changeStateButton(eventName)
-         }
+    eventsHandler (eventDetails) {
+      if (eventDetails.eventType === "Shape Button") {
+        //shape buttons
+        this.changeStateButton(eventDetails.eventName)
+        this.saveShapeChangesToStorage()
+      } else if (eventDetails.eventType === "Done Changing Shape") {
+        //shape sliders/number inputs
+        this.applyAllShapeChanges('storageCropper')
+        this.saveShapeChangesToStorage()
+        //we notify GA here bc we only want to send one event
+        sendGA4PhotoEditEvent(this, eventDetails.eventName)
+      }
+    },
+    applyAllShapeChanges (cropper) {
+      this.applyShapeChanges(cropper)
+      if (this.cropped) {
+        this.applyCropChanges(cropper)
+      } else if (this.straightened) {
+        this.initStraightenWindow(cropper)
+      }
     },
     capitalizeFirstLetter (string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
@@ -777,8 +796,76 @@ export default {
       this.$refs[cropperName].rotateTo(this.rotation);
       //for cropper window
       this.$refs[cropperName].scale(this.sizeX * .01, this.sizeY * .01)
+      //straightening last
       if (this.straightening || this.straightened) {
-        this.straighten(cropperName)
+        this.$refs[cropperName].rotateTo(this.straightenAmount)
+        this.$refs[cropperName].scale(1 + (.021 * Math.abs(this.straightenAmount)))
+      }
+    },
+    applyCropChanges(cropper) {
+      this.$refs[cropper].initCrop()
+      this.$refs[cropper].setCropBoxData({
+        "left": this.cropBoxLeft,
+        "top": this.cropBoxTop,
+        "width": this.cropBoxWidth,
+        "height": this.cropBoxHeight
+      })
+    },
+    changeStateButton (property) {
+      //set shape states on cropper
+      if (property === "Aspect Ratio") {
+        this.initCropBoxWindow('cropper')
+        this.saveCropBoxCanvasData()
+      }
+
+      if (property === "Flip Horizontally"){
+        this.$store.dispatch('setSizeX', -1 * this.sizeX)
+        this.applyShapeChanges('cropper')
+      } else if (property === "Flip Vertically") {
+        this.$store.dispatch('setSizeY', -1 * this.sizeY)
+        this.applyShapeChanges('cropper')
+      }
+
+      //cropping handled here
+      if (this.cropping && property === "Cropping") {
+        this.initCropBoxWindow('cropper')
+      }
+
+      if (this.cropping) {
+        if (property === 'Save') {
+          this.$store.dispatch('setCropping', false)
+          this.$store.dispatch('setCropped', true)
+          this.saveCropBoxData()
+        } else if (property === 'Cancel') {
+          this.$refs.cropper.clear()
+          //need to get image dave, save it, re init crop window
+          this.saveCropBoxCanvasData()
+          this.$store.dispatch('setCropping', false)
+          this.$store.dispatch('setCropped', false)
+        }
+        this.applyCropChanges('storageCropper')
+      }
+
+      if (this.straightening) {
+        if (property === 'Save') {
+          this.$store.dispatch('setStraightened', true)
+          this.$store.dispatch('setStraightening', false)
+        } else if (property === 'Cancel') {
+          //reset cropper
+          this.$refs.cropper.clear()
+          this.$store.dispatch('setStraightenAmount', 0)
+          this.applyShapeChanges('storageCropper')
+          //save new img deets
+          this.saveStraightenCanvasData()
+          this.$store.dispatch('setStraightened', false)
+          this.$store.dispatch('setStraightening', false)
+        }
+        this.initStraightenWindow('storageCropper')
+      }
+
+      //this is just a state change
+      if (this.straightening && property === "Straightening") {
+        this.initStraightenWindow('cropper')
       }
     },
     //and still need this
@@ -850,28 +937,26 @@ export default {
         //FIRST SAVE DATA
         //want to initialize cropbox default values if we havent yet.
         if (ref.straightenCropBoxTop === false) {
-          ref.saveStraightenImgData()
+          ref.saveStraightenCanvasData()
         }
         //do the same for crop box data
         if (ref.cropBoxTop === false) {
-          ref.saveCropImgData()
+          ref.saveCropBoxCanvasData()
         }
 
         if (newImage) {
           //need these to be reset after uploading img
-          ref.saveStraightenImgData()
-          ref.saveCropImgData()
+          ref.saveStraightenCanvasData()
+          ref.saveCropBoxCanvasData()
         }
 
         //NEXT, APPLY THAT DATA TO THE CROPPER
         //order MATTERS here, straighening takes precedence over cropping
         if (ref.cropped === true) {
-          ref.$refs['cropper'].initCrop()
           ref.initCropBoxWindow('cropper')
         }
 
         if (ref.straightened === true) {
-          ref.$refs['cropper'].initCrop()
           ref.initStraightenWindow('cropper')
         }
 
@@ -888,18 +973,13 @@ export default {
         imgBucket.removeChild(oldCanvas)
       }
     },
-    doneChangingShape (featureName) {
-      //must be visible to apply crop changes
-      this.applyShapeChanges('storageCropper')
-      this.applyCropChanges('storageCropper')
+    saveShapeChangesToStorage () {
+      //shape changes should have already been applied
       const ref = this;
       setTimeout(function() {
         const newShapeImg = ref.$refs.storageCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1)
         ref.$store.dispatch('setShapeImg', newShapeImg)
       }, IMAGE_LOAD_TIME);
-
-      //we notify GA here bc we only want to send one event
-      sendGA4PhotoEditEvent(this, featureName)
     },
     doneChangingFilter (filterName) {
       console.log('called done changing filter')
@@ -913,69 +993,18 @@ export default {
       //lmao
       sendGA4PhotoEditEvent(this, filterName)
     },
-    changeStateButton (property) {
-      //set shape states on cropper
-      if (property === "Aspect Ratio") {
-        this.$refs['cropper'].initCrop()
-        this.initStraightenWindow('cropper')
-        this.saveCropImgData()
-      }
-
-      if (property === "Flip Horizontally"){
-        this.$store.dispatch('setSizeX', -1 * this.sizeX)
-        this.applyShapeChanges('cropper')
-      } else if (property === "Flip Vertically") {
-        this.$store.dispatch('setSizeY', -1 * this.sizeY)
-        this.applyShapeChanges('cropper')
-      }
-
-      //cropping handled here
-      if (this.cropping && property === "Cropping") {
-        this.$refs['cropper'].initCrop()
-        this.initCropBoxWindow('cropper')
-      }
-
-      if (this.cropping) {
-        if (property === 'Save') {
-          this.$store.dispatch('setCropping', false)
-          this.$store.dispatch('setCropped', true)
-          this.saveCropBoxData()
-        } else if (property === 'Cancel') {
-          this.$refs.cropper.clear()
-          this.$store.dispatch('setCropping', false)
-          this.$store.dispatch('setCropped', false)
-        }
-      }
-
-      if (this.straightening) {
-        if (property === 'Save') {
-          this.$store.dispatch('setStraightened', true)
-          this.$store.dispatch('setStraightening', false)
-        } else if (property === 'Cancel') {
-          this.$refs.cropper.clear()
-          this.$store.dispatch('setStraightenAmount', 0)
-          this.straighten('cropper')
-          this.$store.dispatch('setStraightened', false)
-          this.$store.dispatch('setStraightening', false)
-        }
-      }
-      if (this.straightening && property === "Straightening") {
-        this.$refs['cropper'].initCrop()
-        this.initStraightenWindow('cropper')
-      }
-      this.doneChangingShape(property)
-    },
-    saveStraightenImgData () {
+    saveStraightenCanvasData () {
       const cropperCanData = this.$refs.cropper.getCanvasData()
       //save canvas data
       this.$store.dispatch('setStraightenCropBoxData', cropperCanData)
     },
-    saveCropImgData () {
+    saveCropBoxCanvasData () {
       const cropperCanData = this.$refs.cropper.getCanvasData()
       //save canvas data
       this.$store.dispatch('setCropBoxData', cropperCanData)
     },
     initStraightenWindow (cropper) {
+      this.$refs[cropper].initCrop()
       this.$refs[cropper].setCropBoxData({
         "left": this.straightenCropBoxLeft,
         "top": this.straightenCropBoxTop,
@@ -989,6 +1018,7 @@ export default {
       this.$store.dispatch('setCropBoxData', cropBoxData)
     },
     initCropBoxWindow (cropper) {
+      this.$refs[cropper].initCrop()
       this.$refs[cropper].setCropBoxData({
         "left": this.cropBoxLeft,
         "top": this.cropBoxTop,
@@ -1018,24 +1048,6 @@ export default {
         vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
       }, IMAGE_LOAD_TIME)
     },
-    straighten(cropperName) {
-      //rotate and crop to fit as we rotate
-      this.$refs[cropperName].rotateTo(this.straightenAmount)
-      this.$refs[cropperName].scale(1 + (.021 * Math.abs(this.straightenAmount)))
-    },
-    applyCropChanges(cropper) {
-      if (this.cropped || this.straightened) {
-        //need cropper info
-        const cropperData = this.$refs.cropper.getCropBoxData()
-        this.$refs[cropper].initCrop()
-        this.$refs[cropper].setCropBoxData({
-          "left": cropperData['left'],
-          "top": cropperData['top'],
-          "width": cropperData['width'],
-          "height": cropperData['height']
-        })
-      }
-    },
     prepOutput () {
       //take in original (unsized) img
       //apply all filter changes
@@ -1055,8 +1067,7 @@ export default {
       const ref = this;
       setTimeout(function() {
         //apply rotation, size, cropping
-        ref.applyShapeChanges('outputCropper')
-        ref.applyCropChanges('outputCropper')
+        ref.applyAllShapeChanges('outputCropper')
         setTimeout(function() {
           saveAs(ref.$refs.outputCropper.getCroppedCanvas().toDataURL(ref.imgFileExt, 1), ref.imgFileName)
           ref.$store.dispatch('setOutputVisible', false)

@@ -8,31 +8,31 @@
       <button class="button is-black is-normal" @click="startStraightening">Straighten</button>
     </div>
     <div class="column">
-      <button class="button is-black is-normal" @click="emitEvent" name="Flip Vertically">Flip &nbsp;<font-awesome-icon :icon="['fas', 'arrows-alt-v']"/></button>
+      <button class="button is-black is-normal" @click="stateChangeButton" name="Flip Vertically">Flip &nbsp;<font-awesome-icon :icon="['fas', 'arrows-alt-v']"/></button>
     </div>
     <div class="column">
-      <button class="button is-black is-normal" @click="emitEvent" name="Flip Horizontally">Flip &nbsp;<font-awesome-icon :icon="['fas', 'arrows-alt-h']"/></button>
+      <button class="button is-black is-normal" @click="stateChangeButton" name="Flip Horizontally">Flip &nbsp;<font-awesome-icon :icon="['fas', 'arrows-alt-h']"/></button>
     </div>
   </div>
 
   <div class="columns is-mobile" v-show="cropping">
     <div class="column">
-      <button class="button is-black is-normal" @click="emitEvent" name="Save">Save</button>
+      <button class="button is-black is-normal" @click="stateChangeButton" name="Save">Save</button>
     </div>
     <div class="column">
-      <button class="button is-black is-normal" @click="emitEvent" name="Cancel">Cancel</button>
+      <button class="button is-black is-normal" @click="stateChangeButton" name="Cancel">Cancel</button>
     </div>
   </div>
   <div class="mb-3" v-show="cropping">
-    <button class="button is-black is-normal" @click="emitEvent" name="Aspect Ratio">Reset Crop Aspect Ratio</button>
+    <button class="button is-black is-normal" @click="stateChangeButton" name="Aspect Ratio">Reset Crop Aspect Ratio</button>
   </div>
   <!--straighten-->
   <div class="columns is-mobile" v-show="straightening">
     <div class="column" v-show="straightening">
-      <button class="button is-black is-normal" @click="emitEvent" name="Save">Save</button>
+      <button class="button is-black is-normal" @click="stateChangeButton" name="Save">Save</button>
     </div>
     <div class="column" v-show="straightening">
-      <button class="button is-black is-normal" @click="emitEvent" name="Cancel">Cancel</button>
+      <button class="button is-black is-normal" @click="stateChangeButton" name="Cancel">Cancel</button>
     </div>
   </div>
   <div v-show="straightening">
@@ -110,8 +110,12 @@ export default {
     'effect-number': EffectNumberComp
   },
   methods: {
-    emitEvent (e) {
-      this.$emit("eventBus", e.target.name);
+    emitEvent (eventName, eventType) {
+      const eventDetails = {
+        'eventName': eventName,
+        'eventType': eventType
+      }
+      this.$emit("eventBus", eventDetails);
     },
     startCropping () {
       this.$store.dispatch('setCropping', true)
@@ -119,8 +123,11 @@ export default {
     startStraightening () {
       this.$store.dispatch('setStraightening', true)
     },
+    stateChangeButton (e) {
+      this.emitEvent(e.target.name, 'Shape Button')
+    },
     doneApplyingChange (e) {
-      this.$emit("doneChangingShape", e.valType);
+      this.emitEvent(e.valType, 'Done Changing Shape')
     }
   }
 }
