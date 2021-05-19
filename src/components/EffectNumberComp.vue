@@ -8,7 +8,7 @@
         <input type="number" name="input" v-model="val" @input="emitNewVal" :min="min" :max="max" class="w-50">
       </div>
       <div class="column is-1">
-        <button class="button is-black is-small ml-5 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
+        <button class="button is-black is-small ml-3 has-text-white" @click="undo"><font-awesome-icon icon="undo" /></button>
       </div>
     </div>
   </div>

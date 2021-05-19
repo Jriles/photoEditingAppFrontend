@@ -1,17 +1,19 @@
 <template>
   <nav class="navbar is-fixed-top has-background-grey-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand ml-4">
-      <router-link class="navbar-item has-text-white has-background-grey-dark simple-photo-logo" to="/transformations/light">
-        <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
+      <router-link class="has-text-white has-background-grey-dark" to="/transformations/light">
+        <img src="@/assets/img/eazysnap_white_transparent.png" class="logo">
+      </router-link>
+      <router-link v-show="!mobileMode" class="navbar-item has-text-white has-background-grey-dark brand-text" to="/transformations/light">
         EazySnap
       </router-link>
-      <router-link to="/transformations/light" class="navbar-item has-text-white has-background-grey-dark">
+      <router-link to="/transformations/light" class="navbar-item has-text-white has-background-grey-dark pt-3">
         Light
       </router-link>
-      <router-link to="/transformations/color" class="navbar-item has-text-white has-background-grey-dark">
+      <router-link to="/transformations/color" class="navbar-item has-text-white has-background-grey-dark pt-3">
         Color
       </router-link>
-      <router-link to="/transformations/shape" class="navbar-item has-text-white has-background-grey-dark">
+      <router-link to="/transformations/shape" class="navbar-item has-text-white has-background-grey-dark pt-3">
         Shape
       </router-link>
 
@@ -24,10 +26,10 @@
 
     <div id="navbarBasicExample" class="navbar-menu has-background-grey-dark" v-bind:class="{ 'is-active' : showNav }">
       <div class="navbar-start has-text-white">
-        <router-link to="/hints" class="navbar-item has-text-white has-background-grey-dark">
+        <router-link to="/hints" class="navbar-item has-text-white has-background-grey-dark pt-3">
           Hints
         </router-link>
-        <a href="tel:+1206-724-7800" class="navbar-item has-text-white has-background-grey-dark">Help & Feedback</a>
+        <a href="tel:+1206-724-7800" class="navbar-item has-text-white has-background-grey-dark pt-3">Help & Feedback</a>
       </div>
 
       <!-- No ads v2 -->
@@ -68,6 +70,17 @@
 
 <script>
 export default {
+  computed: {
+    desktopMode: function () {
+      return this.$store.state.desktopMode
+    },
+    tabletMode: function () {
+      return this.$store.state.tabletMode
+    },
+    mobileMode: function () {
+      return this.$store.state.mobileMode
+    },
+  },
   data() {
     return {
       showNav: false
@@ -77,6 +90,10 @@ export default {
 </script>
 
 <style lang="scss">
+  .logo {
+    height: 45px;
+    padding-top: 5px;
+  }
 
   @font-face {
     font-family: "Helvetica";
@@ -92,7 +109,7 @@ export default {
     margin-bottom: 6px;
   }
 
-  .simple-photo-logo{
+  .brand-text{
     font-family: 'RobotoSlabExtraLight' !important;
     font-size: 20px;
   }

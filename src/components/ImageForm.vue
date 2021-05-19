@@ -1,66 +1,68 @@
 <template>
   <!--desktop-->
-  <div v-if="desktopMode" class="columns navbar-offset">
-    <div class="column is-three-quarters">
-      <div>
-        <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
-        <img id="originalImg" v-show="false" :src="originalImg"/>
-      </div>
-      <div id="imgBucket" class="desktop-img-bucket">
-        <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
-        <div v-if="!uploaded" class="custom-canvas-overlay-desktop">
-          <h1 class="title has-text-white main-title">
-              Transform Your Images
-          </h1>
-          <div class="file is-primary is-centered">
-            <label class="file-label">
-              <input class="file-input" type="file" name="photo" @change="submit">
-              <span class="file-cta has-background-black">
-                <span class="file-label">
-                  Choose an Image
-                </span>
-              </span>
-            </label>
-          </div>
+  <div v-if="desktopMode" class="max-width content-centered">
+    <div class="columns navbar-offset">
+      <div class="column is-three-quarters">
+        <div>
+          <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
+          <img id="originalImg" v-show="false" :src="originalImg"/>
         </div>
-        <img id="shapeImg" alt="Free photo editor" class="hidden" :src="shapeImg"/>
-        <img id="filterImg" alt="Edit photo brightness" class="hidden" :src="filterImg"/>
-        <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" alt="Crop image"></VueCropper>
-        <div class="hiddenCropperStyling">
-          <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Crop image" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
-        </div>
-        <div class="hiddenCropperStyling">
-          <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" alt="Free photo editor" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
-        </div>
-      </div>
-    </div>
-    <div class="desktopControls has-text-centered">
-      <div v-show="uploaded" class="mb-5">
-        <div v-show="uploaded" class="columns is-multiline">
-          <div class="column">
+        <div id="imgBucket" class="desktop-img-bucket">
+          <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
+          <div v-if="!uploaded" class="custom-canvas-overlay-desktop">
+            <h1 class="title has-text-white main-title">
+                Transform Your Images
+            </h1>
             <div class="file is-primary is-centered">
               <label class="file-label">
                 <input class="file-input" type="file" name="photo" @change="submit">
                 <span class="file-cta has-background-black">
                   <span class="file-label">
-                    <font-awesome-icon icon="file-upload" />
+                    Choose an Image
                   </span>
                 </span>
               </label>
             </div>
           </div>
-          <div class="column">
-            <button id="downloadButton" @click="prepOutput()" class="button is-black"><font-awesome-icon icon="file-download" /></button>
+          <img id="shapeImg" alt="Free photo editor" class="hidden" :src="shapeImg"/>
+          <img id="filterImg" alt="Edit photo brightness" class="hidden" :src="filterImg"/>
+          <VueCropper ref="cropper" :autoCropArea="cropping.defaultSize" :autoCrop="cropping" v-show="cropperVisible" :minContainerWidth="containerWidth" alt="Crop image"></VueCropper>
+          <div class="hiddenCropperStyling">
+            <VueCropper ref="storageCropper" :autoCropArea="2" :autoCrop="false" v-show="storageCropperVisible" alt="Crop image" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
           </div>
-          <div class="column">
-            <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
-          </div>
-          <div class="column">
-            <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
+          <div class="hiddenCropperStyling">
+            <VueCropper ref="outputCropper" :autoCropArea="2" :autoCrop="false" v-show="outputVisible" alt="Free photo editor" :minContainerWidth="containerWidth" :maxContainerHeight="containerHeight"></VueCropper>
           </div>
         </div>
       </div>
-      <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter"/>
+      <div class="desktopControls has-text-centered">
+        <div v-show="uploaded" class="mb-5">
+          <div v-show="uploaded" class="columns is-multiline">
+            <div class="column">
+              <div class="file is-primary is-centered">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="photo" @change="submit">
+                  <span class="file-cta has-background-black">
+                    <span class="file-label">
+                      <font-awesome-icon icon="file-upload" />
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <button id="downloadButton" @click="prepOutput()" class="button is-black"><font-awesome-icon icon="file-download" /></button>
+            </div>
+            <div class="column">
+              <button id="downloadButton" @click="undoAll()" class="button is-black"><font-awesome-icon icon="undo" /></button>
+            </div>
+            <div class="column">
+              <button class="button is-black" @click="changeOriginalVisible()"><font-awesome-icon icon="image" />&nbsp;/&nbsp;<font-awesome-icon :icon="['far', 'image']"/></button>
+            </div>
+          </div>
+        </div>
+        <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter"/>
+      </div>
     </div>
   </div>
   <div v-if="tabletMode" class="columns navbar-offset">
@@ -199,7 +201,7 @@ import glfx from 'glfx';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
-import { isMobile, isTablet, isDesktop } from '@/utils/DeviceTesting'
+import { isMobile, isTablet, isDesktop, isLargeDesktop, isUltraWide } from '@/utils/DeviceTesting'
 import { sendGA4PhotoEditEvent, sendGA4FileEvent } from '@/utils/GoogleAnalytics'
 //max width is 75% of screen
 const IMAGE_HEIGHT = window.innerHeight - 50;
@@ -228,13 +230,25 @@ export default {
       this.$store.dispatch('setTabletMode', true)
       this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    } else if(isMobile(this.getWindowWidth())) {
+    } else if (isMobile(this.getWindowWidth())) {
       //mobile
       imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
       this.$store.dispatch('setMobileMode', true)
       this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
     }
+    //  else if (isLargeDesktop(this.getWindowWidth())) {
+    //   console.log('thinks is large desktop')
+    //   imgURL = require('@/assets/img/largedesktop/manWCatLargeDesktop.jpg')
+    //   this.$store.dispatch('setDesktopMode', true)
+    //   this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
+    //   this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
+    // } else if (isUltraWide(this.getWindowWidth())) {
+    //   imgURL = require('@/assets/img/ultrawide/manWCatUltrawide.jpg')
+    //   this.$store.dispatch('setDesktopMode', true)
+    //   this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
+    //   this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
+    // }
     const path = this.$route.name;
 
     const img = new Image();
@@ -1011,6 +1025,7 @@ export default {
       })
     },
     imgTooBig (imgWidth, imgHeight, vueRef) {
+      console.log('thought img too big')
       if (imgWidth > vueRef.containerWidth || imgHeight > vueRef.containerHeight) {
         return true
       }
@@ -1136,5 +1151,13 @@ export default {
   .hiddenCropperStyling {
     position: absolute;
     top: 1000px;
+  }
+
+  .max-width {
+    max-width: 1500px;
+  }
+
+  .content-centered {
+
   }
 </style>
