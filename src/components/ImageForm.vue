@@ -1,7 +1,7 @@
 <template>
   <!--desktop-->
-  <div v-if="desktopMode" class="max-width content-centered">
-    <div class="columns navbar-offset">
+  <div v-if="desktopMode || ultrawideMode || largeDesktopMode">
+    <div v-bind:class="{ largeDesktopOffset : largeDesktopMode, ultrawideOffset : ultrawideMode }" class="columns navbar-offset">
       <div class="column is-three-quarters">
         <div>
           <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
@@ -9,7 +9,7 @@
         </div>
         <div id="imgBucket" class="desktop-img-bucket">
           <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
-          <div v-if="!uploaded" class="custom-canvas-overlay-desktop">
+          <div v-if="!uploaded" v-bind:class="{ customCanvasOverlayDesktop : desktopMode, customCanvasOverlayUltrawide : ultrawideMode, customCanvasOverlayLargeDesktop : largeDesktopMode }">
             <h1 class="title has-text-white main-title">
                 Transform Your Images
             </h1>
@@ -35,7 +35,7 @@
           </div>
         </div>
       </div>
-      <div class="desktopControls has-text-centered">
+      <div class="has-text-centered" v-bind:class="{ desktopControls : desktopMode, largeDesktopControls : largeDesktopMode, ultrawideControls : ultrawideMode }">
         <div v-show="uploaded" class="mb-5">
           <div v-show="uploaded" class="columns is-multiline">
             <div class="column">
@@ -236,19 +236,18 @@ export default {
       this.$store.dispatch('setMobileMode', true)
       this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
       this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
+    } else if (isLargeDesktop(this.getWindowWidth())) {
+      console.log('thinks is large desktop')
+      imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
+      this.$store.dispatch('setLargeDesktopMode', true)
+      this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
+      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
+    } else if (isUltraWide(this.getWindowWidth())) {
+      imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
+      this.$store.dispatch('setUltrawideMode', true)
+      this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
+      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
     }
-    //  else if (isLargeDesktop(this.getWindowWidth())) {
-    //   console.log('thinks is large desktop')
-    //   imgURL = require('@/assets/img/largedesktop/manWCatLargeDesktop.jpg')
-    //   this.$store.dispatch('setDesktopMode', true)
-    //   this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
-    //   this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    // } else if (isUltraWide(this.getWindowWidth())) {
-    //   imgURL = require('@/assets/img/ultrawide/manWCatUltrawide.jpg')
-    //   this.$store.dispatch('setDesktopMode', true)
-    //   this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
-    //   this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    // }
     const path = this.$route.name;
 
     const img = new Image();
@@ -276,6 +275,12 @@ export default {
     msg: String
   },
   computed: {
+    ultrawideMode: function () {
+      return this.$store.state.ultrawideMode
+    },
+    largeDesktopMode: function () {
+      return this.$store.state.largeDesktopMode
+    },
     desktopMode: function () {
       return this.$store.state.desktopMode
     },
@@ -1092,7 +1097,28 @@ export default {
   .desktopControls {
     padding-top: 20px;
     position: fixed;
-    left: 80%;
+    /* left: 80%; */
+    right: 5%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+  }
+
+  .largeDesktopControls {
+    padding-top: 20px;
+    position: fixed;
+    /* left: 80%; */
+    right: 10%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+  }
+
+  .ultrawideControls {
+    padding-top: 20px;
+    position: fixed;
+    /* left: 80%; */
+    right: 22%;
     overflow-y: auto;
     overflow-x: hidden;
     height: 100vh;
@@ -1117,7 +1143,21 @@ export default {
     color: black !important;
   }
 
-  .custom-canvas-overlay-desktop {
+  .customCanvasOverlayUltrawide {
+    position: absolute;
+    top: 300px;
+    left: 33%;
+    z-index: 1;
+  }
+
+  .customCanvasOverlayLargeDesktop {
+    position: absolute;
+    top: 300px;
+    left: 27%;
+    z-index: 1;
+  }
+
+  .customCanvasOverlayDesktop {
     position: absolute;
     top: 300px;
     left: 20%;
@@ -1153,11 +1193,11 @@ export default {
     top: 1000px;
   }
 
-  .max-width {
-    max-width: 1500px;
+  .ultrawideOffset {
+    margin-left: 22%;
   }
 
-  .content-centered {
-
+  .largeDesktopOffset {
+    margin-left: 10%;
   }
 </style>

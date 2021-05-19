@@ -10,6 +10,8 @@ const IMAGE_LOAD_TIME = 150;
 export default createStore({
   state () {
     return {
+      ultrawideMode: false,
+      largeDesktopMode: false,
       desktopMode: false,
       tabletMode: false,
       mobileMode: false,
@@ -118,6 +120,12 @@ export default createStore({
     }
   },
   mutations: {
+    SET_ULTRAWIDE_MODE (state, mode) {
+      state.ultrawideMode = mode
+    },
+    SET_LARGE_DESKTOP_MODE (state, mode) {
+      state.largeDesktopMode = mode
+    },
     SET_DESKTOP_MODE (state, mode) {
       state.desktopMode = mode
     },
@@ -262,6 +270,12 @@ export default createStore({
     }
   },
   actions: {
+    setUltrawideMode (context, mode) {
+      context.commit('SET_ULTRAWIDE_MODE', mode)
+    },
+    setLargeDesktopMode (context, mode) {
+      context.commit('SET_LARGE_DESKTOP_MODE', mode)
+    },
     setDesktopMode (context, mode) {
       context.commit('SET_DESKTOP_MODE', mode)
     },

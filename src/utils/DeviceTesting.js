@@ -18,19 +18,19 @@ function isTablet (windowWidth) {
   return false
 }
 
-// function isDesktop (windowWidth) {
-//   if (windowWidth > TABLET_MAX_WIDTH && windowWidth < DESKTOP_MAX_WIDTH) {
-//     return true
-//   }
-//   return false
-// }
-
 function isDesktop (windowWidth) {
-  if (windowWidth > TABLET_MAX_WIDTH) {
+  if (windowWidth > TABLET_MAX_WIDTH && windowWidth < DESKTOP_MAX_WIDTH) {
     return true
   }
   return false
 }
+
+// function isDesktop (windowWidth) {
+//   if (windowWidth > TABLET_MAX_WIDTH) {
+//     return true
+//   }
+//   return false
+// }
 
 function isLargeDesktop (windowWidth) {
   if (windowWidth > DESKTOP_MAX_WIDTH && windowWidth < LARGE_DESKTOP_MAX_WIDTH) {

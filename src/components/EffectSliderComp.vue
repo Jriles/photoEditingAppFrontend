@@ -1,5 +1,5 @@
 <template>
-  <div v-if="desktopMode || tabletMode">
+  <div v-if="desktopMode || tabletMode || largeDesktopMode || ultrawideMode">
     <div>
       <h6 for="input" class="label has-text-white tool-name">{{ name }}</h6>
     </div>
@@ -43,6 +43,12 @@ export default {
     mobileMode: function () {
       return this.$store.state.mobileMode
     },
+    ultrawideMode: function () {
+      return this.$store.state.ultrawideMode
+    },
+    largeDesktopMode: function () {
+      return this.$store.state.largeDesktopMode
+    }
   },
   props: {
     name: String,
