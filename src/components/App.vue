@@ -248,4 +248,7 @@ export default {
     background: black;
   }
 
+  //bulma columns class fucking broken
+  body { overflow-x: hidden; }
+
 </style>

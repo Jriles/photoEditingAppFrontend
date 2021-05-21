@@ -1,7 +1,7 @@
 <template>
   <!--desktop-->
   <div v-if="desktopMode || ultrawideMode || largeDesktopMode">
-    <div v-bind:class="{ largeDesktopOffset : largeDesktopMode, ultrawideOffset : ultrawideMode }" class="columns navbar-offset">
+    <div v-bind:class="[{ desktopOffset : desktopMode }, { largeDesktopOffset : largeDesktopMode }, { ultrawideOffset : ultrawideMode }]" class="columns navbarOffset">
       <div class="column is-three-quarters">
         <div>
           <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
@@ -65,7 +65,8 @@
       </div>
     </div>
   </div>
-  <div v-if="tabletMode" class="columns navbar-offset">
+  <!--tablet-->
+  <div v-if="tabletMode" class="columns navbarOffset">
     <div class="column is-three-quarters">
       <div>
         <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
@@ -128,8 +129,9 @@
       <router-view @eventBus="eventsHandler" @doneChangingFilter="doneChangingFilter"/>
     </div>
   </div>
+  <!--mobile-->
   <div v-if="mobileMode">
-    <div class="navbar-offset">
+    <div class="navbarOffset">
       <div>
         <div>
           <img id="displayImg" v-show="originalVisible" :src="displayImg"/>
@@ -216,40 +218,15 @@ export default {
   name: 'ImageForm',
   emits: ['updateColorVal', 'updateShapeVal'],
   created(){
-    var imgURL;
+    //respond if window has changed size dramatically.
+    window.addEventListener("resize", this.resizeCheck);
 
-    if(isDesktop(this.getWindowWidth())){
-      //desktop
-      imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
-      this.$store.dispatch('setDesktopMode', true)
-      this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
-      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    } else if (isTablet(this.getWindowWidth())){
-      //tablet
-      imgURL = require('@/assets/img/tablet/manWCatTablet.jpg')
-      this.$store.dispatch('setTabletMode', true)
-      this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
-      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    } else if (isMobile(this.getWindowWidth())) {
-      //mobile
-      imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
-      this.$store.dispatch('setMobileMode', true)
-      this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
-      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
-    } else if (isLargeDesktop(this.getWindowWidth())) {
-      console.log('thinks is large desktop')
-      imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
-      this.$store.dispatch('setLargeDesktopMode', true)
-      this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
-      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    } else if (isUltraWide(this.getWindowWidth())) {
-      imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
-      this.$store.dispatch('setUltrawideMode', true)
-      this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
-      this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
-    }
+    //call set device details here
+    this.setDeviceMode()
+    this.setContainerDimensions()
+
+    const imgURL = this.getLandingImgURL()
     const path = this.$route.name;
-
     const img = new Image();
     const ref = this;
     var fullUrl = window.location.origin + this.$route.path
@@ -267,6 +244,9 @@ export default {
       ref.initPageBasedOnPath(path, true)
     })
     img.src = imgURL;
+  },
+  destroyed () {
+    window.removeEventListener("resize", this.resizeCheck);
   },
   components: {
     VueCropper
@@ -600,14 +580,88 @@ export default {
     }
   },
   methods: {
-    glfxToGlfx(toRouteName, fromRouteName) {
+    resizeCheck () {
+      //in this function we want to ask whether the window size has changed enough to constitute changing device modes
+      //since device modes are based on innerWidth, we just reset the mode based on that and the functionality/viewport will still be usable.
+      //then we want to reset the mode and call initPageBasedOnPath
+      if ((isDesktop(this.getWindowWidth()) && this.desktopMode == false)
+          || (isTablet(this.getWindowWidth()) && this.tabletMode == false)
+          || (isMobile(this.getWindowWidth()) && this.mobileMode == false)
+          || (isLargeDesktop(this.getWindowWidth()) && this.largeDesktopMode == false)
+          || (isUltraWide(this.getWindowWidth()) && this.ultrawideMode == false)) {
+            //only reset if device mode has changed.
+        this.setDeviceMode()
+        this.setContainerDimensions()
+        const path = this.$route.name;
+        this.initPageBasedOnPath(path, false)
+      }
+    },
+    getLandingImgURL () {
+      //get landing image based on device mode
+      var imgURL;
+      if(this.desktopMode || this.ultrawideMode || this.largeDesktopMode){
+        //desktop
+        imgURL = require('@/assets/img/desktop/manWCatDesktop.jpg')
+      } else if (this.tabletMode){
+        //tablet
+        imgURL = require('@/assets/img/tablet/manWCatTablet.jpg')
+      } else if (this.mobileMode) {
+        //mobile
+        imgURL = require('@/assets/img/mobile/manWCatMobile.jpg')
+      }
+      return imgURL
+    },
+    setContainerDimensions () {
+      if(this.desktopMode || this.ultrawideMode || this.largeDesktopMode){
+        //desktop
+        this.$store.dispatch('setContainerHeight', IMAGE_HEIGHT)
+        this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
+      } else if (this.tabletMode){
+        //tablet
+        this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
+        this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(DESKTOP_CANVAS_PERCENT))
+      } else if (this.mobileMode) {
+        //mobile
+        this.$store.dispatch('setContainerHeight', MOBILE_IMAGE_HEIGHT)
+        this.$store.dispatch('setContainerWidth', this.getPercentOfScreenVal(MOBILE_CANVAS_PERCENT))
+      }
+    },
+    falseAllDeviceModes () {
+      this.$store.dispatch('setDesktopMode', false)
+      this.$store.dispatch('setTabletMode', false)
+      this.$store.dispatch('setMobileMode', false)
+      this.$store.dispatch('setLargeDesktopMode', false)
+      this.$store.dispatch('setUltrawideMode', false)
+    },
+    setDeviceMode () {
+      //set all false
+      //we need this on resize
+      this.falseAllDeviceModes()
+      if (isDesktop(this.getWindowWidth())) {
+        //desktop
+        this.$store.dispatch('setDesktopMode', true)
+      } else if (isTablet(this.getWindowWidth())) {
+        //tablet
+        this.$store.dispatch('setTabletMode', true)
+      } else if (isMobile(this.getWindowWidth())) {
+        //mobile
+        this.$store.dispatch('setMobileMode', true)
+      } else if (isLargeDesktop(this.getWindowWidth())) {
+        // large desktop mode
+        this.$store.dispatch('setLargeDesktopMode', true)
+      } else if (isUltraWide(this.getWindowWidth())) {
+        // ultra wide mode
+        this.$store.dispatch('setUltrawideMode', true)
+      }
+    },
+    glfxToGlfx (toRouteName, fromRouteName) {
       if ((toRouteName === 'light' && fromRouteName === 'color')
       || (toRouteName === 'color' && fromRouteName === 'light')) {
         return true
       }
       return false
     },
-    initPageBasedOnPath(path, newImage) {
+    initPageBasedOnPath (path, newImage) {
       switch(path){
         case "color":
           this.initWebGLCanvas(newImage)
@@ -874,7 +928,7 @@ export default {
       }
     },
     //and still need this
-    updateFilterVal(img){
+    updateFilterVal (img) {
       this.originalImgTexture.loadContentsOf(img)
       const imgBucket = document.getElementById('imgBucket');
       const oldCanvas = document.getElementsByTagName("canvas")[0];
@@ -883,7 +937,7 @@ export default {
       }
       imgBucket.insertBefore(this.applyFilters(this.originalImgCanvas, this.originalImgTexture), filterImg)
     },
-    initWebGLCanvas(newImage) {
+    initWebGLCanvas (newImage) {
       //remove cropper
       const ref = this;
       this.$store.dispatch('setCropperVisible', false)
@@ -923,7 +977,7 @@ export default {
         }
       }, IMAGE_LOAD_TIME);
     },
-    initCropperjsCanvas(newImage) {
+    initCropperjsCanvas (newImage) {
       this.removeCanvasIfExists()
       this.$store.dispatch('setCropperVisible', true)
 
@@ -1030,13 +1084,12 @@ export default {
       })
     },
     imgTooBig (imgWidth, imgHeight, vueRef) {
-      console.log('thought img too big')
       if (imgWidth > vueRef.containerWidth || imgHeight > vueRef.containerHeight) {
         return true
       }
       return false
     },
-    fitImgToCanvas (newImgURL, cropperRef, width, height, vueRef){
+    fitImgToCanvas (newImgURL, cropperRef, width, height, vueRef) {
       //takes in an image id, loads
       //submit call is a flag for when we are calling this function
       //on submit image
@@ -1086,7 +1139,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .navbar-offset {
+  .navbarOffset {
     margin-top: 51px !important;
   }
 
@@ -1098,10 +1151,11 @@ export default {
     padding-top: 20px;
     position: fixed;
     /* left: 80%; */
-    right: 5%;
+    right: 3%;
     overflow-y: auto;
     overflow-x: hidden;
     height: 100vh;
+    max-width: 16%;
   }
 
   .largeDesktopControls {
@@ -1112,6 +1166,7 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
     height: 100vh;
+    max-width: 16%;
   }
 
   .ultrawideControls {
@@ -1122,6 +1177,7 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
     height: 100vh;
+    max-width: 16%;
   }
 
   .tabletControls {
@@ -1132,6 +1188,7 @@ export default {
     overflow-x: hidden;
     height: 100vh;
     padding-right: 3%;
+    max-width: 16%;
   }
 
   .desktopCanvasOffset {
@@ -1199,5 +1256,9 @@ export default {
 
   .largeDesktopOffset {
     margin-left: 10%;
+  }
+
+  .desktopOffset {
+    margin-left: 0%;
   }
 </style>

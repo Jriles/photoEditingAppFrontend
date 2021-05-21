@@ -26,6 +26,7 @@
   <div class="mb-3" v-show="cropping">
     <button class="button is-black is-normal" @click="stateChangeButton" name="Aspect Ratio">Reset Crop Aspect Ratio</button>
   </div>
+
   <!--straighten-->
   <div class="columns is-mobile" v-show="straightening">
     <div class="column" v-show="straightening">
@@ -56,13 +57,8 @@ export default {
     rotation: function () {
       return this.$store.state.rotation
     },
-    cropping: {
-      get () {
-        return this.$store.state.cropping
-      },
-      set (value) {
-        this.cropping = value
-      }
+    cropping: function () {
+      return this.$store.state.cropping
     },
     cropped: function () {
       return this.$store.state.cropped
