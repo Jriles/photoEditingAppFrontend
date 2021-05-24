@@ -218,7 +218,6 @@ export default {
   name: 'ImageForm',
   emits: ['updateColorVal', 'updateShapeVal'],
   created(){
-    console.log('called created')
     //respond if window has changed size dramatically.
     window.addEventListener("resize", this.resizeCheck);
 
@@ -249,6 +248,10 @@ export default {
       ref.initPageBasedOnPath(path, true)
     })
     img.src = imgURL;
+
+    if (isWebitRenderEngine(window.navigator.vendor)) {
+      alert('Please re-open eazysnap on firefox or desktop. Apple does not offer bug support for webGL, one of our core technologies. Sorry for any inconvenience.')
+    }
     //originalImgElem.src = imgURL
     //this.$store.dispatch('setOriginalImg', imgURL)
   },
