@@ -38,6 +38,7 @@ export default createStore({
       //we need this because we do not want to apply all filter changes every frame
       originalImgCanvas: null,
       originalImgTexture: null,
+      originalCanvasContext: null,
       //saved after submitting, making changes in cropperjs.
       //used to resize img if necessary
       imgWidth: 0,
@@ -267,6 +268,9 @@ export default createStore({
     },
     SET_ORIGINAL_IMG_TEXTURE (state, texture) {
       state.originalImgTexture = texture
+    },
+    SET_ORIGINAL_CANVAS_CTX (state, context) {
+      state.originalCanvasContext = context
     }
   },
   actions: {
@@ -409,6 +413,9 @@ export default createStore({
     },
     setOriginalImgTexture (context, texture) {
       context.commit('SET_ORIGINAL_IMG_TEXTURE', texture)
+    },
+    setOriginalCanvasContext (context, canvasContext) {
+      context.commit('SET_ORIGINAL_CANVAS_CTX', canvasContext)
     }
   }
 })

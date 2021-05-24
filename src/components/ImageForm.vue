@@ -203,7 +203,7 @@ import glfx from 'glfx';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
-import { isMobile, isTablet, isDesktop, isLargeDesktop, isUltraWide } from '@/utils/DeviceTesting'
+import { isMobile, isTablet, isDesktop, isLargeDesktop, isUltraWide, isWebitRenderEngine } from '@/utils/DeviceTesting'
 import { sendGA4PhotoEditEvent, sendGA4FileEvent } from '@/utils/GoogleAnalytics'
 //max width is 75% of screen
 const IMAGE_HEIGHT = window.innerHeight - 50;
@@ -218,6 +218,7 @@ export default {
   name: 'ImageForm',
   emits: ['updateColorVal', 'updateShapeVal'],
   created(){
+    console.log('called created')
     //respond if window has changed size dramatically.
     window.addEventListener("resize", this.resizeCheck);
 
@@ -226,24 +227,30 @@ export default {
     this.setContainerDimensions()
 
     const imgURL = this.getLandingImgURL()
+
     const path = this.$route.name;
     const img = new Image();
     const ref = this;
-    var fullUrl = window.location.origin + this.$route.path
+    // var fullUrl = window.location.origin + this.$route.path
     img.addEventListener("load", function () {
+      console.log('thought original img elem loaded')
       const canvas = ref.getGLFXCanvas()
+      const context = ref.getWebGLCanvasContext(canvas)
       const texture = ref.getGLFXTexture(canvas, this)
       const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
-      const defaultImgURL = texturedCanvas.toDataURL('image/jpg', DISPLAY_IMAGE_QUALITY)
-      ref.$store.dispatch('setFilterImg', defaultImgURL)
-      ref.$store.dispatch('setShapeImg', defaultImgURL)
-      ref.$store.dispatch('setOriginalImg', defaultImgURL)
-      ref.$store.dispatch('setDisplayImg', defaultImgURL)
+      //console.log(defaultImgURL)
+      ref.$store.dispatch('setFilterImg', imgURL)
+      ref.$store.dispatch('setShapeImg', imgURL)
+      ref.$store.dispatch('setOriginalImg', imgURL)
+      ref.$store.dispatch('setDisplayImg', imgURL)
       ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
       ref.$store.dispatch('setOriginalImgTexture', texture)
+      ref.$store.dispatch('setOriginalCanvasContext', context)
       ref.initPageBasedOnPath(path, true)
     })
     img.src = imgURL;
+    //originalImgElem.src = imgURL
+    //this.$store.dispatch('setOriginalImg', imgURL)
   },
   destroyed () {
     window.removeEventListener("resize", this.resizeCheck);
@@ -292,9 +299,6 @@ export default {
     filterImg: function () {
       return this.$store.state.filterImg
     },
-    downloadImg: function () {
-      return this.$store.state.downloadImg
-    },
     displayImg: function () {
       return this.$store.state.displayImg
     },
@@ -303,6 +307,9 @@ export default {
     },
     originalImgTexture: function () {
       return this.$store.state.originalImgTexture
+    },
+    originalCanvasContext: function () {
+      return this.$store.state.originalCanvasContext
     },
     imgFileExt: function () {
       return this.$store.state.imgFileExt
@@ -504,9 +511,6 @@ export default {
       if (!this.glfxToGlfx(to.name, from.name)){
         this.initPageBasedOnPath(path, false)
       }
-    },
-    downloadImg: function(newValue, oldValue) {
-      saveAs(newValue)
     },
     brightness: function (newValue, oldValue) {
       //need to call updateFilterVal with new value
@@ -734,13 +738,14 @@ export default {
       this.$store.dispatch('setStraightened', this.defaultStraightened)
       this.$store.dispatch('setStraightenAmount', this.defaultStraightenAmount)
     },
-    submit(e) {
+    submit (e) {
       //delete old canvas
       //for re-uploading
       //first check if valid file format/save file format
       const file = e.target.files[0];
       this.$store.dispatch('setImgFileName', file.name)
       const fileExt = file.name.split('.').pop();
+      // never trust the data!
       if (fileExt === "png" || fileExt === "PNG") {
         this.$store.dispatch('setImgFileExt', "image/png")
       } else if (fileExt === "jpg" || fileExt === "jpeg" || fileExt === "JPG" || fileExt === "JPEG") {
@@ -759,11 +764,13 @@ export default {
         const path = ref.$route.name;
         //we want to change this here so we can avoid an if down the road.
         const canvas = ref.getGLFXCanvas()
+        const context = ref.getWebGLCanvasContext(canvas)
         const shapeImgElem = document.getElementById('shapeImg')
         const texture = ref.getGLFXTexture(canvas, shapeImgElem)
         const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
         ref.$store.dispatch('setOriginalImgCanvas', texturedCanvas)
         ref.$store.dispatch('setOriginalImgTexture', texture)
+        ref.$store.dispatch('setOriginalCanvasContext', context)
         ref.initPageBasedOnPath(path, true)
         const aspectRatio = this.width / this.height;
         ref.$store.dispatch('setOriginalAspectRatio', aspectRatio)
@@ -786,15 +793,18 @@ export default {
       reader.readAsDataURL(file)
       sendGA4FileEvent(this, 'Uploaded Image')
     },
-    getPercentOfScreenVal(percent){
+    getPercentOfScreenVal (percent){
       const width  = this.getWindowWidth()
       return width * percent
     },
     getGLFXCanvas () {
       const canvas = glfx.canvas();
+      return canvas
+    },
+    getWebGLCanvasContext (canvas) {
       const gl = canvas.getContext('webgl');
       gl.getExtension('WEBGL_color_buffer_float');
-      return canvas
+      return gl
     },
     getGLFXTexture (canvas, img) {
       return canvas.texture(img)
@@ -803,7 +813,15 @@ export default {
       canvas.draw(texture).update()
       return canvas
     },
-    applyFilters(canvas, texture) {
+    flipGLCanvasIfNeeded (context, canvas) {
+      console.log(window.navigator.vendor)
+      if (isWebitRenderEngine(window.navigator.vendor)) {
+        console.log('thinks that we are using webkit as render engine')
+        context.setTransform(1, 0, 0, -1, 0, canvas.height);
+        context.drawImage(canvas, 0, 0);
+      }
+    },
+    applyFilters (canvas, texture) {
       canvas.draw(texture).update()
       if (this.brightness != this.defaultBrightness || this.contrast != this.defaultContrast) {
         canvas.draw(texture).brightnessContrast((this.brightness), (this.contrast)).update()
@@ -955,6 +973,7 @@ export default {
         const width = shapeImgElem.width;
         const height = shapeImgElem.height;
         if (ref.imgTooBig(width, height, ref)) {
+          console.log('img too big')
           //use output cropper for resizing
           //we clean up output cropper at the end anyways
           ref.fitImgToCanvas(ref.shapeImg, 'outputCropper', width, height, ref)
@@ -1041,10 +1060,11 @@ export default {
     },
     doneChangingFilter (filterName) {
       const canvas = this.getGLFXCanvas()
+      const context = this.getWebGLCanvasContext(canvas)
       const originalImgElem = document.getElementById('originalImg')
       const texture = this.getGLFXTexture(canvas, originalImgElem)
       const texturedCanvas = this.applyTextureToGLFXCanvas(canvas, texture)
-      const newFilterImg = this.applyFilters(texturedCanvas,texture).toDataURL(this.imgFileExt, 1)
+      const newFilterImg = this.applyFilters(texturedCanvas, texture).toDataURL(this.imgFileExt, 1)
       this.$store.dispatch('setFilterImg', newFilterImg)
       //then hit GA4 with the great news!
       //lmao
@@ -1110,10 +1130,10 @@ export default {
       //apply all filter changes
       const originalImg = document.getElementById('originalImg')
       const canvas = this.getGLFXCanvas()
+      const context = this.getWebGLCanvasContext(canvas)
       const originalImgElem = document.getElementById('originalImg')
       const texture = this.getGLFXTexture(canvas, originalImgElem)
       const texturedCanvas = this.applyTextureToGLFXCanvas(canvas, texture)
-      const newFilterImg = this.applyFilters(texturedCanvas,texture).toDataURL(this.imgFileExt, 1)
 
       var originalImgWFilters = this.applyFilters(texturedCanvas, texture).toDataURL()
       // upload to output cropper

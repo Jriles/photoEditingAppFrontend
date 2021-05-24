@@ -46,10 +46,21 @@ function isUltraWide (windowWidth) {
   return false
 }
 
+// detect webkit render engine, that is what is breaking webgl on IOS/safari on macOS.
+// very bad no good thing to do, but apple has left me with few alternatives.
+// toDataURL flips image on iOS (including firefox and chrome) and Safari on MacOS and iOS
+function isWebitRenderEngine (vendor) {
+  if (vendor.match(/apple/i)) {
+    return true
+  }
+  return false
+}
+
 module.exports = {
   isMobile,
   isTablet,
   isDesktop,
   isLargeDesktop,
-  isUltraWide
+  isUltraWide,
+  isWebitRenderEngine
 }
