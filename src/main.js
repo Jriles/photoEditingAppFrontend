@@ -7,11 +7,11 @@ import { faUndo, faFileDownload, faFileUpload, faImage, faCropAlt, faArrowsAltV,
 import { faImage as faRegImage } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
 import VueGtag from "vue-gtag-next";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 require('cropperjs/dist/cropper.js')
 require('cropperjs/dist/cropper.css')
 require('@/assets/main.scss');
-//require("@/assets/img/tablet/manWCatTablet.jpg")
 
 library.add(faTwitter)
 library.add(faUndo)
@@ -22,9 +22,6 @@ library.add(faRegImage)
 library.add(faCropAlt)
 library.add(faArrowsAltH)
 library.add(faArrowsAltV)
-
-
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)

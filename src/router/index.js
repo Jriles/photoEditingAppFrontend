@@ -49,7 +49,6 @@ const routes = [
     name: 'Hints',
     component: Hints
   }
-  //more vues (haha) here
 ]
 
 const router = createRouter({

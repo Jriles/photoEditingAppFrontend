@@ -17,7 +17,6 @@ export default createStore({
       mobileMode: false,
       originalImg: null,
       originalVisible: false,
-      //img: null,
       uploaded: false,
       imgFileName: null,
       cropperVisible: false,
@@ -95,7 +94,7 @@ export default createStore({
       //defaults, here bc single source of truth
       //we want defaults on inputs so we can reset
       // + on img form so we can undo all at once
-      // :. single source of truth bish
+      // :. single source of truth
       defaultBrightness: 0,
       defaultContrast: 0,
       defaultVibrance: 0,
@@ -419,5 +418,3 @@ export default createStore({
     }
   }
 })
-
-//export default c

@@ -8,7 +8,6 @@
           <img id="originalImg" v-show="false" :src="originalImg"/>
         </div>
         <div id="imgBucket" class="desktop-img-bucket">
-          <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
           <div v-if="!uploaded" v-bind:class="{ customCanvasOverlayDesktop : desktopMode, customCanvasOverlayUltrawide : ultrawideMode, customCanvasOverlayLargeDesktop : largeDesktopMode }">
             <h1 class="title has-text-white main-title">
                 Transform Your Images
@@ -73,7 +72,6 @@
         <img id="originalImg" v-show="false" :src="originalImg"/>
       </div>
       <div id="imgBucket" class="desktop-img-bucket">
-        <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
         <div v-if="!uploaded" class="custom-canvas-overlay-tablet">
           <h2 class="title has-text-white">
               Transform Your Images
@@ -138,7 +136,6 @@
           <img id="originalImg" v-show="false" :src="originalImg"/>
         </div>
         <div id="imgBucket">
-          <!-- reuse this bad boi for holding on to changes in updateFilterVal -->
           <div v-if="!uploaded" class="custom-canvas-overlay-mobile">
             <h3 class="title has-text-white">
                 Transform Your Images
@@ -205,7 +202,6 @@ import 'cropperjs/dist/cropper.css';
 import { saveAs } from 'file-saver';
 import { isMobile, isTablet, isDesktop, isLargeDesktop, isUltraWide, isWebitRenderEngine } from '@/utils/DeviceTesting'
 import { sendGA4PhotoEditEvent, sendGA4FileEvent } from '@/utils/GoogleAnalytics'
-//max width is 75% of screen
 const IMAGE_HEIGHT = window.innerHeight - 50;
 const MOBILE_IMAGE_HEIGHT = window.innerHeight - 350;
 const MOBILE_CANVAS_PERCENT = 1;
@@ -230,14 +226,11 @@ export default {
     const path = this.$route.name;
     const img = new Image();
     const ref = this;
-    // var fullUrl = window.location.origin + this.$route.path
     img.addEventListener("load", function () {
-      console.log('thought original img elem loaded')
       const canvas = ref.getGLFXCanvas()
       const context = ref.getWebGLCanvasContext(canvas)
       const texture = ref.getGLFXTexture(canvas, this)
       const texturedCanvas = ref.applyTextureToGLFXCanvas(canvas, texture)
-      //console.log(defaultImgURL)
       ref.$store.dispatch('setFilterImg', imgURL)
       ref.$store.dispatch('setShapeImg', imgURL)
       ref.$store.dispatch('setOriginalImg', imgURL)
@@ -252,8 +245,6 @@ export default {
     if (isWebitRenderEngine(window.navigator.vendor)) {
       alert('Please re-open eazysnap on firefox or desktop. Apple does not offer bug support for webGL, one of our core technologies. Sorry for any inconvenience.')
     }
-    //originalImgElem.src = imgURL
-    //this.$store.dispatch('setOriginalImg', imgURL)
   },
   destroyed () {
     window.removeEventListener("resize", this.resizeCheck);
@@ -286,7 +277,6 @@ export default {
     originalVisible: function () {
       return this.$store.state.originalVisible
     },
-    // img: null,
     uploaded: function () {
       return this.$store.state.uploaded
     },
@@ -817,9 +807,7 @@ export default {
       return canvas
     },
     flipGLCanvasIfNeeded (context, canvas) {
-      console.log(window.navigator.vendor)
       if (isWebitRenderEngine(window.navigator.vendor)) {
-        console.log('thinks that we are using webkit as render engine')
         context.setTransform(1, 0, 0, -1, 0, canvas.height);
         context.drawImage(canvas, 0, 0);
       }
@@ -871,7 +859,6 @@ export default {
       }
       return canvas
     },
-    //still need this
     applyShapeChanges (cropperName) {
       this.$refs[cropperName].rotateTo(this.rotation);
       //for cropper window
@@ -948,7 +935,6 @@ export default {
         this.initStraightenWindow('cropper')
       }
     },
-    //and still need this
     updateFilterVal (img) {
       this.originalImgTexture.loadContentsOf(img)
       const imgBucket = document.getElementById('imgBucket');
@@ -976,7 +962,6 @@ export default {
         const width = shapeImgElem.width;
         const height = shapeImgElem.height;
         if (ref.imgTooBig(width, height, ref)) {
-          console.log('img too big')
           //use output cropper for resizing
           //we clean up output cropper at the end anyways
           ref.fitImgToCanvas(ref.shapeImg, 'outputCropper', width, height, ref)
@@ -1070,7 +1055,6 @@ export default {
       const newFilterImg = this.applyFilters(texturedCanvas, texture).toDataURL(this.imgFileExt, 1)
       this.$store.dispatch('setFilterImg', newFilterImg)
       //then hit GA4 with the great news!
-      //lmao
       sendGA4PhotoEditEvent(this, filterName)
     },
     saveStraightenCanvasData () {
@@ -1121,9 +1105,6 @@ export default {
       const newHeightRatio = vueRef.containerHeight / height;
       const ratioToUse = Math.min(newWidthRatio, newHeightRatio)
 
-      //MULTIPLY RATIO BY IMAGE WIDTH/HEIGHT HERE, AND SET.
-      //THAT WAY WHEN WE MULTIPLY AGAIN, we have the values
-      //need to make a copy
       setTimeout(function() {
         vueRef.$refs[cropperRef].scale(ratioToUse, ratioToUse)
       }, IMAGE_LOAD_TIME)

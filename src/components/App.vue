@@ -248,7 +248,7 @@ export default {
     background: black;
   }
 
-  //bulma columns class fucking broken
+  //bulma columns class broken iOS
   body { overflow-x: hidden; }
 
 </style>
