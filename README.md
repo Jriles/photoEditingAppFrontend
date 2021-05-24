@@ -1,24 +1,13 @@
-# photo-editing-app
+# EazySnap: A real time photo editor with easy to use UI
 
-## Project setup
-```
-npm install
-```
+The goal of this project was to learn more about usability testing, analytics, user experience and software iteration.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Stack
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+* Vue3
+* Vuex
+* Vue Router
+* Google Analytics 4
+* Webgl (glfx.js)
+* Cropper.js
+* Google Cloud
