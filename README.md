@@ -2,6 +2,8 @@
 
 The goal of this project was to learn more about usability testing, analytics, user experience and software iteration.
 
+Check it out here: [https://www.eazysnap.com/#/transformations/light](https://www.eazysnap.com/#/transformations/light)
+
 ## Stack
 
 * Vue3
